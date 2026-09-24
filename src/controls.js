@@ -16,7 +16,10 @@ export function createControls(doc) {
   const time = el('time');
   const timeOut = el('time-out');
   const autoDay = el('auto-day');
-  const rain = el('rain');
+  const weather = el('weather');
+  const weatherOut = el('weather-out');
+  const season = el('season');
+  const seasonOut = el('season-out');
   const stops = el('stops');
   const sound = el('sound');
   const panel = el('panel');
@@ -39,7 +42,8 @@ export function createControls(doc) {
       targetKmh: Number(speed.value),
       dayTime: Number(time.value),
       autoDay: autoDay.checked,
-      rain: rain.checked,
+      weather: weather.value,
+      season: season.value,
       stops: stops.checked,
     }),
     showDayTime(dayTime) {
@@ -52,6 +56,11 @@ export function createControls(doc) {
       hud.speed.textContent = `${Math.round(kmh)} km/h`;
       hud.station.textContent = station;
       board.classList.toggle('no-station', !station);
+    },
+    /** Current weather and season names, shown next to the selectors (useful in automatic mode). */
+    showConditions(weatherName, seasonName) {
+      weatherOut.textContent = weatherName;
+      seasonOut.textContent = seasonName;
     },
     togglePanel,
     onSoundClick: (handler) => sound.addEventListener('click', handler),

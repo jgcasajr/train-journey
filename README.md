@@ -20,6 +20,9 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
   - **Subúrbio/Cidade**: skyline no horizonte que cresce conforme o trem se aproxima, prédios com janelas que acendem à noite, antenas piscando, fábricas soltando fumaça, muro e postes de luz.
 - **Estações** (Campo Belo, Três Porteiras, Pedra Alta, Vila Serena, Estação Central, Porto Azul): o trem freia suavemente, para ~14 s e parte de novo. Plataforma, cobertura com colunas de ferro, placas com o nome, prédio com relógio que marca a hora do jogo, bancos, passageiros esperando e luminárias acesas à noite. Sino na chegada e apito na partida (com som ligado).
 - **Rios e pontes**: ~8 rios por volta cortando a paisagem em todas as camadas; na travessia, uma ponte treliçada de aço passa rente à janela com a água correndo embaixo.
+- **Clima**: limpo, chuva ou tempestade (ou automático, mudando a cada 2 min). Na tempestade o céu fecha, caem raios com clarão que ilumina até a cabine e o trovão chega depois, com atraso conforme a distância. Quando a chuva para com sol, aparece um **arco-íris**.
+- **Neblina da manhã** nos vales ao amanhecer, que se dissipa até o meio da manhã (mais densa depois de chuva e no outono/inverno).
+- **Estações do ano** (ou automático, 2 dias por estação): primavera com árvores floridas e flores no campo; verão; outono com folhas alaranjadas caindo; inverno com neve no chão, nos telhados e nas lavouras, árvores sem folhas e neve caindo no lugar da chuva (também nas montanhas).
 - **Passagens de nível** (~9 por volta): estrada cruzando o trilho, cancela listrada abaixada, luzes vermelhas alternando, cruz de Santo André, carros esperando (faróis acesos à noite) e sino tocando quando o trem se aproxima (com som ligado).
 - **Estrada paralela** ao trilho com carros e caminhões nos dois sentidos: uns ficam para trás, outros ultrapassam o trem; faróis e lanternas à noite.
 - **Céu vivo**: bandos de pássaros em V, aviões com rastro (luz piscando à noite) e balões de ar quente sobre as fazendas em dias claros.
@@ -40,7 +43,8 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 | --- | --- |
 | Velocidade | 0–220 km/h (acelera/freia de forma gradual) |
 | Hora do dia | Fixa um horário (desliga o ciclo automático) |
-| Chuva | Liga/desliga |
+| Clima | Automático, limpo, chuva ou tempestade |
+| Estação do ano | Automática, primavera, verão, outono ou inverno |
 | Parar nas estações | Liga/desliga as paradas (desligado, o trem passa direto) |
 | Som | Ativa o áudio (navegadores exigem um clique) |
 | Mover o mouse | Olhar ao redor |
@@ -76,6 +80,9 @@ src/
   roads.js      passagens de nível, estrada paralela e tráfego (dados)
   roadView.js   desenho das estradas, carros e cancelas
   skylife.js    pássaros, aviões e balões
+  weather.js    clima: chuva, tempestade, raios, umidade (simulação)
+  weatherView.js arco-íris, raios, neblina, chuva/neve/folhas
+  seasons.js    estações do ano e cores sazonais
   coast.js      barcos e farol
   passenger.js  a passageira
   audio.js      som gerado com Web Audio (sem arquivos)

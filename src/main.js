@@ -1,5 +1,5 @@
 import { createAudio } from './audio.js';
-import { biomeName } from './biomes.js';
+import { biomeAt, biomeName, num } from './biomes.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
 import { LOOK_FAR } from './frame.js';
@@ -13,9 +13,14 @@ import { drawPassenger } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
 import { createPointer } from './pointer.js';
 import { crossingNear } from './roads.js';
+import { SEASON_NAMES, dominantSeason } from './seasons.js';
 import { drawSky, environment } from './sky.js';
 import { drawSkyLife } from './skylife.js';
 import { tunnelCoverage } from './tunnel.js';
+import { flashLevel, thunderDelay, weatherTargets } from './weather.js';
+import { drawLightning, drawRainbow, precipitationKind } from './weatherView.js';
+
+const WEATHER_NAMES = { clear: 'Limpo', rain: 'Chuva', storm: 'Tempestade' };
 
 const HUD_INTERVAL = 0.25;
 
@@ -41,12 +46,21 @@ function resizeCanvas(canvas, ctx) {
  * `layout.lookX/lookY` is the viewer's head offset: the view outside shifts with it
  * (far layers most, relative to the frame) and the passenger, nearer than the window, shifts against it.
  */
+const sceneEnvironment = (state) => environment(state.dayTime, {
+  rain: state.rain,
+  storm: state.storm,
+  wetness: state.wetness,
+  flash: flashLevel(state.lightning),
+  seasonPhase: state.seasonPhase,
+});
+
 function render(ctx, layout, state, { fog, dt }) {
-  const env = environment(state.dayTime, state.rain);
+  const env = sceneEnvironment(state);
   const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
   const L = interiorLighting(env, blocked);
   const bob = trainBob(state, layout.u);
   const { win, u, lookX, lookY } = layout;
+  const falling = precipitationKind(env, num(biomeAt(state.distance), 'snow'));
 
   drawWall(ctx, layout, L);
 
@@ -57,13 +71,19 @@ function render(ctx, layout, state, { fog, dt }) {
   ctx.save();
   ctx.translate(lookX * u * LOOK_FAR, bob + lookY * u * 3);
   drawSky(ctx, layout, state, env);
+  drawRainbow(ctx, layout, env);
+  drawLightning(ctx, layout, state.lightning);
   drawSkyLife(ctx, layout, state, env);
   drawLandscape(ctx, layout, state, env);
   drawPassingTrain(ctx, layout, state, env);
   ctx.restore();
+  if (env.flash > 0.01) {
+    ctx.fillStyle = `rgba(235,240,255,${env.flash * 0.35 * (1 - blocked)})`;
+    ctx.fillRect(win.x, win.y, win.w, win.h);
+  }
   drawGlass(ctx, layout, L);
   fog.draw(ctx, layout, state.fog, dt);
-  drawDrops(ctx, layout, state);
+  drawDrops(ctx, layout, state, falling === 'rain' ? state.rain : 0);
   ctx.restore();
 
   drawFrame(ctx, layout, L);
@@ -75,6 +95,31 @@ function render(ctx, layout, state, { fog, dt }) {
   drawPassenger(ctx, layout, state, L, env, bob);
   ctx.restore();
   drawVignette(ctx, layout);
+  if (env.flash > 0.01) {
+    ctx.fillStyle = `rgba(225,232,255,${env.flash * 0.12 * (1 - blocked)})`;
+    ctx.fillRect(0, 0, layout.W, layout.H);
+  }
+}
+
+function playSounds(audio, state) {
+  if (state.crossedJoint) audio.clack(state.speed);
+  if (state.arrived) audio.chime();
+  if (state.departed) audio.whistle();
+  if (state.passStarted) audio.passBy(passDuration(state.passing, state.speed));
+  if (state.lightningStarted) audio.thunder(thunderDelay(state.lightning), 1 - state.lightning.far);
+  audio.update(state.speed, Math.min(1, state.rain + state.storm * 0.5), crossingNear(state.distance, 250));
+}
+
+function updatePanel(controls, state, input) {
+  controls.showHud({
+    km: state.distance / 1000,
+    biome: biomeName(state.distance),
+    kmh: state.speed * 3.6,
+    station: stationInfo(state, input.stops),
+  });
+  const weather = WEATHER_NAMES[weatherTargets(input, state.time).mode];
+  const season = SEASON_NAMES[dominantSeason(sceneEnvironment(state).season)];
+  controls.showConditions(input.weather === 'auto' ? weather : '', input.season === 'auto' ? season : '');
 }
 
 function start() {
@@ -109,21 +154,12 @@ function start() {
     last = now;
     const input = controls.read();
     state = step(state, dt, input);
-    if (state.crossedJoint) audio.clack(state.speed);
-    if (state.arrived) audio.chime();
-    if (state.departed) audio.whistle();
-    if (state.passStarted) audio.passBy(passDuration(state.passing, state.speed));
-    audio.update(state.speed, state.rain, crossingNear(state.distance, 250));
+    playSounds(audio, state);
     if (input.autoDay) controls.showDayTime(state.dayTime);
     hudTimer += dt;
     if (hudTimer > HUD_INTERVAL) {
       hudTimer = 0;
-      controls.showHud({
-        km: state.distance / 1000,
-        biome: biomeName(state.distance),
-        kmh: state.speed * 3.6,
-        station: stationInfo(state, input.stops),
-      });
+      updatePanel(controls, state, input);
     }
     const look = pointer.updateLook(dt);
     const strokes = pointer.takeStrokes();

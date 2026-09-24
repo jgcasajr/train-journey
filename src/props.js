@@ -1,13 +1,40 @@
 import { circle } from './utils.js';
 
-function drawRound(ctx, x, y, s, { leaf, trunk }) {
+const BRANCHES = [[0, -0.5, -0.28, -0.85], [0, -0.45, 0.3, -0.8], [0, -0.6, 0.05, -1.0], [-0.14, -0.7, -0.3, -0.72], [0.16, -0.66, 0.34, -0.62]];
+const BLOSSOM_SPOTS = [[-0.12, -0.8], [0.14, -0.74], [-0.24, -0.58], [0.26, -0.56], [0.02, -0.62], [-0.05, -0.92], [0.18, -0.9]];
+
+/** Winter: a bare trunk with forked branches, dusted with snow. */
+function drawBare(ctx, x, y, s, { trunk, snow }) {
   ctx.fillStyle = trunk;
   ctx.fillRect(x - s * 0.05, y - s * 0.5, s * 0.1, s * 0.5);
-  ctx.fillStyle = leaf;
+  ctx.strokeStyle = trunk;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = Math.max(1, s * 0.04);
+  ctx.beginPath();
+  BRANCHES.forEach(([x0, y0, x1, y1]) => {
+    ctx.moveTo(x + x0 * s, y + y0 * s);
+    ctx.lineTo(x + x1 * s, y + y1 * s);
+  });
+  ctx.stroke();
+  if (!snow) return;
+  ctx.fillStyle = snow;
+  BRANCHES.forEach(([, , x1, y1]) => ctx.fillRect(x + x1 * s - s * 0.04, y + y1 * s - s * 0.02, s * 0.08, s * 0.03));
+}
+
+function drawRound(ctx, x, y, s, style) {
+  if (style.bare) return drawBare(ctx, x, y, s, style);
+  ctx.fillStyle = style.trunk;
+  ctx.fillRect(x - s * 0.05, y - s * 0.5, s * 0.1, s * 0.5);
+  ctx.fillStyle = style.leaf;
   ctx.beginPath();
   circle(ctx, x, y - s * 0.72, s * 0.3);
   circle(ctx, x - s * 0.2, y - s * 0.55, s * 0.22);
   circle(ctx, x + s * 0.2, y - s * 0.58, s * 0.24);
+  ctx.fill();
+  if (!style.blossom) return;
+  ctx.fillStyle = style.blossom;
+  ctx.beginPath();
+  BLOSSOM_SPOTS.forEach(([dx, dy]) => circle(ctx, x + dx * s, y + dy * s, Math.max(0.8, s * 0.05)));
   ctx.fill();
 }
 

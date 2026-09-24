@@ -1,3 +1,4 @@
+import { seasonWeights } from './seasons.js';
 import { circle, clamp, hash, hex, mix, radialGlow, rgba, scale, smoothstep } from './utils.js';
 
 const SKY = {
@@ -15,19 +16,35 @@ function skyColor(key, sunElev) {
   return mix(SKY.twilight[key], SKY.day[key], smoothstep(0, 0.35, sunElev));
 }
 
-/** dayTime: 0 = midnight, 0.25 = sunrise, 0.5 = noon, 0.75 = sunset. */
-export function environment(dayTime, rain) {
+/** Valley mist: forms around dawn, burns off by mid-morning; thicker after rain and in cold seasons. */
+function morningMist(dayTime, wetness, storm, season) {
+  const morning = smoothstep(0.19, 0.25, dayTime) * (1 - smoothstep(0.33, 0.4, dayTime));
+  const boost = 0.55 + wetness * 0.3 + season.autumn * 0.25 + season.winter * 0.2;
+  return clamp(morning * boost * (1 - storm));
+}
+
+/**
+ * dayTime: 0 = midnight, 0.25 = sunrise, 0.5 = noon, 0.75 = sunset.
+ * weather: { rain, storm, wetness, flash, seasonPhase } — all optional.
+ */
+export function environment(dayTime, { rain = 0, storm = 0, wetness = 0, flash = 0, seasonPhase = 1.2 } = {}) {
   const sunElev = -Math.cos(dayTime * Math.PI * 2);
   const clear = smoothstep(-0.25, 0.3, sunElev);
-  const gloom = rain * 0.75;
-  const overcast = (key) => scale(SKY.overcast[key], 0.12 + 0.88 * clear);
+  const gloom = Math.min(1, rain * 0.75 + storm * 0.2);
+  const overcast = (key) => scale(SKY.overcast[key], (0.12 + 0.88 * clear) * (1 - storm * 0.45));
+  const season = seasonWeights(seasonPhase);
   return {
     dayTime,
     sunElev,
     rain,
+    storm,
+    flash,
+    season,
+    wetness,
+    mist: morningMist(dayTime, wetness, storm, season),
     top: mix(skyColor('top', sunElev), overcast('top'), gloom),
     bottom: mix(skyColor('bottom', sunElev), overcast('bottom'), gloom),
-    light: clear * (1 - rain * 0.35),
+    light: clear * (1 - rain * 0.35) * (1 - storm * 0.3),
     warm: clamp(1 - Math.abs(sunElev) / 0.35) * (1 - rain * 0.7),
   };
 }
@@ -106,10 +123,12 @@ function drawClouds(ctx, layout, state, env) {
   const { win, horizon, px, u } = layout;
   const offset = state.distance * px * 0.01 + state.time * u * 0.6;
   const spacing = u * 34;
-  const coverage = 0.45 + env.rain * 0.45;
+  const coverage = 0.45 + env.rain * 0.45 + env.storm * 0.1;
   const lit = mix(scale(env.bottom, 0.55), WHITE, env.light * 0.85);
-  const tone = mix(mix(lit, hex('#ffb38a'), env.warm * 0.35), hex('#6b717a'), env.rain * 0.5);
-  ctx.fillStyle = rgba(tone, 0.55 + 0.3 * env.light);
+  const rainy = mix(mix(lit, hex('#ffb38a'), env.warm * 0.35), hex('#6b717a'), env.rain * 0.5);
+  const stormy = mix(rainy, hex('#34383f'), env.storm * 0.6);
+  const tone = mix(stormy, WHITE, env.flash * 0.6);
+  ctx.fillStyle = rgba(tone, 0.55 + 0.3 * Math.max(env.light, env.storm));
   const first = Math.floor(offset / spacing) - 2;
   const last = Math.floor((offset + win.w) / spacing) + 2;
   for (let i = first; i <= last; i++) {

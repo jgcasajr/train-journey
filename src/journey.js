@@ -1,8 +1,10 @@
 import { biomeAt, num } from './biomes.js';
 import { createDrops, updateDrops } from './glass.js';
 import { initialPassing, updatePassing } from './passingTrain.js';
+import { seasonWeights } from './seasons.js';
 import { nextStation } from './stations.js';
 import { approach } from './utils.js';
+import { initialWeather, updateWeather } from './weather.js';
 
 export const RAIL_LENGTH = 25; // meters between rail joints ("clack")
 const ACCEL = 2.2; // m/s²
@@ -19,7 +21,7 @@ export function initialState(input, startKm) {
     distance,
     speed: input.targetKmh / 3.6,
     dayTime: input.dayTime,
-    rain: input.rain ? 1 : 0,
+    ...initialWeather(input),
     jolt: 0,
     joint: Math.floor(distance / RAIL_LENGTH),
     crossedJoint: false,
@@ -27,16 +29,16 @@ export function initialState(input, startKm) {
     served: null,
     arrived: false,
     departed: false,
-    fog: input.rain ? 0.85 : 0,
+    fog: initialWeather(input).rain * 0.85,
     drops: createDrops(DROP_COUNT),
     ...initialPassing(),
   };
 }
 
-/** Glass condensation: rain fogs the window, and so does the cold air of the mountains. */
-function fogTarget(state, input) {
-  const cold = num(biomeAt(state.distance), 'snow') * 0.6;
-  return Math.max(input.rain ? 0.85 : 0, cold);
+/** Glass condensation: rain fogs the window, and so does cold air (mountains, winter). */
+function fogTarget(state) {
+  const cold = Math.max(num(biomeAt(state.distance), 'snow') * 0.6, seasonWeights(state.seasonPhase).winter * 0.5);
+  return Math.max(state.rain > 0.3 ? 0.85 : 0, cold);
 }
 
 /** Fields that evolve the same way whether the train is moving or standing. */
@@ -44,8 +46,8 @@ function ambient(state, dt, input) {
   return {
     time: state.time + dt,
     dayTime: input.autoDay ? (state.dayTime + dt / DAY_SECONDS) % 1 : input.dayTime,
-    rain: approach(state.rain, input.rain ? 1 : 0, dt * 0.3),
-    fog: approach(state.fog, fogTarget(state, input), dt * 0.05),
+    ...updateWeather(state, dt, input),
+    fog: approach(state.fog, fogTarget(state), dt * 0.05),
     drops: updateDrops(state.drops, dt, state.speed),
     ...updatePassing(state, dt, state.speed),
   };

@@ -1,4 +1,4 @@
-import { color, num, pick } from './biomes.js';
+import { biomeAt, num, pick } from './biomes.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
 import { drawBoats, drawLighthouses } from './coast.js';
@@ -7,12 +7,14 @@ import { acrossGradient, fillRidge, forEachSlot, layerFrame, traceRidge } from '
 import { drawBush, drawHouse, drawTree } from './props.js';
 import { bridgeAt } from './rivers.js';
 import { drawCrossingBand, drawCrossingGates, drawParallelRoad } from './roadView.js';
+import { snowCover, tint } from './seasons.js';
 import { shade } from './sky.js';
 import { drawBalloons } from './skylife.js';
 import { drawStations } from './stationView.js';
 import { stationsBetween } from './stations.js';
 import { drawTunnels } from './tunnel.js';
-import { fbm, hash, hex, mix, mod, noise1, rgba, scale } from './utils.js';
+import { drawMist, drawPrecipitation, precipitationKind } from './weatherView.js';
+import { fbm, hash, hex, mix, noise1, rgba, scale } from './utils.js';
 
 const TRUNK = hex('#4a3526');
 const SNOW = hex('#eef3fa');
@@ -24,18 +26,26 @@ const LAMP = hex('#ffd27a');
 const DARK_GLASS = hex('#2a2f38');
 const WALLS = ['#d9cbb0', '#c46a4a', '#ece6d6', '#9fb0c0'].map(hex);
 const ROOFS = ['#7a3b2e', '#4a4a55', '#8a5a3a'].map(hex);
+const BLOSSOM = hex('#f4b6c8');
+const FLOWERS = ['#f4b6c8', '#fff3a8', '#ffffff', '#c9a0ff'].map(hex);
 
+/** Winter strips broadleaf trees bare and snows on pines; spring puts blossoms on some trees. */
 const treeStyle = (bm, env, haze) => ({
-  leaf: rgba(shade(color(bm, 'leaf'), env, haze)),
+  leaf: rgba(shade(tint(bm, 'leaf', env), env, haze)),
   trunk: rgba(shade(TRUNK, env, haze)),
-  snow: num(bm, 'snow') > 0.4 ? rgba(shade(SNOW, env, haze)) : null,
+  snow: num(bm, 'snow') > 0.4 || env.season.winter > 0.5 ? rgba(shade(SNOW, env, haze)) : null,
+  bare: env.season.winter > 0.5,
+  blossom: env.season.spring > 0.5 ? rgba(shade(BLOSSOM, env, haze)) : null,
 });
+
+/** Snow on the peaks: mountain biomes always, everywhere in winter. */
+const peakSnow = (bm, env) => Math.max(num(bm, 'snow'), env.season.winter * 0.8);
 
 function houseStyle(id, env, haze) {
   const lit = env.light < 0.45 && hash(id, 301) > 0.25;
   return {
     wall: rgba(shade(WALLS[Math.floor(hash(id, 302) * WALLS.length)], env, haze)),
-    roof: rgba(shade(ROOFS[Math.floor(hash(id, 303) * ROOFS.length)], env, haze)),
+    roof: rgba(shade(snowCover(ROOFS[Math.floor(hash(id, 303) * ROOFS.length)], env, 0.85), env, haze)),
     window: lit ? rgba(LAMP) : rgba(shade(DARK_GLASS, env, haze)),
   };
 }
@@ -45,15 +55,15 @@ const MOUNTAINS = [
   { key: 'mid', depth: 0.05, freq: 0.0036, amp: 0.24, seed: 23, haze: 0.32, snowLine: 0.11, drop: 0.03 },
 ];
 
-function drawSnowCaps(ctx, pts, snowLine, band, fill) {
-  if (!pts.some((p) => p.y < snowLine && num(p.bm, 'snow') > 0.01)) return;
+function drawSnowCaps(ctx, pts, snowLine, band, fill, env) {
+  if (!pts.some((p) => p.y < snowLine && peakSnow(p.bm, env) > 0.01)) return;
   ctx.fillStyle = fill;
   ctx.beginPath();
   pts.forEach((p) => ctx.lineTo(p.x, p.y));
   for (let i = pts.length - 1; i >= 0; i--) {
     const p = pts[i];
     const cap = Math.max(0, Math.min(snowLine - p.y, band));
-    ctx.lineTo(p.x, p.y + cap * num(p.bm, 'snow') * (0.6 + 0.5 * noise1(p.wx * 0.05, 5)));
+    ctx.lineTo(p.x, p.y + cap * peakSnow(p.bm, env) * (0.6 + 0.5 * noise1(p.wx * 0.05, 5)));
   }
   ctx.closePath();
   ctx.fill();
@@ -66,9 +76,9 @@ function drawMountains(ctx, layout, state, env, cfg) {
   const heightAt = (wx, bm) =>
     base - (0.3 + 0.7 * fbm(wx * cfg.freq, cfg.seed, 5)) * win.h * cfg.amp * num(bm, 'mtn');
   const pts = traceRidge(win, lf, heightAt);
-  const fill = acrossGradient(ctx, win, lf, (bm) => rgba(shade(color(bm, cfg.key), env, cfg.haze)));
+  const fill = acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, cfg.key, env), env, cfg.haze)));
   fillRidge(ctx, pts, win.y + win.h + 40, fill);
-  drawSnowCaps(ctx, pts, horizon - win.h * cfg.snowLine, win.h * 0.14, rgba(shade(SNOW, env, cfg.haze * 0.8)));
+  drawSnowCaps(ctx, pts, horizon - win.h * cfg.snowLine, win.h * 0.14, rgba(shade(SNOW, env, cfg.haze * 0.8)), env);
 }
 
 function drawWater(ctx, layout, state, env) {
@@ -97,7 +107,7 @@ function drawHills(ctx, layout, state, env) {
   const heightAt = (wx, bm) =>
     horizon + win.h * (0.05 + num(bm, 'water') * 0.14) - fbm(wx * 0.005, 37, 3) * win.h * 0.1 * num(bm, 'hillAmp');
   fillRidge(ctx, traceRidge(win, lf, heightAt), win.y + win.h + 40,
-    acrossGradient(ctx, win, lf, (bm) => rgba(shade(color(bm, 'hills'), env, haze))));
+    acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, 'hills', env), env, haze))));
   drawCropPatches(ctx, win, lf, heightAt, env, { spacing: win.h * 0.25, seed: 611, haze, rowGap: win.h * 0.003 });
   drawRiverBand(ctx, layout, state, lf, heightAt, env, haze);
   const s = win.h * 0.03;
@@ -111,6 +121,7 @@ function drawHills(ctx, layout, state, env) {
     drawHouse(ctx, x, heightAt(wx, bm) + s * 0.3, s * 0.9, houseStyle(i, env, haze));
   });
   drawLighthouses(ctx, layout, state, env, lf, heightAt);
+  drawMist(ctx, layout, state, env, horizon + win.h * 0.06, win.h * 0.06, 1601);
 }
 
 function drawFields(ctx, layout, state, env) {
@@ -120,7 +131,7 @@ function drawFields(ctx, layout, state, env) {
   const heightAt = (wx, bm) =>
     horizon + win.h * (0.2 + num(bm, 'water') * 0.08) - fbm(wx * 0.006, 51, 2) * win.h * 0.05;
   fillRidge(ctx, traceRidge(win, lf, heightAt), win.y + win.h + 40,
-    acrossGradient(ctx, win, lf, (bm) => rgba(shade(color(bm, 'field'), env, haze))));
+    acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, 'field', env), env, haze))));
   drawCropPatches(ctx, win, lf, heightAt, env, { spacing: win.h * 0.45, seed: 601, haze, rowGap: win.h * 0.006 });
   drawRiverBand(ctx, layout, state, lf, heightAt, env, haze);
   drawCrossingBand(ctx, layout, state, lf, heightAt, env, { haze, waitingCars: true });
@@ -140,6 +151,19 @@ function drawFields(ctx, layout, state, env) {
       drawHouse(ctx, x, y, s * 0.7, houseStyle(i + 7000, env, haze));
     }
   });
+  drawMist(ctx, layout, state, env, horizon + win.h * 0.2, win.h * 0.07, 1611);
+}
+
+/** Spring meadow flowers scattered in the trackside grass. */
+function drawFlowers(ctx, layout, lf, heightAt, env) {
+  const spring = env.season.spring;
+  if (spring < 0.1) return;
+  const { win, u } = layout;
+  forEachSlot(win, lf, u * 0.9, 0, 1621, (i, x, wx, bm) => {
+    if (num(bm, 'city') > 0.5 || hash(i, 1622) > 0.6) return;
+    ctx.fillStyle = rgba(shade(FLOWERS[Math.floor(hash(i, 1623) * FLOWERS.length)], env), spring);
+    ctx.fillRect(x, heightAt(wx) + u * (0.3 + hash(i, 1624) * 1.5), Math.max(1.5, u * 0.3), Math.max(1.5, u * 0.3));
+  });
 }
 
 function drawNear(ctx, layout, state, env) {
@@ -153,16 +177,17 @@ function drawNear(ctx, layout, state, env) {
     drawTree(ctx, type, x, heightAt(wx) + big * 0.05, big * (0.8 + hash(i, 73) * 0.5), treeStyle(bm, env, 0));
   });
   fillRidge(ctx, traceRidge(win, lf, heightAt), win.y + win.h + 40,
-    acrossGradient(ctx, win, lf, (bm) => rgba(shade(color(bm, 'near'), env, 0))));
+    acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, 'near', env), env, 0))));
   drawRiverBand(ctx, layout, state, lf, heightAt, env, 0);
   drawCrossingBand(ctx, layout, state, lf, heightAt, env, { haze: 0, waitingCars: false });
   drawStreetside(ctx, layout, lf, heightAt, env);
   const s = win.h * 0.05;
   forEachSlot(win, lf, s * 0.9, s * 2, 68, (i, x, wx, bm) => {
     if (hash(i, 69) > (0.35 + num(bm, 'trees') * 0.4) * (1 - num(bm, 'city') * 0.8)) return;
-    const fill = rgba(shade(scale(mix(color(bm, 'near'), color(bm, 'leaf'), 0.5), 0.85), env, 0));
+    const fill = rgba(shade(scale(mix(tint(bm, 'near', env), tint(bm, 'leaf', env), 0.5), 0.85), env, 0));
     drawBush(ctx, x, heightAt(wx) + s * 0.3, s * (0.6 + hash(i, 74) * 0.8), fill);
   });
+  drawFlowers(ctx, layout, lf, heightAt, env);
   drawFence(ctx, layout, lf, heightAt, env);
 }
 
@@ -206,7 +231,7 @@ function drawRush(ctx, layout, state, env) {
   const lf = layerFrame(layout, state, 1.6);
   const heightAt = (wx) => win.y + win.h * 0.9 - fbm(wx * 0.02, 81, 2) * win.h * 0.05;
   fillRidge(ctx, traceRidge(win, lf, heightAt), win.y + win.h + 40,
-    acrossGradient(ctx, win, lf, (bm) => rgba(shade(scale(color(bm, 'ground'), 0.8), env))));
+    acrossGradient(ctx, win, lf, (bm) => rgba(shade(scale(tint(bm, 'ground', env), 0.8), env))));
   const blur = Math.max(u * 0.3, Math.min(u * 14, (state.speed * lf.px) / 60));
   const light = rgba(shade(hex('#b8ad90'), env), 0.35);
   const dark = rgba(shade(hex('#1f1a14'), env), 0.4);
@@ -214,23 +239,6 @@ function drawRush(ctx, layout, state, env) {
     ctx.fillStyle = hash(i, 84) > 0.5 ? light : dark;
     ctx.fillRect(x, win.y + win.h * (0.92 + hash(i, 83) * 0.08), blur, Math.max(1, u * 0.15));
   });
-}
-
-function drawRainStreaks(ctx, layout, state) {
-  if (state.rain < 0.02) return;
-  const { win, u, px } = layout;
-  const drift = state.distance * px * 0.9 + state.time * u * 3;
-  const dx = -(u * 0.5 + state.speed * 0.08 * u);
-  ctx.strokeStyle = `rgba(210,220,235,${0.28 * state.rain})`;
-  ctx.lineWidth = Math.max(1, u * 0.08);
-  ctx.beginPath();
-  for (let i = 0; i < Math.round(state.rain * 90); i++) {
-    const x = win.x + mod(hash(i, 1) * win.w - drift * (0.6 + hash(i, 3) * 0.4), win.w);
-    const y = win.y + mod(hash(i, 2) * win.h + state.time * win.h * 1.6, win.h);
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + dx, y + u * 2.2);
-  }
-  ctx.stroke();
 }
 
 export function drawLandscape(ctx, layout, state, env) {
@@ -247,6 +255,6 @@ export function drawLandscape(ctx, layout, state, env) {
   drawCrossingGates(ctx, layout, state, env);
   drawBridges(ctx, layout, state, env);
   drawStations(ctx, layout, state, env);
-  drawRainStreaks(ctx, layout, state);
+  drawPrecipitation(ctx, layout, state, env, precipitationKind(env, num(biomeAt(state.distance), 'snow')));
   drawTunnels(ctx, layout, state, env);
 }

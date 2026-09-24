@@ -1,5 +1,6 @@
 import { biomeAt, num } from './biomes.js';
 import { STEP, forEachSegment } from './layers.js';
+import { snowCover } from './seasons.js';
 import { shade } from './sky.js';
 import { circle, hash, hex, rgba, scale } from './utils.js';
 
@@ -51,10 +52,10 @@ export function drawCropPatches(ctx, win, lf, heightAt, env, { spacing, seed, ha
     if (farm < 0.05 || hash(i, seed) > 0.4 + farm * 0.6) return;
     const crop = CROPS[Math.floor(hash(i, seed + 1) * CROPS.length)];
     tracePatch(ctx, win, lf, heightAt, wx0, wx0 + spacing, bottom);
-    ctx.fillStyle = rgba(shade(crop, env, haze), farm * 0.8);
+    ctx.fillStyle = rgba(shade(snowCover(crop, env, 0.8), env, haze), farm * 0.8);
     ctx.fill();
     if (hash(i, seed + 2) > 0.5) return;
-    ctx.strokeStyle = rgba(shade(scale(crop, 0.7), env, haze), farm * 0.5);
+    ctx.strokeStyle = rgba(shade(snowCover(scale(crop, 0.7), env, 0.6), env, haze), farm * 0.5);
     drawFurrows(ctx, win, lf, heightAt, wx0 + 2, wx0 + spacing - 2, rowGap);
   });
 }

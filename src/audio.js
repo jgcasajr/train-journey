@@ -118,6 +118,27 @@ export function createAudio() {
       graph.rumble.filter.frequency.setTargetAtTime(120 + speed * 4, now, 0.3);
       graph.rain.gain.gain.setTargetAtTime(rain * 0.06, now, 0.5);
     },
+    /** Thunder `delay` seconds after the flash: a crack for close strikes, then a long low rumble. */
+    thunder(delay, closeness) {
+      if (!enabled) return;
+      const { ac } = graph;
+      const t = ac.currentTime + delay;
+      const duration = 3 + (1 - closeness) * 2;
+      const src = ac.createBufferSource();
+      src.buffer = graph.noise;
+      src.loop = true;
+      const low = ac.createBiquadFilter();
+      low.type = 'lowpass';
+      low.frequency.setValueAtTime(250 + closeness * 500, t);
+      low.frequency.exponentialRampToValueAtTime(70, t + duration);
+      const gain = ac.createGain();
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.35 + closeness * 0.45, t + 0.08 + (1 - closeness) * 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+      src.connect(low).connect(gain).connect(graph.master);
+      src.start(t);
+      src.stop(t + duration + 0.1);
+    },
     /** Station arrival: two-note "ding-dong" chime. */
     chime() {
       if (!enabled) return;

@@ -19,8 +19,9 @@ export function updateDrops(drops, dt, speed) {
   });
 }
 
-export function drawDrops(ctx, layout, state) {
-  const visible = Math.round(state.drops.length * state.rain);
+/** `amount` 0..1: share of drops visible (0 when it is snowing instead of raining). */
+export function drawDrops(ctx, layout, state, amount) {
+  const visible = Math.round(state.drops.length * amount);
   if (visible === 0) return;
   const { win, u } = layout;
   const vx = (0.01 + state.speed * 0.005) * win.w;

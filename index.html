@@ -27,7 +27,25 @@
       <input type="range" id="time" min="0" max="0.999" step="0.001" value="0.32">
     </label>
     <label class="check"><input type="checkbox" id="auto-day" checked> Ciclo automático do dia</label>
-    <label class="check"><input type="checkbox" id="rain"> Chuva</label>
+    <label class="field">
+      <span>Clima <output id="weather-out"></output></span>
+      <select id="weather">
+        <option value="auto">Automático</option>
+        <option value="clear" selected>Limpo</option>
+        <option value="rain">Chuva</option>
+        <option value="storm">Tempestade</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>Estação do ano <output id="season-out"></output></span>
+      <select id="season">
+        <option value="auto">Automática</option>
+        <option value="spring">Primavera</option>
+        <option value="summer" selected>Verão</option>
+        <option value="autumn">Outono</option>
+        <option value="winter">Inverno</option>
+      </select>
+    </label>
     <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
     <button id="sound" type="button" aria-pressed="false">Ativar som</button>
     <p class="hint">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>

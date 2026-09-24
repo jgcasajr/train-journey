@@ -20,6 +20,11 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
   - **Subúrbio/Cidade**: skyline no horizonte que cresce conforme o trem se aproxima, prédios com janelas que acendem à noite, antenas piscando, fábricas soltando fumaça, muro e postes de luz.
 - **Estações** (Campo Belo, Três Porteiras, Pedra Alta, Vila Serena, Estação Central, Porto Azul): o trem freia suavemente, para ~14 s e parte de novo. Plataforma, cobertura com colunas de ferro, placas com o nome, prédio com relógio que marca a hora do jogo, bancos, passageiros esperando e luminárias acesas à noite. Sino na chegada e apito na partida (com som ligado).
 - **Rios e pontes**: ~8 rios por volta cortando a paisagem em todas as camadas; na travessia, uma ponte treliçada de aço passa rente à janela com a água correndo embaixo.
+- **Passagens de nível** (~9 por volta): estrada cruzando o trilho, cancela listrada abaixada, luzes vermelhas alternando, cruz de Santo André, carros esperando (faróis acesos à noite) e sino tocando quando o trem se aproxima (com som ligado).
+- **Estrada paralela** ao trilho com carros e caminhões nos dois sentidos: uns ficam para trás, outros ultrapassam o trem; faróis e lanternas à noite.
+- **Céu vivo**: bandos de pássaros em V, aviões com rastro (luz piscando à noite) e balões de ar quente sobre as fazendas em dias claros.
+- **Litoral**: veleiros e barcos de pesca balançando no mar, e um farol listrado cujo facho gira à noite (com clarão quando aponta para você).
+- **Animais**: vacas, ovelhas e cavalos nas fazendas.
 - **Trem no sentido oposto**: de tempos em tempos (a cada 1–2 min) um trem passa colado à janela, com tranco da onda de ar, "vuuush" no áudio e janelas acesas à noite.
 - **Olhar ao redor**: mover o mouse desloca a cabeça do observador; a paisagem se move em relação à moldura com paralaxe por profundidade e a passageira se move no sentido contrário.
 - **Vidro embaçado**: com chuva (ou no frio das montanhas) o vidro embaça; arraste o mouse/dedo para desenhar. O desenho vai sumindo conforme o vidro embaça de novo.
@@ -42,7 +47,7 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 | Arrastar na janela | Desenhar no vidro embaçado |
 | `H` ou clique/toque na cena | Oculta o painel |
 | `?pass` na URL | Faz um trem passar em 2 s (para testar) |
-| `?km=22` na URL | Começa em outro ponto do trajeto (fazenda ≈ 5, cidade ≈ 22, litoral ≈ 26, ponte ≈ 3.07, estação ≈ 1.44) |
+| `?km=22` na URL | Começa em outro ponto do trajeto (fazenda ≈ 5, cidade ≈ 22, litoral ≈ 26, ponte ≈ 3.07, estação ≈ 1.44, passagem de nível ≈ 3.94, farol ≈ 26.75) |
 
 ## Estrutura
 
@@ -68,6 +73,10 @@ src/
   pointer.js    mouse/toque: olhar ao redor, desenhar, tocar
   frame.js      paralaxe por camada (inclui o deslocamento da cabeça)
   passingTrain.js trem no sentido oposto
+  roads.js      passagens de nível, estrada paralela e tráfego (dados)
+  roadView.js   desenho das estradas, carros e cancelas
+  skylife.js    pássaros, aviões e balões
+  coast.js      barcos e farol
   passenger.js  a passageira
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro

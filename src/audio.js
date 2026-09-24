@@ -92,6 +92,7 @@ function tone(g, { type, freq, when, duration, peak, vibrato = 0 }) {
 export function createAudio() {
   let graph = null;
   let enabled = false;
+  let lastBell = 0;
 
   return {
     get enabled() {
@@ -104,9 +105,15 @@ export function createAudio() {
       enabled = !enabled;
       return enabled;
     },
-    update(speed, rain) {
+    /** `bell`: a level crossing is near — its warning bell rings twice a second. */
+    update(speed, rain, bell = false) {
       if (!enabled) return;
       const now = graph.ac.currentTime;
+      if (bell && now - lastBell > 0.5) {
+        lastBell = now;
+        tone(graph, { type: 'triangle', freq: 1320, when: now + 0.02, duration: 0.3, peak: 0.08 });
+        tone(graph, { type: 'sine', freq: 2640, when: now + 0.02, duration: 0.2, peak: 0.03 });
+      }
       graph.rumble.gain.gain.setTargetAtTime(Math.min(1, speed / 60) * 0.35, now, 0.3);
       graph.rumble.filter.frequency.setTargetAtTime(120 + speed * 4, now, 0.3);
       graph.rain.gain.gain.setTargetAtTime(rain * 0.06, now, 0.5);

@@ -1,11 +1,14 @@
 import { color, num, pick } from './biomes.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
+import { drawBoats, drawLighthouses } from './coast.js';
 import { drawCropPatches, drawFarmProp, drawFence } from './farm.js';
 import { acrossGradient, fillRidge, forEachSlot, layerFrame, traceRidge } from './layers.js';
 import { drawBush, drawHouse, drawTree } from './props.js';
 import { bridgeAt } from './rivers.js';
+import { drawCrossingBand, drawCrossingGates, drawParallelRoad } from './roadView.js';
 import { shade } from './sky.js';
+import { drawBalloons } from './skylife.js';
 import { drawStations } from './stationView.js';
 import { stationsBetween } from './stations.js';
 import { drawTunnels } from './tunnel.js';
@@ -84,6 +87,7 @@ function drawWater(ctx, layout, state, env) {
     ctx.fillStyle = rgba(glint, water * 0.35 * (0.5 + 0.5 * Math.sin(state.time * 2 + i)));
     ctx.fillRect(x, top + depthT * win.h * 0.2, len, Math.max(1, u * 0.12));
   });
+  drawBoats(ctx, layout, state, env, lf, top);
 }
 
 function drawHills(ctx, layout, state, env) {
@@ -106,6 +110,7 @@ function drawHills(ctx, layout, state, env) {
     if (hash(i, 46) > num(bm, 'houses')) return;
     drawHouse(ctx, x, heightAt(wx, bm) + s * 0.3, s * 0.9, houseStyle(i, env, haze));
   });
+  drawLighthouses(ctx, layout, state, env, lf, heightAt);
 }
 
 function drawFields(ctx, layout, state, env) {
@@ -118,6 +123,7 @@ function drawFields(ctx, layout, state, env) {
     acrossGradient(ctx, win, lf, (bm) => rgba(shade(color(bm, 'field'), env, haze))));
   drawCropPatches(ctx, win, lf, heightAt, env, { spacing: win.h * 0.45, seed: 601, haze, rowGap: win.h * 0.006 });
   drawRiverBand(ctx, layout, state, lf, heightAt, env, haze);
+  drawCrossingBand(ctx, layout, state, lf, heightAt, env, { haze, waitingCars: true });
   const s = win.h * 0.12;
   forEachSlot(win, lf, s * 0.45, s * 1.2, 52, (i, x, wx, bm) => {
     const r = hash(i, 53);
@@ -149,6 +155,7 @@ function drawNear(ctx, layout, state, env) {
   fillRidge(ctx, traceRidge(win, lf, heightAt), win.y + win.h + 40,
     acrossGradient(ctx, win, lf, (bm) => rgba(shade(color(bm, 'near'), env, 0))));
   drawRiverBand(ctx, layout, state, lf, heightAt, env, 0);
+  drawCrossingBand(ctx, layout, state, lf, heightAt, env, { haze: 0, waitingCars: false });
   drawStreetside(ctx, layout, lf, heightAt, env);
   const s = win.h * 0.05;
   forEachSlot(win, lf, s * 0.9, s * 2, 68, (i, x, wx, bm) => {
@@ -228,13 +235,16 @@ function drawRainStreaks(ctx, layout, state) {
 
 export function drawLandscape(ctx, layout, state, env) {
   MOUNTAINS.forEach((cfg) => drawMountains(ctx, layout, state, env, cfg));
+  drawBalloons(ctx, layout, state, env);
   drawSkyline(ctx, layout, state, env);
   drawWater(ctx, layout, state, env);
   drawHills(ctx, layout, state, env);
   drawFields(ctx, layout, state, env);
+  drawParallelRoad(ctx, layout, state, env);
   drawNear(ctx, layout, state, env);
   drawPoles(ctx, layout, state, env);
   drawRush(ctx, layout, state, env);
+  drawCrossingGates(ctx, layout, state, env);
   drawBridges(ctx, layout, state, env);
   drawStations(ctx, layout, state, env);
   drawRainStreaks(ctx, layout, state);

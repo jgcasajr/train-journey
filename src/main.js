@@ -12,7 +12,9 @@ import { drawLandscape } from './landscape.js';
 import { drawPassenger } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
 import { createPointer } from './pointer.js';
+import { crossingNear } from './roads.js';
 import { drawSky, environment } from './sky.js';
+import { drawSkyLife } from './skylife.js';
 import { tunnelCoverage } from './tunnel.js';
 
 const HUD_INTERVAL = 0.25;
@@ -55,6 +57,7 @@ function render(ctx, layout, state, { fog, dt }) {
   ctx.save();
   ctx.translate(lookX * u * LOOK_FAR, bob + lookY * u * 3);
   drawSky(ctx, layout, state, env);
+  drawSkyLife(ctx, layout, state, env);
   drawLandscape(ctx, layout, state, env);
   drawPassingTrain(ctx, layout, state, env);
   ctx.restore();
@@ -110,7 +113,7 @@ function start() {
     if (state.arrived) audio.chime();
     if (state.departed) audio.whistle();
     if (state.passStarted) audio.passBy(passDuration(state.passing, state.speed));
-    audio.update(state.speed, state.rain);
+    audio.update(state.speed, state.rain, crossingNear(state.distance, 250));
     if (input.autoDay) controls.showDayTime(state.dayTime);
     hudTimer += dt;
     if (hudTimer > HUD_INTERVAL) {

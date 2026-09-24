@@ -13,6 +13,8 @@ const COW = hex('#f2efe8');
 const SPOT = hex('#222222');
 const WOOD = hex('#7a6248');
 const STEEL = hex('#5d6166');
+const WOOL = hex('#f3f0e6');
+const HORSE_COATS = ['#6b3e26', '#2b2320', '#a8703f', '#d9cfc1'].map(hex);
 
 const surfaceY = (lf, heightAt, wx) => heightAt(wx, biomeAt(wx / lf.px));
 
@@ -166,7 +168,45 @@ function drawWindmill(ctx, x, y, s, c, angle) {
   ctx.stroke();
 }
 
-const KINDS = ['barn', 'barn', 'silo', 'bales', 'bales', 'cows', 'cows', 'windmill'];
+function drawSheep(ctx, x, y, s, c, id) {
+  const dir = hash(id, 521) > 0.5 ? 1 : -1;
+  const bodyY = y - s * 0.07;
+  ctx.fillStyle = c(SPOT);
+  [-0.04, 0.04].forEach((lx) => ctx.fillRect(x + lx * s, bodyY, Math.max(1, s * 0.012), s * 0.06));
+  ctx.beginPath();
+  ctx.ellipse(x + dir * s * 0.075, bodyY - s * 0.01, s * 0.022, s * 0.03, dir * 0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = c(WOOL);
+  ctx.beginPath();
+  [-0.035, 0, 0.035].forEach((ox, k) => circle(ctx, x + ox * s, bodyY - s * 0.02 - (k % 2) * s * 0.01, s * 0.035));
+  ctx.fill();
+}
+
+function drawHorse(ctx, x, y, s, c, id) {
+  const dir = hash(id, 531) > 0.5 ? 1 : -1;
+  const coat = c(HORSE_COATS[Math.floor(hash(id, 532) * HORSE_COATS.length)]);
+  const bodyY = y - s * 0.13;
+  ctx.fillStyle = coat;
+  [-0.08, -0.05, 0.05, 0.08].forEach((lx) => ctx.fillRect(x + lx * s, bodyY, Math.max(1, s * 0.016), s * 0.13));
+  ctx.beginPath();
+  ctx.ellipse(x, bodyY, s * 0.11, s * 0.045, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x + dir * s * 0.07, bodyY - s * 0.02);
+  ctx.lineTo(x + dir * s * 0.12, bodyY - s * 0.11);
+  ctx.lineTo(x + dir * s * 0.16, bodyY - s * 0.09);
+  ctx.lineTo(x + dir * s * 0.1, bodyY + s * 0.02);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = c(SPOT);
+  ctx.lineWidth = Math.max(1, s * 0.015);
+  ctx.beginPath();
+  ctx.moveTo(x - dir * s * 0.1, bodyY - s * 0.01);
+  ctx.quadraticCurveTo(x - dir * s * 0.14, bodyY + s * 0.02, x - dir * s * 0.13, bodyY + s * 0.07);
+  ctx.stroke();
+}
+
+const KINDS = ['barn', 'barn', 'silo', 'bales', 'bales', 'cows', 'cows', 'windmill', 'sheep', 'sheep', 'horses'];
 
 export function drawFarmProp(ctx, x, y, s, env, haze, id, time) {
   const c = (color) => rgba(shade(color, env, haze));
@@ -181,6 +221,10 @@ export function drawFarmProp(ctx, x, y, s, env, haze, id, time) {
     drawBales(ctx, x, y, s, c);
   } else if (kind === 'cows') {
     [0, 1, 2].forEach((k) => drawCow(ctx, x + (k - 1) * s * 0.35, y + k * s * 0.02, s, c, id * 3 + k));
+  } else if (kind === 'sheep') {
+    [0, 1, 2, 3, 4].forEach((k) => drawSheep(ctx, x + (k - 2) * s * 0.18, y + (k % 2) * s * 0.03, s, c, id * 5 + k));
+  } else if (kind === 'horses') {
+    [0, 1].forEach((k) => drawHorse(ctx, x + (k - 0.5) * s * 0.45, y + k * s * 0.02, s, c, id * 2 + k));
   } else {
     drawWindmill(ctx, x, y, s, c, time * 2.5 + id);
   }

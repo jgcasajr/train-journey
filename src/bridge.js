@@ -36,13 +36,29 @@ export function drawRiverBand(ctx, layout, state, lf, heightAt, env, haze) {
     });
     const bank = Math.max(2, (x1 - x0) * 0.08);
     const surface = Math.max(...samples) + bank * 0.2;
+    const spread = win.h * 0.1; // the river narrows as it recedes into the distance
     ctx.fillStyle = rgba(shade(BANK, env, haze));
-    ctx.fillRect(x0 - bank, surface - bank * 0.3, x1 - x0 + bank * 2, bottom - surface);
+    traceRiver(ctx, x0 - bank, x1 + bank, surface - bank * 0.3, spread, bottom);
+    ctx.fill();
     ctx.fillStyle = waterFill(ctx, env, haze, surface, bottom);
-    ctx.fillRect(x0, surface, x1 - x0, bottom - surface);
+    traceRiver(ctx, x0, x1, surface, spread, bottom);
+    ctx.fill();
     ctx.fillStyle = rgba(WHITE, 0.25 * env.light + 0.05);
-    ctx.fillRect(x0, surface, x1 - x0, 1);
+    const inset = (x1 - x0) * 0.28;
+    ctx.fillRect(x0 + inset, surface, x1 - x0 - inset * 2, 1);
   });
+}
+
+function traceRiver(ctx, x0, x1, top, spread, bottom) {
+  const inset = (x1 - x0) * 0.28;
+  ctx.beginPath();
+  ctx.moveTo(x0 + inset, top);
+  ctx.lineTo(x1 - inset, top);
+  ctx.lineTo(x1, top + spread);
+  ctx.lineTo(x1, bottom);
+  ctx.lineTo(x0, bottom);
+  ctx.lineTo(x0, top + spread);
+  ctx.closePath();
 }
 
 function drawTruss(ctx, layout, r, toX, chordY, deckY) {

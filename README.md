@@ -2,6 +2,8 @@
 
 Uma pessoa sentada num vagão antigo olhando a paisagem passar pela janela. JavaScript puro + Canvas 2D, sem dependências.
 
+**Online:** https://jgcasajr.github.io/train-journey/
+
 ## Rodar
 
 ```bash

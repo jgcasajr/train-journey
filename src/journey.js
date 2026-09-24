@@ -1,0 +1,127 @@
+import { biomeAt, num } from './biomes.js';
+import { createDrops, updateDrops } from './glass.js';
+import { initialPassing, updatePassing } from './passingTrain.js';
+import { nextStation } from './stations.js';
+import { approach } from './utils.js';
+
+export const RAIL_LENGTH = 25; // meters between rail joints ("clack")
+const ACCEL = 2.2; // m/s²
+const BRAKE = 0.9; // m/s², comfortable service braking into stations
+const DWELL = 14; // seconds stopped at a station
+const DAY_SECONDS = 300; // one full day cycle
+const START_DISTANCE = 600;
+const DROP_COUNT = 140;
+
+export function initialState(input, startKm) {
+  const distance = Number.isFinite(startKm) && startKm >= 0 ? startKm * 1000 : START_DISTANCE;
+  return {
+    time: 0,
+    distance,
+    speed: input.targetKmh / 3.6,
+    dayTime: input.dayTime,
+    rain: input.rain ? 1 : 0,
+    jolt: 0,
+    joint: Math.floor(distance / RAIL_LENGTH),
+    crossedJoint: false,
+    dwell: 0,
+    served: null,
+    arrived: false,
+    departed: false,
+    fog: input.rain ? 0.85 : 0,
+    drops: createDrops(DROP_COUNT),
+    ...initialPassing(),
+  };
+}
+
+/** Glass condensation: rain fogs the window, and so does the cold air of the mountains. */
+function fogTarget(state, input) {
+  const cold = num(biomeAt(state.distance), 'snow') * 0.6;
+  return Math.max(input.rain ? 0.85 : 0, cold);
+}
+
+/** Fields that evolve the same way whether the train is moving or standing. */
+function ambient(state, dt, input) {
+  return {
+    time: state.time + dt,
+    dayTime: input.autoDay ? (state.dayTime + dt / DAY_SECONDS) % 1 : input.dayTime,
+    rain: approach(state.rain, input.rain ? 1 : 0, dt * 0.3),
+    fog: approach(state.fog, fogTarget(state, input), dt * 0.05),
+    drops: updateDrops(state.drops, dt, state.speed),
+    ...updatePassing(state, dt, state.speed),
+  };
+}
+
+/** Rail joints give a small jolt; the pressure wave of a passing train a bigger one. */
+function nextJolt(state, dt, crossedJoint, speed, passStarted) {
+  const decayed = state.jolt * Math.exp(-dt * 7);
+  if (passStarted) return Math.max(decayed, 0.8);
+  return crossedJoint ? Math.min(1, 0.3 + speed / 45) : decayed;
+}
+
+function standing(state, dt, input) {
+  const dwell = input.stops ? Math.max(0, state.dwell - dt) : 0;
+  const amb = ambient(state, dt, input);
+  return {
+    ...state,
+    ...amb,
+    speed: 0,
+    dwell,
+    jolt: nextJolt(state, dt, false, 0, amb.passStarted),
+    crossedJoint: false,
+    arrived: false,
+    departed: dwell === 0,
+  };
+}
+
+/** Max speed that still lets the train stop at the next station with BRAKE deceleration. */
+function stationLimit(state, input) {
+  const station = input.stops ? nextStation(state.distance, state.served?.id) : null;
+  if (!station) return { station: null, limit: Infinity };
+  return { station, limit: Math.sqrt(2 * BRAKE * Math.max(0, station.stopAt - state.distance)) };
+}
+
+/** Pure simulation step: returns a new state, never mutates the previous one. */
+export function step(state, dt, input) {
+  if (state.dwell > 0) return standing(state, dt, input);
+  const { station, limit } = stationLimit(state, input);
+  const cruise = approach(state.speed, Math.min(input.targetKmh / 3.6, limit), ACCEL * dt);
+  const moved = state.distance + cruise * dt;
+  const arrived = station !== null && moved >= station.stopAt - 0.3;
+  const distance = arrived ? station.stopAt : moved;
+  const joint = Math.floor(distance / RAIL_LENGTH);
+  const crossedJoint = joint !== state.joint;
+  const amb = ambient(state, dt, input);
+  return {
+    ...amb,
+    distance,
+    speed: arrived ? 0 : cruise,
+    joint,
+    crossedJoint,
+    jolt: nextJolt(state, dt, crossedJoint, cruise, amb.passStarted),
+    dwell: arrived ? DWELL : 0,
+    served: arrived ? { id: station.id, name: station.name } : state.served,
+    arrived,
+    departed: false,
+  };
+}
+
+/** Text for the destination board: current or next station. */
+export function stationInfo(state, stops) {
+  if (state.dwell > 0 && state.served) {
+    const { name } = state.served;
+    return name.startsWith('Estação') ? name : `Estação ${name}`;
+  }
+  if (!stops) return '';
+  const next = nextStation(state.distance, state.served?.id);
+  return next ? `Próx.: ${next.name} ${((next.stopAt - state.distance) / 1000).toFixed(1)} km` : '';
+}
+
+/** Vertical sway of the carriage, in pixels. */
+export function trainBob(state, u) {
+  const k = Math.min(1, state.speed / 25);
+  return u * (
+    0.18 * k * Math.sin(state.time * 2.1)
+    + 0.08 * k * Math.sin(state.time * 5.3)
+    + 0.25 * state.jolt * Math.sin(state.time * 38)
+  );
+}

@@ -1,0 +1,90 @@
+import { circle } from './utils.js';
+
+function drawRound(ctx, x, y, s, { leaf, trunk }) {
+  ctx.fillStyle = trunk;
+  ctx.fillRect(x - s * 0.05, y - s * 0.5, s * 0.1, s * 0.5);
+  ctx.fillStyle = leaf;
+  ctx.beginPath();
+  circle(ctx, x, y - s * 0.72, s * 0.3);
+  circle(ctx, x - s * 0.2, y - s * 0.55, s * 0.22);
+  circle(ctx, x + s * 0.2, y - s * 0.58, s * 0.24);
+  ctx.fill();
+}
+
+function drawPine(ctx, x, y, s, { leaf, trunk, snow }) {
+  ctx.fillStyle = trunk;
+  ctx.fillRect(x - s * 0.04, y - s * 0.2, s * 0.08, s * 0.2);
+  ctx.fillStyle = leaf;
+  ctx.beginPath();
+  for (let k = 0; k < 3; k++) {
+    const base = y - s * (0.12 + k * 0.26);
+    const half = s * (0.26 - k * 0.06);
+    ctx.moveTo(x - half, base);
+    ctx.lineTo(x + half, base);
+    ctx.lineTo(x, base - s * 0.42);
+  }
+  ctx.fill();
+  if (!snow) return;
+  ctx.fillStyle = snow;
+  ctx.beginPath();
+  ctx.moveTo(x, y - s * 1.06);
+  ctx.lineTo(x - s * 0.06, y - s * 0.88);
+  ctx.lineTo(x + s * 0.06, y - s * 0.88);
+  ctx.fill();
+}
+
+const FROND_ANGLES = [-2.9, -2.3, -1.75, -1.3, -0.8, -0.25];
+
+function drawPalm(ctx, x, y, s, { leaf, trunk }) {
+  const tx = x + s * 0.18;
+  const ty = y - s;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = trunk;
+  ctx.lineWidth = Math.max(1, s * 0.06);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.quadraticCurveTo(x + s * 0.02, y - s * 0.6, tx, ty);
+  ctx.stroke();
+  ctx.strokeStyle = leaf;
+  ctx.lineWidth = Math.max(1, s * 0.07);
+  ctx.beginPath();
+  FROND_ANGLES.forEach((a) => {
+    const len = s * 0.45;
+    ctx.moveTo(tx, ty);
+    ctx.quadraticCurveTo(
+      tx + Math.cos(a) * len * 0.5, ty + Math.sin(a) * len * 0.5 - s * 0.1,
+      tx + Math.cos(a) * len, ty + Math.sin(a) * len + s * 0.18,
+    );
+  });
+  ctx.stroke();
+}
+
+export function drawTree(ctx, type, x, y, s, style) {
+  if (type === 'pine') return drawPine(ctx, x, y, s, style);
+  if (type === 'palm') return drawPalm(ctx, x, y, s, style);
+  return drawRound(ctx, x, y, s, style);
+}
+
+export function drawHouse(ctx, x, y, s, { wall, roof, window }) {
+  const h = s * 0.6;
+  ctx.fillStyle = wall;
+  ctx.fillRect(x - s / 2, y - h, s, h);
+  ctx.fillStyle = roof;
+  ctx.beginPath();
+  ctx.moveTo(x - s * 0.6, y - h);
+  ctx.lineTo(x, y - h - s * 0.45);
+  ctx.lineTo(x + s * 0.6, y - h);
+  ctx.fill();
+  ctx.fillStyle = window;
+  ctx.fillRect(x - s * 0.28, y - h * 0.7, s * 0.18, h * 0.3);
+  ctx.fillRect(x + s * 0.1, y - h * 0.7, s * 0.18, h * 0.3);
+}
+
+export function drawBush(ctx, x, y, s, fill) {
+  ctx.fillStyle = fill;
+  ctx.beginPath();
+  circle(ctx, x - s * 0.35, y - s * 0.25, s * 0.35);
+  circle(ctx, x, y - s * 0.4, s * 0.45);
+  circle(ctx, x + s * 0.4, y - s * 0.25, s * 0.32);
+  ctx.fill();
+}

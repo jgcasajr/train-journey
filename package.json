@@ -1,0 +1,13 @@
+{
+  "name": "train-journey",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A passenger watching the landscape roll by from a train window. Vanilla JS + Canvas 2D.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

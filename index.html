@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Train Journey</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="scene" aria-label="Vista da janela de um trem em movimento"></canvas>
+
+  <div class="board" aria-hidden="true">
+    <span id="hud-km">km 0.0</span><span class="sep">•</span>
+    <span id="hud-biome">—</span><span class="sep">•</span>
+    <span id="hud-speed">0 km/h</span>
+    <span class="sep station-part">•</span><span id="hud-station" class="station-part"></span>
+  </div>
+
+  <aside id="panel" class="panel">
+    <h1>Train Journey</h1>
+    <label class="field">
+      <span>Velocidade <output id="speed-out">90 km/h</output></span>
+      <input type="range" id="speed" min="0" max="220" value="90">
+    </label>
+    <label class="field">
+      <span>Hora do dia <output id="time-out">07:40</output></span>
+      <input type="range" id="time" min="0" max="0.999" step="0.001" value="0.32">
+    </label>
+    <label class="check"><input type="checkbox" id="auto-day" checked> Ciclo automático do dia</label>
+    <label class="check"><input type="checkbox" id="rain"> Chuva</label>
+    <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
+    <button id="sound" type="button" aria-pressed="false">Ativar som</button>
+    <p class="hint">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
+  </aside>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+const BOGIE_AXLE_GAP = 2.6; // meters between axles on one bogie
+const BOGIE_GAP = 17; // meters between the front and rear bogie of the car
+
+function noiseBuffer(ac, seconds) {
+  const buffer = ac.createBuffer(1, ac.sampleRate * seconds, ac.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  return buffer;
+}
+
+function loopedNoise(ac, buffer, filterType, frequency, destination) {
+  const src = ac.createBufferSource();
+  src.buffer = buffer;
+  src.loop = true;
+  const filter = ac.createBiquadFilter();
+  filter.type = filterType;
+  filter.frequency.value = frequency;
+  const gain = ac.createGain();
+  gain.gain.value = 0;
+  src.connect(filter).connect(gain).connect(destination);
+  src.start();
+  return { filter, gain };
+}
+
+function buildGraph() {
+  const ac = new AudioContext();
+  const noise = noiseBuffer(ac, 2);
+  const master = ac.createGain();
+  master.gain.value = 0.9;
+  master.connect(ac.destination);
+  return {
+    ac,
+    noise,
+    master,
+    rumble: loopedNoise(ac, noise, 'lowpass', 160, master),
+    rain: loopedNoise(ac, noise, 'highpass', 2500, master),
+  };
+}
+
+function envelope(param, when, peak, decay) {
+  param.setValueAtTime(0.0001, when);
+  param.exponentialRampToValueAtTime(peak, when + 0.004);
+  param.exponentialRampToValueAtTime(0.0001, when + decay);
+}
+
+/** One wheel hitting a rail joint: a filtered noise click plus a low thump. */
+function wheelClick(g, when, strength) {
+  const src = g.ac.createBufferSource();
+  src.buffer = g.noise;
+  const band = g.ac.createBiquadFilter();
+  band.type = 'bandpass';
+  band.frequency.value = 700 + Math.random() * 300;
+  band.Q.value = 1.2;
+  const clickGain = g.ac.createGain();
+  envelope(clickGain.gain, when, 0.5 * strength, 0.09);
+  src.connect(band).connect(clickGain).connect(g.master);
+  src.start(when, Math.random() * 1.5, 0.12);
+
+  const osc = g.ac.createOscillator();
+  osc.frequency.setValueAtTime(110, when);
+  osc.frequency.exponentialRampToValueAtTime(50, when + 0.08);
+  const thumpGain = g.ac.createGain();
+  envelope(thumpGain.gain, when, 0.35 * strength, 0.1);
+  osc.connect(thumpGain).connect(g.master);
+  osc.start(when);
+  osc.stop(when + 0.12);
+}
+
+function tone(g, { type, freq, when, duration, peak, vibrato = 0 }) {
+  const osc = g.ac.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, when);
+  const gain = g.ac.createGain();
+  gain.gain.setValueAtTime(0.0001, when);
+  gain.gain.exponentialRampToValueAtTime(peak, when + 0.03);
+  gain.gain.setValueAtTime(peak, when + duration * 0.6);
+  gain.gain.exponentialRampToValueAtTime(0.0001, when + duration);
+  if (vibrato) {
+    const lfo = g.ac.createOscillator();
+    const depth = g.ac.createGain();
+    lfo.frequency.value = 5.5;
+    depth.gain.value = vibrato;
+    lfo.connect(depth).connect(osc.frequency);
+    lfo.start(when);
+    lfo.stop(when + duration);
+  }
+  osc.connect(gain).connect(g.master);
+  osc.start(when);
+  osc.stop(when + duration + 0.05);
+}
+
+export function createAudio() {
+  let graph = null;
+  let enabled = false;
+
+  return {
+    get enabled() {
+      return enabled;
+    },
+    async toggle() {
+      graph = graph ?? buildGraph();
+      if (enabled) await graph.ac.suspend();
+      else await graph.ac.resume();
+      enabled = !enabled;
+      return enabled;
+    },
+    update(speed, rain) {
+      if (!enabled) return;
+      const now = graph.ac.currentTime;
+      graph.rumble.gain.gain.setTargetAtTime(Math.min(1, speed / 60) * 0.35, now, 0.3);
+      graph.rumble.filter.frequency.setTargetAtTime(120 + speed * 4, now, 0.3);
+      graph.rain.gain.gain.setTargetAtTime(rain * 0.06, now, 0.5);
+    },
+    /** Station arrival: two-note "ding-dong" chime. */
+    chime() {
+      if (!enabled) return;
+      const t = graph.ac.currentTime + 0.05;
+      tone(graph, { type: 'sine', freq: 659, when: t, duration: 1.2, peak: 0.18 });
+      tone(graph, { type: 'sine', freq: 523, when: t + 0.55, duration: 1.6, peak: 0.18 });
+    },
+    /** Departure: a soft two-tone whistle. */
+    whistle() {
+      if (!enabled) return;
+      const t = graph.ac.currentTime + 0.05;
+      [587, 740].forEach((freq) => tone(graph, { type: 'triangle', freq, when: t, duration: 1.4, peak: 0.07, vibrato: 4 }));
+    },
+    /** Opposing train: a loud filtered-noise whoosh lasting `duration` seconds. */
+    passBy(duration) {
+      if (!enabled) return;
+      const { ac } = graph;
+      const t = ac.currentTime + 0.02;
+      const src = ac.createBufferSource();
+      src.buffer = graph.noise;
+      src.loop = true;
+      const band = ac.createBiquadFilter();
+      band.type = 'bandpass';
+      band.Q.value = 0.7;
+      band.frequency.setValueAtTime(900, t);
+      band.frequency.exponentialRampToValueAtTime(350, t + duration);
+      const gain = ac.createGain();
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.55, t + 0.15);
+      gain.gain.setValueAtTime(0.45, t + Math.max(0.2, duration - 0.4));
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + duration + 0.3);
+      src.connect(band).connect(gain).connect(graph.master);
+      src.start(t);
+      src.stop(t + duration + 0.4);
+    },
+    /** Called when the train passes a rail joint: "ta-dum ... ta-dum". */
+    clack(speed) {
+      if (!enabled || speed < 1) return;
+      const strength = Math.min(1, speed / 30);
+      const t0 = graph.ac.currentTime + 0.01;
+      const offsets = [0, BOGIE_AXLE_GAP, BOGIE_GAP, BOGIE_GAP + BOGIE_AXLE_GAP].map((m) => m / speed);
+      offsets
+        .filter((dt) => dt < 1.5)
+        .forEach((dt, i) => wheelClick(graph, t0 + dt, strength * (i % 2 ? 0.85 : 1)));
+    },
+  };
+}

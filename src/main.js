@@ -1,4 +1,6 @@
+import { drawAisle } from './aisle.js';
 import { createAudio } from './audio.js';
+import { coffeeHot } from './cabin.js';
 import { biomeAt, biomeName, num } from './biomes.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
@@ -9,7 +11,7 @@ import {
 } from './interior.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
-import { drawPassenger } from './passenger.js';
+import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
 import { createPointer } from './pointer.js';
 import { crossingNear } from './roads.js';
@@ -81,6 +83,7 @@ function render(ctx, layout, state, { fog, dt }) {
     ctx.fillStyle = `rgba(235,240,255,${env.flash * 0.35 * (1 - blocked)})`;
     ctx.fillRect(win.x, win.y, win.w, win.h);
   }
+  drawReflection(ctx, layout, state, L);
   drawGlass(ctx, layout, L);
   fog.draw(ctx, layout, state.fog, dt);
   drawDrops(ctx, layout, state, falling === 'rain' ? state.rain : 0);
@@ -88,11 +91,20 @@ function render(ctx, layout, state, { fog, dt }) {
 
   drawFrame(ctx, layout, L);
   drawCurtains(ctx, layout, L, Math.sin(state.time * 0.9) * u * 0.4 + bob * 0.5);
-  drawLedge(ctx, layout, L, state.time, bob);
+  drawLedge(ctx, layout, L, state.time, bob, {
+    x: passengerOrigin(layout).x + u * 22,
+    level: state.coffee,
+    hot: coffeeHot(state),
+    inHand: state.pose.sip > 0.3,
+  });
   drawLamp(ctx, layout, L);
   ctx.save();
   ctx.translate(-lookX * u * 4, -lookY * u * 2);
   drawPassenger(ctx, layout, state, L, env, bob);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(-lookX * u * 7, -lookY * u * 3);
+  drawAisle(ctx, layout, state, L);
   ctx.restore();
   drawVignette(ctx, layout);
   if (env.flash > 0.01) {

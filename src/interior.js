@@ -118,12 +118,15 @@ function drawSteam(ctx, x, y, u, time) {
   });
 }
 
-function drawCup(ctx, x, y, u, L, time, bob) {
+/** cup: { x, level 0..1, hot, inHand } — the saucer stays on the ledge while she drinks. */
+function drawCup(ctx, y, u, L, time, bob, cup) {
+  const { x } = cup;
   const china = rgba(lit(CHINA, L));
   ctx.fillStyle = china;
   ctx.beginPath();
   ctx.ellipse(x, y, u * 3.4, u * 0.7, 0, 0, Math.PI * 2);
   ctx.fill();
+  if (cup.inHand) return;
   ctx.beginPath();
   ctx.moveTo(x - u * 2.2, y - u * 4.2);
   ctx.lineTo(x + u * 2.2, y - u * 4.2);
@@ -140,21 +143,24 @@ function drawCup(ctx, x, y, u, L, time, bob) {
   ctx.beginPath();
   ctx.ellipse(x, y - u * 4.2, u * 2.2, u * 0.5, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(COFFEE, L));
-  ctx.beginPath();
-  ctx.ellipse(x + bob * 0.3, y - u * 4.2, u * 1.9, u * 0.38, bob * 0.02, 0, Math.PI * 2);
-  ctx.fill();
-  drawSteam(ctx, x, y - u * 4.8, u, time);
+  if (cup.level > 0.05) {
+    const r = 0.6 + cup.level * 0.4; // the surface sits lower (narrower) as the cup empties
+    ctx.fillStyle = rgba(lit(COFFEE, L));
+    ctx.beginPath();
+    ctx.ellipse(x + bob * 0.3, y - u * (3.6 + cup.level * 0.6), u * 1.9 * r, u * 0.38 * r, bob * 0.02, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  if (cup.hot) drawSteam(ctx, x, y - u * 4.8, u, time);
 }
 
-export function drawLedge(ctx, layout, L, time, bob) {
+export function drawLedge(ctx, layout, L, time, bob, cup) {
   const { win, u } = layout;
   const y = win.y + win.h + u * 1.2;
   ctx.fillStyle = rgba(lit(LEDGE, L));
   ctx.fillRect(win.x - u * 4, y, win.w + u * 8, u * 2.4);
   ctx.fillStyle = rgba(lit(LEDGE_TOP, L));
   ctx.fillRect(win.x - u * 4, y, win.w + u * 8, u * 0.5);
-  drawCup(ctx, win.x + win.w * 0.74, y + u * 0.2, u, L, time, bob);
+  drawCup(ctx, y + u * 0.2, u, L, time, bob, cup);
 }
 
 export function drawLamp(ctx, layout, L) {

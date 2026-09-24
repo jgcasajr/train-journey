@@ -1,4 +1,5 @@
 import { biomeAt, num } from './biomes.js';
+import { initialCabin, updateCabin } from './cabin.js';
 import { createDrops, updateDrops } from './glass.js';
 import { initialPassing, updatePassing } from './passingTrain.js';
 import { seasonWeights } from './seasons.js';
@@ -32,6 +33,7 @@ export function initialState(input, startKm) {
     fog: initialWeather(input).rain * 0.85,
     drops: createDrops(DROP_COUNT),
     ...initialPassing(),
+    ...initialCabin(),
   };
 }
 
@@ -50,6 +52,7 @@ function ambient(state, dt, input) {
     fog: approach(state.fog, fogTarget(state), dt * 0.05),
     drops: updateDrops(state.drops, dt, state.speed),
     ...updatePassing(state, dt, state.speed),
+    ...updateCabin(state, dt),
   };
 }
 

@@ -28,6 +28,8 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Céu vivo**: bandos de pássaros em V, aviões com rastro (luz piscando à noite) e balões de ar quente sobre as fazendas em dias claros.
 - **Litoral**: veleiros e barcos de pesca balançando no mar, e um farol listrado cujo facho gira à noite (com clarão quando aponta para você).
 - **Animais**: vacas, ovelhas e cavalos nas fazendas.
+- **A passageira vive a viagem**: alterna entre olhar a paisagem, ler um livro e tomar goles de café (a xícara vai esvaziando e o vapor some quando esfria). À noite cochila com a cabeça no encosto ("z z z"), e com o escuro lá fora o rosto dela aparece refletido no vidro.
+- **Corredor**: a cada ~2 min passa o **condutor** ("Bilhete, por favor!") — ela levanta o bilhete — ou o **carrinho de lanches** ("Café? Pão de queijo?"), que reabastece o café. À noite o carrinho não passa.
 - **Trem no sentido oposto**: de tempos em tempos (a cada 1–2 min) um trem passa colado à janela, com tranco da onda de ar, "vuuush" no áudio e janelas acesas à noite.
 - **Olhar ao redor**: mover o mouse desloca a cabeça do observador; a paisagem se move em relação à moldura com paralaxe por profundidade e a passageira se move no sentido contrário.
 - **Vidro embaçado**: com chuva (ou no frio das montanhas) o vidro embaça; arraste o mouse/dedo para desenhar. O desenho vai sumindo conforme o vidro embaça de novo.
@@ -84,7 +86,9 @@ src/
   weatherView.js arco-íris, raios, neblina, chuva/neve/folhas
   seasons.js    estações do ano e cores sazonais
   coast.js      barcos e farol
-  passenger.js  a passageira
+  passenger.js  a passageira (poses e reflexo no vidro)
+  cabin.js      atividades dela, café e visitas do corredor (simulação)
+  aisle.js      condutor e carrinho de lanches
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro
 ```

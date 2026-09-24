@@ -48,8 +48,24 @@
     </label>
     <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
     <button id="sound" type="button" aria-pressed="false">Ativar som</button>
+    <div class="buttons">
+      <button id="relax" type="button" aria-pressed="false" title="Tela cheia, sem painel, com música ambiente">Relaxar</button>
+      <button id="pomodoro" type="button" aria-pressed="false" title="Timer de foco 25 min / pausa 5 min">Pomodoro</button>
+      <button id="map-btn" type="button" aria-pressed="false">Mapa</button>
+      <button id="photo" type="button">Foto</button>
+    </div>
     <p class="hint">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
   </aside>
+
+  <div id="pomo-pill" class="pill hidden" role="timer" aria-live="off"></div>
+
+  <section id="line-map" class="line-map hidden" aria-label="Mapa da linha">
+    <header><strong>Mapa da linha</strong><span id="map-lap"></span></header>
+    <svg id="map-svg" viewBox="0 -40 1000 140" preserveAspectRatio="xMidYMid meet"></svg>
+    <footer><span class="key station">Estação</span><span class="key tunnel">Túnel</span><span class="key bridge">Ponte</span><span class="key crossing">Passagem de nível</span></footer>
+  </section>
+
+  <div id="photo-flash" class="photo-flash" aria-hidden="true"></div>
 
   <script type="module" src="src/main.js"></script>
 </body>

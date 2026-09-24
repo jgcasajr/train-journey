@@ -39,6 +39,13 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Som** (opcional): ronco do trem e o "tá-dum tá-dum" das juntas dos trilhos a cada 25 m, sincronizado com a velocidade.
 - Balanço do vagão, cafezinho com vapor, cortinas e a passageira respirando.
 
+## Modos de uso
+
+- **Relaxar**: tela cheia, sem painel nem letreiro, com música ambiente gerada na hora (acordes lentos e notas soltas). Esc ou o botão de novo para sair.
+- **Pomodoro**: timer de foco 25 min / pausa 5 min no canto inferior esquerdo, com sino na troca. Durações personalizáveis pela URL: `?foco=50&pausa=10`.
+- **Mapa**: a linha inteira da volta atual (28 km) com estações, túneis, pontes, passagens de nível, biomas e a posição do trem.
+- **Foto**: salva o quadro atual como PNG (`train-journey-km12.3.png`).
+
 ## Controles
 
 | Controle | Efeito |
@@ -88,6 +95,10 @@ src/
   coast.js      barcos e farol
   passenger.js  a passageira (poses e reflexo no vidro)
   cabin.js      atividades dela, café e visitas do corredor (simulação)
+  modes.js      modos relaxar, Pomodoro, mapa e foto
+  music.js      música ambiente generativa
+  pomodoro.js   lógica do timer
+  lineMap.js    mapa da linha (SVG)
   aisle.js      condutor e carrinho de lanches
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro

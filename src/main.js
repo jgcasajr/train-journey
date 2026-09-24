@@ -11,6 +11,7 @@ import {
 } from './interior.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
+import { createModes } from './modes.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
 import { createPointer } from './pointer.js';
@@ -144,6 +145,12 @@ function start() {
 
   let layout = resizeCanvas(canvas, ctx);
   const params = new URLSearchParams(window.location.search);
+  const modes = createModes(document, {
+    canvas,
+    panel: document.getElementById('panel'),
+    params,
+    chime: () => audio.chime(),
+  });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
   let state = params.has('pass') ? { ...start, nextPassing: 2 } : start;
@@ -167,6 +174,7 @@ function start() {
     const input = controls.read();
     state = step(state, dt, input);
     playSounds(audio, state);
+    modes.tick(state.distance);
     if (input.autoDay) controls.showDayTime(state.dayTime);
     hudTimer += dt;
     if (hudTimer > HUD_INTERVAL) {

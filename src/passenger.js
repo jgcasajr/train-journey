@@ -1,3 +1,4 @@
+import { aisleEventAt, beatAt, cupWithPassenger } from './cabin.js';
 import { lit } from './interior.js';
 import { circle, clamp, hex, mix, rgba } from './utils.js';
 
@@ -20,10 +21,24 @@ const HANDS = {
   read: { hand: [10, -23], elbow: [4, -14] },
   sip: { hand: [7.4, -37.5], elbow: [10, -24] },
   ticket: { hand: [17, -33], elbow: [9, -26] },
+  receive: { hand: [19, -27], elbow: [9, -21] },
 };
 
 /** Screen position of the passenger's hip (origin of the passenger's unit space). */
 export const passengerOrigin = ({ win, u }) => ({ x: win.x + win.w * 0.12, y: win.y + win.h * 0.62 + 42 * u });
+
+/** Screen position of her hand in a given pose (where visitors hand things over). */
+export function passengerHand(layout, pose) {
+  const o = passengerOrigin(layout);
+  const [hx, hy] = HANDS[pose].hand;
+  return { x: o.x + hx * layout.u, y: o.y + hy * layout.u };
+}
+
+/** Screen position just above her head (for her speech bubble). */
+export function passengerHead(layout) {
+  const o = passengerOrigin(layout);
+  return { x: o.x + 4 * layout.u, y: o.y - 51 * layout.u };
+}
 
 // All shapes below are in passenger units (1 unit = layout.u), origin at the hip on the seat.
 
@@ -92,6 +107,7 @@ function drawHead(ctx, L, head, rim) {
   ctx.beginPath();
   ctx.ellipse(1.2, 0.8, 1, 1.6, 0, 0, Math.PI * 2);
   ctx.fill();
+  if (head.face > 0.05) drawFaceProfile(ctx, L, head);
   ctx.strokeStyle = rim;
   ctx.lineWidth = 0.6;
   ctx.beginPath();
@@ -100,9 +116,37 @@ function drawHead(ctx, L, head, rim) {
   ctx.restore();
 }
 
+/** When she turns toward a visitor her profile shows: eye, nose and a mouth that moves as she talks. */
+function drawFaceProfile(ctx, L, head) {
+  ctx.save();
+  ctx.globalAlpha = Math.min(1, head.face * 1.4);
+  ctx.fillStyle = rgba(lit(SKIN, L));
+  ctx.beginPath();
+  ctx.moveTo(5.6, -1.2);
+  ctx.quadraticCurveTo(7.4, 0.6, 5.9, 1.4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = rgba(lit(HAIR, L));
+  ctx.beginPath();
+  ctx.ellipse(3.9, -1.3, 0.55, 0.7, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = rgba(mix(lit(SKIN, L), [120, 40, 40], 0.5));
+  ctx.lineWidth = 0.45;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  if (head.mouth > 0.1) {
+    ctx.ellipse(4.9, 3.1, 0.6, 0.25 + head.mouth * 0.45, 0, 0, Math.PI * 2);
+  } else {
+    ctx.moveTo(4.2, 3);
+    ctx.quadraticCurveTo(4.9, 3.5, 5.5, 2.9); // a small smile
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
 /** Blends the resting arm toward each active pose by its weight. */
 function armPose(pose) {
-  const active = ['read', 'sip', 'ticket'];
+  const active = ['read', 'sip', 'ticket', 'receive'];
   const sum = active.reduce((s, k) => s + pose[k], 0);
   const weight = (k) => (sum > 1 ? pose[k] / sum : pose[k]);
   const blend = (part, axis) => active.reduce(
@@ -154,7 +198,7 @@ function drawTicket(ctx, L, [x, y], amount) {
   ctx.restore();
 }
 
-function drawArm(ctx, L, pose) {
+function drawArm(ctx, L, pose, holdingNewCup) {
   const { hand, elbow } = armPose(pose);
   if (pose.read > 0.2) drawBook(ctx, L, hand, pose.read);
   ctx.strokeStyle = rgba(mix(lit(SWEATER, L), [0, 0, 0], 0.15));
@@ -167,6 +211,7 @@ function drawArm(ctx, L, pose) {
   ctx.lineTo(hand[0] - 1.6, hand[1] + 0.4);
   ctx.stroke();
   if (pose.sip > 0.3) drawHeldCup(ctx, L, hand, pose.sip);
+  if (holdingNewCup) drawHeldCup(ctx, L, hand, 1);
   if (pose.ticket > 0.3) drawTicket(ctx, L, hand, pose.ticket);
   ctx.fillStyle = rgba(lit(SKIN, L));
   ctx.beginPath();
@@ -193,10 +238,15 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
   const origin = passengerOrigin(layout);
   const breath = Math.sin(state.time * (pose.sleep > 0.5 ? 0.8 : 1.3)) * 0.3;
   const nod = (Math.sin(state.time * 0.7) * 0.4 + bob / u) * (1 - pose.sleep);
+  const ev = aisleEventAt(state.time, state.dayTime);
+  const speaking = beatAt(ev)?.who === 'passenger';
+  const facing = Math.max(pose.talk, pose.ticket, pose.receive);
   const head = {
-    tilt: nod * 0.02 + pose.read * 0.22 - pose.sleep * 0.32 - pose.sip * 0.12,
+    tilt: nod * 0.02 + pose.read * 0.22 - pose.sleep * 0.32 - pose.sip * 0.12 - facing * 0.08,
     dx: -pose.sleep * 1.4,
     dy: nod * 0.2 + pose.read * 0.8 + pose.sleep * 0.6,
+    face: facing,
+    mouth: speaking ? Math.abs(Math.sin(state.time * 11)) : 0,
   };
   const rim = rgba(mix(env.bottom, WHITE, 0.3), 0.1 + 0.35 * L.daylight);
   ctx.save();
@@ -207,7 +257,7 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
   ctx.translate(0, -breath);
   drawTorso(ctx, L, rim);
   drawHead(ctx, L, head, rim);
-  drawArm(ctx, L, pose);
+  drawArm(ctx, L, pose, cupWithPassenger(ev));
   drawZzz(ctx, state.time, pose.sleep);
   ctx.restore();
 }

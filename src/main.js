@@ -1,6 +1,6 @@
 import { drawAisle } from './aisle.js';
 import { createAudio } from './audio.js';
-import { coffeeHot } from './cabin.js';
+import { aisleEventAt, coffeeHot, cupWithPassenger } from './cabin.js';
 import { biomeAt, biomeName, num } from './biomes.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
@@ -96,7 +96,7 @@ function render(ctx, layout, state, { fog, dt }) {
     x: passengerOrigin(layout).x + u * 22,
     level: state.coffee,
     hot: coffeeHot(state),
-    inHand: state.pose.sip > 0.3,
+    inHand: state.pose.sip > 0.3 || cupWithPassenger(aisleEventAt(state.time, state.dayTime)),
   });
   drawLamp(ctx, layout, L);
   ctx.save();

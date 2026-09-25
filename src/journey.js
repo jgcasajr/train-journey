@@ -1,5 +1,6 @@
 import { biomeAt, num } from './biomes.js';
 import { initialCabin, updateCabin } from './cabin.js';
+import { DAY_SECONDS } from './clock.js';
 import { createDrops, updateDrops } from './glass.js';
 import { initialPassing, updatePassing } from './passingTrain.js';
 import { seasonWeights } from './seasons.js';
@@ -11,7 +12,6 @@ export const RAIL_LENGTH = 25; // meters between rail joints ("clack")
 const ACCEL = 2.2; // m/s²
 const BRAKE = 0.9; // m/s², comfortable service braking into stations
 const DWELL = 14; // seconds stopped at a station
-const DAY_SECONDS = 300; // one full day cycle
 const START_DISTANCE = 600;
 const DROP_COUNT = 140;
 

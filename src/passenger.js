@@ -156,20 +156,81 @@ function armPose(pose) {
   return { hand: [blend('hand', 0), blend('hand', 1)], elbow: [blend('elbow', 0), blend('elbow', 1)] };
 }
 
-function drawBook(ctx, L, [x, y], amount) {
+// Open book seen from the side, spine at the origin, opening up-left toward her face.
+const FAR_TIP = [-6.9, -3.3];
+const NEAR_TIP = [-1.1, -7.3];
+const GUTTER = [-3.9, -6.4]; // where the two fanned page blocks meet
+const FLIP_PERIOD = 9; // seconds between page turns
+const FLIP_TIME = 0.7;
+
+function fillPoly(ctx, points) {
+  ctx.beginPath();
+  points.forEach(([px, py], i) => (i ? ctx.lineTo(px, py) : ctx.moveTo(px, py)));
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** A few text lines on a page, running from near the spine toward the page tip. */
+function drawTextLines(ctx, [tx, ty], offsets) {
+  offsets.forEach((k) => {
+    ctx.moveTo(tx * 0.25 + GUTTER[0] * k * 0.35, ty * 0.25 + GUTTER[1] * k * 0.35);
+    ctx.lineTo(tx * 0.8 + GUTTER[0] * k * 0.3, ty * 0.8 + GUTTER[1] * k * 0.3);
+  });
+}
+
+/** The page being turned, sweeping from the near half to the far half. */
+function drawTurningPage(ctx, L, time) {
+  const t = (time % FLIP_PERIOD) / FLIP_TIME;
+  if (t > 1) return;
+  const a0 = Math.atan2(NEAR_TIP[1], NEAR_TIP[0]);
+  const a1 = Math.atan2(FAR_TIP[1], FAR_TIP[0]);
+  const a = a0 + (a1 - a0) * (t * t * (3 - 2 * t));
+  const len = 7;
+  const lift = Math.sin(t * Math.PI) * 1.6; // the page bows as it turns
+  ctx.fillStyle = rgba(mix(lit(PAGE, L), [255, 255, 255], 0.25));
+  ctx.beginPath();
+  ctx.moveTo(0, -0.3);
+  ctx.quadraticCurveTo(
+    Math.cos(a) * len * 0.5 - Math.sin(a) * lift, Math.sin(a) * len * 0.5 + Math.cos(a) * lift,
+    Math.cos(a) * len, Math.sin(a) * len,
+  );
+  ctx.lineTo(Math.cos(a + 0.12) * len * 0.95, Math.sin(a + 0.12) * len * 0.95);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawBook(ctx, L, [x, y], amount, time) {
+  const cover = rgba(lit(BOOK, L));
+  const page = rgba(lit(PAGE, L));
   ctx.save();
   ctx.globalAlpha = clamp(amount * 1.5);
-  ctx.translate(x + 1.5, y - 1);
-  ctx.rotate(-0.5);
-  ctx.fillStyle = rgba(lit(BOOK, L));
-  ctx.fillRect(-0.5, -4.5, 1.2, 9);
-  ctx.fillStyle = rgba(lit(PAGE, L));
+  ctx.translate(x + 0.6, y - 0.8);
+  ctx.rotate(-0.15);
+  ctx.fillStyle = cover;
+  fillPoly(ctx, [[0, 0], [FAR_TIP[0] - 0.3, FAR_TIP[1] + 0.1], [FAR_TIP[0] - 0.4, FAR_TIP[1] + 0.9], [-0.3, 0.7]]);
+  ctx.fillStyle = page;
   ctx.beginPath();
-  ctx.moveTo(0.6, -4.2);
-  ctx.lineTo(3.6, -3.6);
-  ctx.lineTo(3.6, 4.4);
-  ctx.lineTo(0.6, 4);
+  ctx.moveTo(0, -0.3);
+  ctx.lineTo(FAR_TIP[0], FAR_TIP[1]);
+  ctx.quadraticCurveTo(-6, -5.6, GUTTER[0], GUTTER[1]);
   ctx.closePath();
+  ctx.moveTo(0, -0.3);
+  ctx.lineTo(NEAR_TIP[0], NEAR_TIP[1]);
+  ctx.quadraticCurveTo(-2.6, -7.4, GUTTER[0], GUTTER[1]);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = rgba(mix(lit(PAGE, L), [60, 60, 70], 0.45));
+  ctx.lineWidth = 0.18;
+  ctx.beginPath();
+  drawTextLines(ctx, FAR_TIP, [0.15, 0.35, 0.55, 0.75]);
+  drawTextLines(ctx, NEAR_TIP, [0.15, 0.35, 0.55, 0.75]);
+  ctx.stroke();
+  drawTurningPage(ctx, L, time);
+  ctx.fillStyle = cover;
+  fillPoly(ctx, [[0.3, -0.1], [NEAR_TIP[0] + 0.2, NEAR_TIP[1] - 0.3], [NEAR_TIP[0] + 0.9, NEAR_TIP[1] - 0.2], [1, 0.2]]);
+  ctx.fillStyle = rgba(lit(SKIN, L)); // her other hand holding the far edge
+  ctx.beginPath();
+  ctx.arc(FAR_TIP[0] + 0.6, FAR_TIP[1] + 0.9, 1.4, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
@@ -198,9 +259,8 @@ function drawTicket(ctx, L, [x, y], amount) {
   ctx.restore();
 }
 
-function drawArm(ctx, L, pose, holdingNewCup) {
+function drawArm(ctx, L, pose, holdingNewCup, time) {
   const { hand, elbow } = armPose(pose);
-  if (pose.read > 0.2) drawBook(ctx, L, hand, pose.read);
   ctx.strokeStyle = rgba(mix(lit(SWEATER, L), [0, 0, 0], 0.15));
   ctx.lineWidth = 4.4;
   ctx.lineCap = 'round';
@@ -210,6 +270,7 @@ function drawArm(ctx, L, pose, holdingNewCup) {
   ctx.quadraticCurveTo(-1.5, (elbow[1] - 29) / 2, elbow[0], elbow[1]);
   ctx.lineTo(hand[0] - 1.6, hand[1] + 0.4);
   ctx.stroke();
+  if (pose.read > 0.2) drawBook(ctx, L, hand, pose.read, time);
   if (pose.sip > 0.3) drawHeldCup(ctx, L, hand, pose.sip);
   if (holdingNewCup) drawHeldCup(ctx, L, hand, 1);
   if (pose.ticket > 0.3) drawTicket(ctx, L, hand, pose.ticket);
@@ -257,7 +318,7 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
   ctx.translate(0, -breath);
   drawTorso(ctx, L, rim);
   drawHead(ctx, L, head, rim);
-  drawArm(ctx, L, pose, cupWithPassenger(ev));
+  drawArm(ctx, L, pose, cupWithPassenger(ev), state.time);
   drawZzz(ctx, state.time, pose.sleep);
   ctx.restore();
 }

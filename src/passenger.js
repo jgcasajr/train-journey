@@ -23,6 +23,7 @@ const HANDS = {
   sip: { hand: [7.4, -37.5], elbow: [10, -24] },
   ticket: { hand: [17, -33], elbow: [9, -26] },
   receive: { hand: [19, -27], elbow: [9, -21] },
+  wave: { hand: [9, -52], elbow: [7, -38] },
 };
 
 /** Screen position of the passenger's hip (origin of the passenger's unit space). */
@@ -147,7 +148,7 @@ function drawFaceProfile(ctx, L, head) {
 
 /** Blends the resting arm toward each active pose by its weight. */
 function armPose(pose) {
-  const active = ['read', 'sip', 'ticket', 'receive'];
+  const active = ['read', 'sip', 'ticket', 'receive', 'wave'];
   const sum = active.reduce((s, k) => s + pose[k], 0);
   const weight = (k) => (sum > 1 ? pose[k] / sum : pose[k]);
   const blend = (part, axis) => active.reduce(
@@ -261,7 +262,9 @@ function drawTicket(ctx, L, [x, y], amount) {
 }
 
 function drawArm(ctx, L, pose, holdingNewCup, time) {
-  const { hand, elbow } = armPose(pose);
+  const base = armPose(pose);
+  const hand = [base.hand[0] + Math.sin(time * 9) * 1.6 * pose.wave, base.hand[1]]; // waving side to side
+  const { elbow } = base;
   ctx.strokeStyle = rgba(mix(lit(SWEATER, L), [0, 0, 0], 0.15));
   ctx.lineWidth = 4.4;
   ctx.lineCap = 'round';
@@ -302,7 +305,7 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
   const nod = (Math.sin(state.time * 0.7) * 0.4 + bob / u) * (1 - pose.sleep);
   const ev = aisleEventAt(state.time, state.dayTime);
   const speaking = beatAt(ev)?.who === 'passenger' || companionLine(state, null)?.who === 'p';
-  const facing = Math.max(pose.talk, pose.ticket, pose.receive);
+  const facing = Math.max(pose.talk, pose.ticket, pose.receive, pose.wave);
   const head = {
     tilt: nod * 0.02 + pose.read * 0.22 - pose.sleep * 0.32 - pose.sip * 0.12 - facing * 0.08,
     dx: -pose.sleep * 1.4,

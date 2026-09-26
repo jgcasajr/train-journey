@@ -1,6 +1,7 @@
 import { biomeAt, num } from './biomes.js';
 import { initialCabin, updateCabin } from './cabin.js';
 import { DAY_SECONDS } from './clock.js';
+import { arrivalAtDestination, destinationStation, updateDestination } from './destination.js';
 import { initialCompanion, updateCompanion } from './companion.js';
 import { EMERGENCY_DECEL, applyEvents, initialInteraction, updateInteraction } from './events.js';
 import { createDrops, updateDrops } from './glass.js';
@@ -37,6 +38,10 @@ export function initialState(input, startKm) {
     ...initialCabin(),
     ...initialInteraction(),
     ...initialCompanion(),
+    destination: null,
+    tripStart: null,
+    holding: false,
+    arrivedAt: null,
   };
 }
 
@@ -67,7 +72,8 @@ function nextJolt(state, dt, crossedJoint, speed, passStarted) {
 }
 
 function standing(state, dt, input) {
-  const dwell = input.stops ? Math.max(0, state.dwell - dt) : 0;
+  // At the destination the train waits (holding) until the viewer decides what to do next.
+  const dwell = state.holding ? state.dwell : (input.stops ? Math.max(0, state.dwell - dt) : 0);
   const amb = ambient(state, dt, input);
   return {
     ...state,
@@ -83,7 +89,7 @@ function standing(state, dt, input) {
 
 /** Max speed that still lets the train stop at the next station with BRAKE deceleration. */
 function stationLimit(state, input) {
-  const station = input.stops ? nextStation(state.distance, state.served?.id) : null;
+  const station = input.stops ? nextStation(state.distance, state.served?.id) : destinationStation(state);
   if (!station) return { station: null, limit: Infinity };
   return { station, limit: Math.sqrt(2 * BRAKE * Math.max(0, station.stopAt - state.distance)) };
 }
@@ -115,6 +121,7 @@ function moving(state, dt, input) {
     served: arrived ? { id: station.id, name: station.name } : state.served,
     arrived,
     departed: false,
+    ...(arrived ? arrivalAtDestination(state, station) : {}),
   };
 }
 
@@ -123,7 +130,8 @@ function moving(state, dt, input) {
  * `input.events` are the viewer's clicks this frame (see events.js).
  */
 export function step(prev, dt, input) {
-  const state = applyEvents(prev, input.events ?? []);
+  const afterEvents = applyEvents(prev, input.events ?? []);
+  const state = { ...afterEvents, ...updateDestination(afterEvents, input) };
   const next = state.dwell > 0 ? standing(state, dt, input) : moving(state, dt, input);
   return {
     ...next,

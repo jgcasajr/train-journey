@@ -3,6 +3,7 @@ import { createAudio } from './audio.js';
 import { aisleEventAt, coffeeHot, cupWithPassenger } from './cabin.js';
 import { biomeAt, biomeName, num } from './biomes.js';
 import { drawCompanion } from './companionView.js';
+import { createArrival } from './arrival.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
 import { LOOK_FAR } from './frame.js';
@@ -137,12 +138,12 @@ function playSounds(audio, state) {
   audio.update(state.speed, Math.min(1, state.rain + state.storm * 0.5), crossingNear(state.distance, 250));
 }
 
-function updatePanel(controls, state, input) {
+function updatePanel(controls, state, input, destinationText) {
   controls.showHud({
     km: state.distance / 1000,
     biome: biomeName(state.distance),
     kmh: state.speed * 3.6,
-    station: stationInfo(state, input.stops),
+    station: destinationText ?? stationInfo(state, input.stops),
   });
   const weather = WEATHER_NAMES[weatherTargets(input, state.time).mode];
   const season = SEASON_NAMES[dominantSeason(sceneEnvironment(state).season)];
@@ -183,6 +184,8 @@ function createClicks({ canvas, audio, radio, controls, getScene }) {
   });
   return {
     pointer,
+    /** Queue an event that doesn't come from a canvas click (e.g. the arrival card buttons). */
+    queue(event) { pending = [...pending, event]; },
     takeEvents() {
       const taken = pending;
       pending = [];
@@ -213,6 +216,11 @@ function start() {
   const clicks = createClicks({ canvas, audio, radio, controls, getScene: () => scene });
   const { pointer } = clicks;
   const journal = createJournal(document, { onDiscover: () => audio.sfx('discover') });
+  const arrival = createArrival(document, {
+    panel: document.getElementById('panel'),
+    onContinue: () => clicks.queue({ type: 'continue' }),
+    foundCount: journal.foundCount,
+  });
 
   let layout = resizeCanvas(canvas, ctx);
   const params = new URLSearchParams(window.location.search);
@@ -244,14 +252,15 @@ function start() {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const input = controls.read();
-    state = step(state, dt, { ...input, events: clicks.takeEvents() });
+    state = step(state, dt, { ...input, destination: arrival.destination(), events: clicks.takeEvents() });
+    arrival.update(state);
     playSounds(audio, state);
-    modes.tick(state.distance);
+    modes.tick(state.distance, state.destination);
     if (input.autoDay) controls.showDayTime(state.dayTime);
     hudTimer += dt;
     if (hudTimer > HUD_INTERVAL) {
       hudTimer = 0;
-      updatePanel(controls, state, input);
+      updatePanel(controls, state, input, arrival.boardText(state, input.targetKmh));
     }
     const look = pointer.updateLook(dt);
     const strokes = pointer.takeStrokes();

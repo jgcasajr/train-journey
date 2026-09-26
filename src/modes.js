@@ -86,9 +86,9 @@ export function createModes(doc, { canvas, panel, params, chime, radio }) {
 
   return {
     /** Called every frame with the simulation distance (meters). */
-    tick(distance) {
+    tick(distance, destination) {
       distanceKm = distance / 1000;
-      if (!ui.lineMap.classList.contains('hidden')) lineMap.update(distance);
+      if (!ui.lineMap.classList.contains('hidden')) lineMap.update(distance, destination);
       if (!pomodoro) return;
       const now = Date.now();
       const next = tickPomodoro(pomodoro, now);

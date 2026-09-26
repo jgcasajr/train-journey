@@ -119,6 +119,7 @@ export function createJournal(doc, { onDiscover }) {
   render();
 
   return {
+    foundCount: () => DISCOVERIES.filter((d) => progress.found[d.id]).length,
     /** Called every frame; records whatever is newly discovered. */
     observe(state, env, view) {
       const step = lastDistance === null ? 0 : state.distance - lastDistance;

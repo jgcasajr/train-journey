@@ -1,5 +1,6 @@
 import { DAY_SECONDS, isNight } from './clock.js';
 import { companionLine } from './companion.js';
+import { celebrating } from './destination.js';
 
 export { isNight };
 import { approach, hash, mod } from './utils.js';
@@ -75,6 +76,7 @@ function targetActivity(state) {
   const ev = aisleEventAt(state.time, state.dayTime);
   const visit = ev ? visitActivity(ev) : null;
   if (visit) return visit;
+  if (celebrating(state)) return 'wave';
   if (state.time < (state.sipUntil ?? 0) && state.coffee > 0.05) return 'sip';
   if (state.speech || companionLine(state, null)) return 'talk';
   const woken = state.time < (state.wakeUntil ?? 0);
@@ -88,7 +90,7 @@ function targetActivity(state) {
 }
 
 export const initialCabin = () => ({
-  pose: { read: 0, sleep: 0, sip: 0, ticket: 0, talk: 0, receive: 0 },
+  pose: { read: 0, sleep: 0, sip: 0, ticket: 0, talk: 0, receive: 0, wave: 0 },
   coffee: 1,
   coffeeHotUntil: HOT_SECONDS,
 });

@@ -70,6 +70,8 @@ function reduce(state, event) {
       return { ...say(state, 'Ai! O que foi isso?!'), brakeUntil: state.time + BRAKE_SECONDS, brakeStarted: true };
     case 'companion':
       return companionClicked(state);
+    case 'continue':
+      return { holding: false, arrivedAt: null, dwell: Math.min(state.dwell, 2) };
     case 'scatter':
       return { scatterAt: state.time };
     case 'float':

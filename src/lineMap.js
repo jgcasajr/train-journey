@@ -30,7 +30,7 @@ function lapFeatures(lap) {
   };
 }
 
-function buildLap(svg, lap) {
+function buildLap(svg, lap, destination) {
   const x = (m) => (m / LOOP) * VIEW_W;
   const f = lapFeatures(lap);
   const nodes = [
@@ -43,7 +43,7 @@ function buildLap(svg, lap) {
     ...f.bridges.map((m) => svgEl('path', { d: `M${x(m) - 5} ${LINE_Y + 6} Q${x(m)} ${LINE_Y - 2} ${x(m) + 5} ${LINE_Y + 6}`, class: 'bridge' })),
     ...f.crossings.map((m) => svgEl('path', { d: `M${x(m) - 3} ${LINE_Y - 3} L${x(m) + 3} ${LINE_Y + 3} M${x(m) + 3} ${LINE_Y - 3} L${x(m) - 3} ${LINE_Y + 3}`, class: 'crossing' })),
     ...f.stations.flatMap((s, k) => [
-      svgEl('circle', { cx: x(s.at), cy: LINE_Y, r: 5, class: 'station' }),
+      svgEl('circle', { cx: x(s.at), cy: LINE_Y, r: 5, class: s.name === destination ? 'station dest' : 'station' }),
       svgEl('text', { x: x(s.at), y: k % 2 ? LINE_Y - 24 : LINE_Y - 12, class: 'station-name' }, s.name),
     ]),
   ];
@@ -58,12 +58,14 @@ function buildLap(svg, lap) {
 export function createLineMap(svg, lapLabel) {
   let lap = null;
   let marker = null;
+  let shownDestination = null;
   return {
-    update(distance) {
+    update(distance, destination = null) {
       const current = Math.floor(distance / LOOP);
-      if (current !== lap) {
+      if (current !== lap || destination !== shownDestination) {
         lap = current;
-        marker = buildLap(svg, lap);
+        shownDestination = destination;
+        marker = buildLap(svg, lap, destination);
         lapLabel.textContent = `Volta ${lap + 1} · ${(LOOP / 1000).toFixed(0)} km`;
       }
       const x = ((distance - lap * LOOP) / LOOP) * VIEW_W;

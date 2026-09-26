@@ -28,6 +28,19 @@ export function stationsBetween(m0, m1) {
     .filter((s) => s && s.end > m0 && s.start < m1);
 }
 
+/** Next station with this name still ahead (stations repeat every lap). */
+export function nextStationNamed(distance, name, servedId) {
+  const first = Math.floor(distance / SEGMENT);
+  for (let k = first; k <= first + BIOMES.length * 2; k++) {
+    const s = stationIn(k);
+    if (s && s.name === name && s.id !== servedId && s.stopAt >= distance - 1) return s;
+  }
+  return null;
+}
+
+/** All station names in line order (for the destination picker). */
+export const STATION_NAMES = BIOMES.filter((b) => b.station).map((b) => b.station);
+
 /** Next station whose stop point is still ahead, skipping the one just served. */
 export function nextStation(distance, servedId) {
   const first = Math.floor(distance / SEGMENT);

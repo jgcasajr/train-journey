@@ -46,6 +46,10 @@
         <option value="winter">Inverno</option>
       </select>
     </label>
+    <label class="field">
+      <span>Destino</span>
+      <select id="destination"><option value="" selected>Viagem livre</option></select>
+    </label>
     <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
     <div class="radio-row">
       <label class="field">
@@ -92,6 +96,16 @@
     </header>
     <div id="journal-grid" class="journal-grid"></div>
     <footer><button id="journal-reset" type="button" class="journal-reset">Recomeçar diário</button></footer>
+  </section>
+
+  <section id="arrival" class="arrival hidden" aria-live="polite">
+    <p class="arrival-kicker">Fim da viagem</p>
+    <h2 id="arrival-title"></h2>
+    <p id="arrival-stats"></p>
+    <div class="arrival-actions">
+      <button id="arrival-continue" type="button">Continuar viajando</button>
+      <button id="arrival-choose" type="button">Escolher outro destino</button>
+    </div>
   </section>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

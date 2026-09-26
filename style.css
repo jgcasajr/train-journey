@@ -171,6 +171,8 @@ body.relax { cursor: none; }
 
 .journal-btn { border-color: rgba(255, 179, 71, 0.5); }
 
+.radio-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 8px; align-items: end; }
+
 .journal {
   position: fixed;
   inset: 5vh 50% auto auto;

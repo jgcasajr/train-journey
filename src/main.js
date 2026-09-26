@@ -10,12 +10,13 @@ import { drawDrops, drawGlass } from './glass.js';
 import { hitTest } from './interactions.js';
 import { drawFloats, drawSpeech } from './interactionsView.js';
 import {
-  drawCord, drawCurtains, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
+  drawCord, drawCurtains, drawRadio, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
 } from './interior.js';
 import { createJournal } from './journal.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
 import { createModes } from './modes.js';
+import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
 import { createPointer } from './pointer.js';
@@ -63,7 +64,7 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
   seasonPhase: state.seasonPhase,
 });
 
-function render(ctx, layout, state, { fog, dt }) {
+function render(ctx, layout, state, { fog, dt, station }) {
   const env = sceneEnvironment(state);
   const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
   const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains });
@@ -108,6 +109,7 @@ function render(ctx, layout, state, { fog, dt }) {
     hot: coffeeHot(state),
     inHand: state.pose.sip > 0.3 || cupWithPassenger(aisleEventAt(state.time, state.dayTime)),
   });
+  drawRadio(ctx, layout, L, station, state.time);
   drawLamp(ctx, layout, L);
   ctx.save();
   ctx.translate(-lookX * u * 4, -lookY * u * 2);
@@ -151,7 +153,7 @@ function updatePanel(controls, state, input) {
  * Turns clicks into simulation events: hit-tests against the last rendered frame, plays the
  * matching sound, and queues the event for the next step. Empty space toggles the panel.
  */
-function createClicks({ canvas, audio, controls, getScene }) {
+function createClicks({ canvas, audio, radio, controls, getScene }) {
   let pending = [];
   const targetAt = (p) => {
     const { view, state } = getScene();
@@ -163,6 +165,10 @@ function createClicks({ canvas, audio, controls, getScene }) {
       const event = targetAt(p);
       if (!event) {
         controls.togglePanel();
+        return;
+      }
+      if (event.type === 'radio') {
+        radio.next();
         return;
       }
       audio.sfx(event.sound);
@@ -185,6 +191,17 @@ function createClicks({ canvas, audio, controls, getScene }) {
   };
 }
 
+/** The radio plus its panel controls (station select and volume), kept in sync both ways. */
+function createRadioControls(doc) {
+  const select = doc.getElementById('radio-station');
+  const volume = doc.getElementById('radio-volume');
+  const radio = createRadio({ onChange: (station) => { select.value = station; } });
+  const report = (err) => console.error('Radio unavailable:', err);
+  select.addEventListener('change', () => radio.tune(select.value).catch(report));
+  volume.addEventListener('input', () => radio.setVolume(Number(volume.value)));
+  return { ...radio, get station() { return radio.station; }, next: () => radio.next().catch(report) };
+}
+
 function start() {
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
@@ -192,7 +209,8 @@ function start() {
   const audio = createAudio();
   const fog = createFog();
   let scene = { view: null, state: null };
-  const clicks = createClicks({ canvas, audio, controls, getScene: () => scene });
+  const radio = createRadioControls(document);
+  const clicks = createClicks({ canvas, audio, radio, controls, getScene: () => scene });
   const { pointer } = clicks;
   const journal = createJournal(document, { onDiscover: () => audio.sfx('discover') });
 
@@ -203,6 +221,7 @@ function start() {
     panel: document.getElementById('panel'),
     params,
     chime: () => audio.chime(),
+    radio,
   });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
@@ -239,7 +258,7 @@ function start() {
     if (layout.W > 0 && layout.H > 0) {
       if (state.fog > 0.1 && strokes.length > 0) fog.wipe(strokes, layout);
       const view = { ...layout, lookX: look.x, lookY: look.y };
-      render(ctx, view, state, { fog, dt });
+      render(ctx, view, state, { fog, dt, station: radio.station });
       scene = { view, state };
       const env = sceneEnvironment(state);
       journal.observe(state, env, view);

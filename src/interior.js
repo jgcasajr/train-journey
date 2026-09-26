@@ -121,6 +121,72 @@ export function drawCurtains(ctx, layout, L, sway, close = 0) {
   ctx.fillRect(win.x - u * 5, win.y - u * 3.9, win.w + u * 10, u * 0.7);
 }
 
+const RADIO_WOOD = hex('#7a4a2c');
+const RADIO_CLOTH = hex('#c9b48a');
+const DIAL = hex('#ffcc70');
+const DIAL_POSITIONS = { off: 0.1, ambient: 0.25, lofi: 0.45, classical: 0.65, bossa: 0.85 };
+
+/** Screen box of the little radio on the window ledge (for drawing and clicks). */
+export function radioBox({ win, u }) {
+  const w = u * 9;
+  const h = u * 5.5;
+  return { x: win.x + win.w * 0.6, y: win.y + win.h + u * 1.2 - h, w, h };
+}
+
+/** Vintage radio: cloth speaker, amber dial with a needle per station, notes rising when on. */
+export function drawRadio(ctx, layout, L, station, time) {
+  const { u } = layout;
+  const { x, y, w, h } = radioBox(layout);
+  const on = station !== 'off';
+  ctx.strokeStyle = rgba(lit(hex('#3a2a1e'), L));
+  ctx.lineWidth = Math.max(1, u * 0.15);
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.8, y);
+  ctx.lineTo(x + w * 1.05, y - h * 0.9);
+  ctx.stroke();
+  ctx.fillStyle = rgba(lit(RADIO_WOOD, L));
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, u * 1.2);
+  ctx.fill();
+  ctx.fillStyle = rgba(lit(RADIO_CLOTH, L));
+  ctx.beginPath();
+  ctx.roundRect(x + u * 0.8, y + u * 0.8, w * 0.42, h - u * 1.6, u * 0.6);
+  ctx.fill();
+  ctx.strokeStyle = rgba(lit(RADIO_WOOD, L), 0.6);
+  ctx.lineWidth = Math.max(1, u * 0.12);
+  ctx.beginPath();
+  for (let k = 1; k < 5; k++) {
+    ctx.moveTo(x + u * 0.8, y + u * 0.8 + ((h - u * 1.6) * k) / 5);
+    ctx.lineTo(x + u * 0.8 + w * 0.42, y + u * 0.8 + ((h - u * 1.6) * k) / 5);
+  }
+  ctx.stroke();
+  const dial = { x: x + w * 0.55, y: y + u * 0.9, w: w * 0.38, h: h * 0.35 };
+  ctx.fillStyle = on ? rgba(DIAL) : rgba(lit(hex('#b8a888'), L));
+  ctx.beginPath();
+  ctx.roundRect(dial.x, dial.y, dial.w, dial.h, u * 0.3);
+  ctx.fill();
+  if (on) radialGlow(ctx, dial.x + dial.w / 2, dial.y + dial.h / 2, u * 5, DIAL, 0.35);
+  ctx.fillStyle = rgba(hex('#b3261e'));
+  ctx.fillRect(dial.x + dial.w * (DIAL_POSITIONS[station] ?? 0.1), dial.y + u * 0.15, Math.max(1, u * 0.2), dial.h - u * 0.3);
+  ctx.fillStyle = rgba(lit(hex('#2a1d14'), L));
+  ctx.beginPath();
+  [0.62, 0.86].forEach((f) => { ctx.moveTo(x + w * f + u * 0.7, y + h * 0.72); ctx.arc(x + w * f, y + h * 0.72, u * 0.7, 0, Math.PI * 2); });
+  ctx.fill();
+  if (!on) return;
+  ctx.font = `600 ${u * 1.8}px system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.lineWidth = Math.max(1, u * 0.3);
+  [0, 1].forEach((k) => {
+    const t = (time * 0.5 + k * 0.5) % 1;
+    const nx = x + w * (0.3 + k * 0.3) + Math.sin(time * 3 + k) * u;
+    const ny = y - t * u * 7;
+    ctx.strokeStyle = `rgba(60,35,20,${0.6 * (1 - t)})`;
+    ctx.strokeText(k ? '♫' : '♪', nx, ny);
+    ctx.fillStyle = `rgba(255,236,190,${0.95 * (1 - t)})`;
+    ctx.fillText(k ? '♫' : '♪', nx, ny);
+  });
+}
+
 const CORD_RED = hex('#b3261e');
 
 /** Emergency brake cord hanging by the top-right corner of the window. */

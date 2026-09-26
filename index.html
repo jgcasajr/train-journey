@@ -47,6 +47,22 @@
       </select>
     </label>
     <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
+    <div class="radio-row">
+      <label class="field">
+        <span>Rádio</span>
+        <select id="radio-station">
+          <option value="off" selected>Desligado</option>
+          <option value="ambient">Ambiente</option>
+          <option value="lofi">Lo-fi</option>
+          <option value="classical">Clássica</option>
+          <option value="bossa">Bossa nova</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Volume</span>
+        <input type="range" id="radio-volume" min="0" max="1" step="0.05" value="0.8">
+      </label>
+    </div>
     <button id="sound" type="button" aria-pressed="false">Ativar som</button>
     <button id="journal-btn" type="button" class="journal-btn">Diário</button>
     <div class="buttons">

@@ -43,6 +43,17 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Som** (opcional): ronco do trem e o "tá-dum tá-dum" das juntas dos trilhos a cada 25 m, sincronizado com a velocidade.
 - Balanço do vagão, cafezinho com vapor, cortinas e a passageira respirando.
 
+## Rádio do vagão
+
+Um radinho antigo no parapeito da janela: clique nele para trocar de estação (ou use o seletor **Rádio** e o **Volume** no painel). As músicas são geradas na hora, sem arquivos:
+
+- **Ambiente**: acordes longos e notas soltas (é a trilha do modo Relaxar)
+- **Lo-fi**: piano elétrico jazzy, baixo, batida lenta com swing e chiado de vinil
+- **Clássica**: arpejos de piano em 3/4 sobre a progressão de Pachelbel, com cordas ao fundo
+- **Bossa nova**: violão com a batida da bossa, baixo, chocalho, aro de caixa e uma flauta de vez em quando
+
+Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostrador acende e as notinhas sobem.
+
 ## Modos de uso
 
 - **Relaxar**: tela cheia, sem painel nem letreiro, com música ambiente gerada na hora (acordes lentos e notas soltas). Esc ou o botão de novo para sair.
@@ -63,6 +74,7 @@ O cursor vira mãozinha sobre o que é clicável.
 | O companheiro da frente | Fala alguma coisa simpática |
 | A passageira | Ela vira e comenta algo do momento (paisagem, chuva, noite, estação...). Dormindo, acorda assustada. |
 | A xícara | Ela toma um gole (ou reclama que o café acabou) |
+| O rádio | Troca de estação |
 | A lâmpada | Alterna automático / ligada / desligada |
 | As cortinas | Fecham ou abrem (a cabine escurece) |
 | A corda SOS | Freio de emergência: o trem freia bruscamente e depois segue |
@@ -128,7 +140,8 @@ src/
   interactionsView.js textos flutuantes e falas da passageira
   journalData.js as descobertas do diário e quando cada uma acontece
   journal.js    diário: progresso salvo, avisos e o caderno
-  music.js      música ambiente generativa
+  radio.js      rádio: estações, sintonia e volume
+  radioStyles.js instrumentos e arranjos (lo-fi, clássica, bossa)
   pomodoro.js   lógica do timer
   lineMap.js    mapa da linha (SVG)
   aisle.js      condutor e carrinho de lanches

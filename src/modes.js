@@ -1,5 +1,4 @@
 import { createLineMap } from './lineMap.js';
-import { createMusic } from './music.js';
 import { durationsFromParams, pomodoroLabel, startPomodoro, tickPomodoro } from './pomodoro.js';
 
 const PILL_INTERVAL = 250; // ms between pomodoro label refreshes
@@ -35,7 +34,7 @@ function savePhoto(canvas, km, flash) {
  * Relax mode (fullscreen, hidden UI, ambient music), Pomodoro timer, line map and photo.
  * `chime` is played when a Pomodoro phase ends (in addition to the music bell).
  */
-export function createModes(doc, { canvas, panel, params, chime }) {
+export function createModes(doc, { canvas, panel, params, chime, radio }) {
   const ui = {
     relax: element(doc, 'relax'),
     pomodoro: element(doc, 'pomodoro'),
@@ -45,12 +44,12 @@ export function createModes(doc, { canvas, panel, params, chime }) {
     lineMap: element(doc, 'line-map'),
     flash: element(doc, 'photo-flash'),
   };
-  const music = createMusic();
   const lineMap = createLineMap(element(doc, 'map-svg'), element(doc, 'map-lap'));
   const durations = durationsFromParams(params);
   let pomodoro = null;
   let lastPill = 0;
   let distanceKm = 0;
+  let relaxTurnedRadioOn = false; // relax mode switches the radio to ambient only if it was off
 
   async function setRelax(on) {
     doc.body.classList.toggle('relax', on);
@@ -58,10 +57,12 @@ export function createModes(doc, { canvas, panel, params, chime }) {
     if (on) {
       panel.classList.add('hidden');
       await doc.documentElement.requestFullscreen?.().catch((err) => console.warn('Fullscreen unavailable:', err));
-      await music.start().catch((err) => console.error('Music unavailable:', err));
+      relaxTurnedRadioOn = radio.station === 'off';
+      if (relaxTurnedRadioOn) await radio.tune('ambient').catch((err) => console.error('Radio unavailable:', err));
       return;
     }
-    music.stop();
+    if (relaxTurnedRadioOn) radio.tune('off');
+    relaxTurnedRadioOn = false;
     if (doc.fullscreenElement) await doc.exitFullscreen().catch(() => {});
   }
 
@@ -93,7 +94,7 @@ export function createModes(doc, { canvas, panel, params, chime }) {
       const next = tickPomodoro(pomodoro, now);
       pomodoro = next.pomodoro;
       if (next.switched) {
-        music.bell();
+        radio.bell();
         chime();
         ui.pill.classList.remove('pulse');
         void ui.pill.offsetWidth;

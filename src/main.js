@@ -5,6 +5,7 @@ import { companionLine } from './companion.js';
 import { biomeAt, biomeName, num } from './biomes.js';
 import { drawCompanion } from './companionView.js';
 import { createArrival } from './arrival.js';
+import { drawDiningRoom, drawDiningTable } from './diningView.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
 import { LOOK_FAR } from './frame.js';
@@ -77,7 +78,9 @@ function render(ctx, layout, state, { fog, dt, station }) {
   const { win, u, lookX, lookY } = layout;
   const falling = precipitationKind(env, num(biomeAt(state.distance), 'snow'));
 
-  drawWall(ctx, layout, L);
+  const dining = state.car === 'dining';
+  if (dining) drawDiningRoom(ctx, layout, L);
+  else drawWall(ctx, layout, L);
 
   ctx.save();
   ctx.beginPath();
@@ -114,7 +117,8 @@ function render(ctx, layout, state, { fog, dt, station }) {
     hot: coffeeHot(state),
     inHand: state.pose.sip > 0.3 || cupWithPassenger(aisleEventAt(state.time, state.dayTime)),
   }, { apple: state.time < state.appleUntil });
-  drawRadio(ctx, layout, L, station, state.time);
+  if (dining) drawDiningTable(ctx, layout, L, state);
+  else drawRadio(ctx, layout, L, station, state.time);
   drawLamp(ctx, layout, L);
   ctx.save();
   ctx.translate(-lookX * u * 4, -lookY * u * 2);

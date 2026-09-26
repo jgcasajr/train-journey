@@ -62,6 +62,7 @@ export const DISCOVERIES = [
   { id: 'flock', category: 'Momentos', icon: '🐦', title: 'Revoada', hint: 'Assuste os pássaros.', test: (f) => f.flock },
   { id: 'balloon', category: 'Momentos', icon: '🎈', title: 'Olá, balão!', hint: 'Acene para quem está lá no alto.', test: (f) => f.balloonWave },
   { id: 'companion', category: 'Momentos', icon: '🧳', title: 'Companhia de viagem', hint: 'Alguém pode sentar no banco da frente.', test: (f) => f.companion },
+  { id: 'dining', category: 'Momentos', icon: '🍽️', title: 'Jantar no vagão-restaurante', hint: 'Há um vagão com toalha branca...', test: (f) => f.dining },
   { id: 'woke', category: 'Momentos', icon: '😴', title: 'Acordou a passageira', hint: 'Não se faz isso com quem dorme...', test: (f) => f.woke },
   ...PERSONAS.map((pe) => ({
     id: `persona:${pe.id}`, category: 'Personagens', icon: pe.icon, title: pe.name,
@@ -121,6 +122,7 @@ export function factsFrom({ state, env, view, traveled }) {
     fireworks: fireworkBursts(state, env, view).some((b) => b.age > 0.5),
     whale: whaleAt(state, view) !== null,
     arrival: Boolean(state.holding),
+    dining: state.car === 'dining' && Boolean(state.meal),
     passerby: passerbySeen(state),
     companionPersona: state.companion?.status === 'seated' ? companionPersona(state.companion.seed).id : null,
     traveled,

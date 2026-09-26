@@ -2,6 +2,7 @@ import { biomeAt, num } from './biomes.js';
 import { initialCabin, updateCabin } from './cabin.js';
 import { DAY_SECONDS } from './clock.js';
 import { arrivalAtDestination, destinationStation, updateDestination } from './destination.js';
+import { initialDining, updateDining } from './dining.js';
 import { initialCompanion, updateCompanion } from './companion.js';
 import { EMERGENCY_DECEL, applyEvents, initialInteraction, updateInteraction } from './events.js';
 import { createDrops, updateDrops } from './glass.js';
@@ -40,6 +41,7 @@ export function initialState(input, startKm) {
     ...initialInteraction(),
     ...initialCompanion(),
     ...initialPassersby(),
+    ...initialDining(),
     destination: null,
     tripStart: null,
     holding: false,
@@ -140,6 +142,7 @@ export function step(prev, dt, input) {
     ...updateInteraction(next, dt),
     ...updateCompanion(next),
     ...updatePassersby(next),
+    ...updateDining(next, dt, input),
     jolt: state.brakeStarted ? 1 : next.jolt,
   };
 }

@@ -281,6 +281,9 @@ body.relax { cursor: none; }
 .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 body.relax .toast { top: 16px; }
 
+.car-fade { position: fixed; inset: 0; background: #0b0806; opacity: 0; pointer-events: none; transition: opacity 0.45s; }
+.car-fade.on { opacity: 1; }
+
 .photo-flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 .photo-flash.flashing { animation: flash 0.5s ease-out; }
 @keyframes flash { 0% { opacity: 0.8; } 100% { opacity: 0; } }

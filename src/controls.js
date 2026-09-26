@@ -23,6 +23,20 @@ export function createControls(doc) {
   const stops = el('stops');
   const sound = el('sound');
   const panel = el('panel');
+  const carBtn = el('car-btn');
+  const carFade = el('car-fade');
+  let car = 'passenger';
+  // Walking to the other car: fade to dark, switch, fade back in.
+  carBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    carFade.classList.add('on');
+    setTimeout(() => {
+      car = car === 'dining' ? 'passenger' : 'dining';
+      carBtn.textContent = car === 'dining' ? 'Voltar ao vagão' : 'Ir ao vagão-restaurante';
+      carBtn.setAttribute('aria-pressed', String(car === 'dining'));
+      carFade.classList.remove('on');
+    }, 500);
+  });
   const hud = { km: el('hud-km'), biome: el('hud-biome'), speed: el('hud-speed'), station: el('hud-station') };
   const board = hud.km.parentElement;
 
@@ -45,6 +59,7 @@ export function createControls(doc) {
       weather: weather.value,
       season: season.value,
       stops: stops.checked,
+      car,
     }),
     showDayTime(dayTime) {
       time.value = String(dayTime);

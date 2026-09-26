@@ -1,6 +1,7 @@
 import { aisleEventAt, beatAt, cupWithStaff } from './cabin.js';
 import { lit } from './interior.js';
 import { passengerHand, passengerHead, passengerOrigin } from './passenger.js';
+import { dishFor } from './dining.js';
 import { nextStation } from './stations.js';
 import { circle, clamp, hex, lerp, rgba } from './utils.js';
 
@@ -11,6 +12,14 @@ const SKIN = hex('#c98f6b');
 const HAIR = hex('#2a211c');
 const TROUSERS = hex('#20242c');
 const VEST = hex('#a8322d');
+const WAITER = hex('#f4f1ea');
+const SILVER = hex('#c9ced4');
+// In the dining car the snack-cart visit becomes the waiter serving the dish of the day.
+const DINING_TEXT = {
+  'Um café, por favor!': 'Aceito! Parece delicioso.',
+  'Aqui está, quentinho!': 'Seu prato, senhora.',
+  'Boa viagem!': 'Bom apetite!',
+};
 const STEEL = hex('#9aa0a6');
 const STEEL_DARK = hex('#6d7379');
 const CHINA = hex('#efe8dc');
@@ -28,7 +37,10 @@ function greeting(dayTime) {
 }
 
 /** Resolves a script line key into the text actually spoken. */
-function lineText(beat, state) {
+function lineText(beat, state, ev) {
+  const dining = state.car === 'dining' && ev?.kind === 'cart';
+  if (beat.line === 'offer' && dining) return `${greeting(state.dayTime)}! O prato do dia é ${dishFor(ev.k).name.toLowerCase()}. Aceita?`;
+  if (dining && DINING_TEXT[beat.line]) return DINING_TEXT[beat.line];
   if (beat.line === 'offer') return `${greeting(state.dayTime)}! Café? Pão de queijo?`;
   if (beat.line === 'ticket') return `${greeting(state.dayTime)}! Bilhete, por favor.`;
   if (beat.line === 'nextStop') {
@@ -134,6 +146,28 @@ function drawCart(ctx, c) {
   });
 }
 
+/** The waiter's tray with a silver cloche, carried at shoulder height. */
+function drawTray(ctx, c, [x, y]) {
+  ctx.fillStyle = c(SILVER);
+  ctx.fillRect(x - 5, y - 0.6, 10, 0.8);
+  ctx.beginPath();
+  ctx.arc(x, y - 0.6, 3.2, Math.PI, 0);
+  ctx.fill();
+  ctx.fillRect(x - 0.4, y - 4.4, 0.8, 0.8);
+}
+
+/** A served plate in the waiter's hand (hand-off in the dining car). */
+function drawHandPlate(ctx, c, [x, y], dish) {
+  ctx.fillStyle = c(hex('#fbfaf6'));
+  ctx.beginPath();
+  ctx.ellipse(x, y - 0.5, 3.6, 1, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = c(hex(dish.colors[0]));
+  ctx.beginPath();
+  ctx.ellipse(x + 0.6, y - 1, 1.6, 0.6, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
 function drawHandCup(ctx, c, [x, y]) {
   ctx.fillStyle = c(CHINA);
   ctx.beginPath();
@@ -166,9 +200,10 @@ export function drawBubble(ctx, text, anchor, u, W, tone) {
 }
 
 /** Arm target for the current beat: offering, handing over the cup, punching the ticket, waving. */
-function staffArm(ev, beat, layout, x, waist, v, time) {
+function staffArm(ev, beat, layout, x, waist, v, time, waiter) {
   const conductor = ev.kind === 'conductor';
   if (ev.phase !== 'stop') {
+    if (waiter) return [-9, -20]; // carrying the tray
     return conductor ? [-6 + Math.sin(time * 7) * 2, -4] : [10, -8]; // swing, or hold the trolley
   }
   if (beat?.action === 'serve' && cupWithStaff(ev)) return reachTo(passengerHand(layout, 'receive'), x, waist, v);
@@ -176,7 +211,21 @@ function staffArm(ev, beat, layout, x, waist, v, time) {
   if (beat?.action === 'punch') return reachTo(passengerHand(layout, 'ticket'), x, waist, v);
   if (beat?.action === 'wave' && beat.who === 'staff') return [-7 + Math.sin(time * 9) * 1.5, -33];
   if (beat?.line === 'offer') return [-11, -16]; // open-hand gesture toward her
-  return conductor ? [-7, -6] : [10, -8];
+  return conductor ? [-7, -6] : (waiter ? [-5, -6] : [10, -8]);
+}
+
+function drawBowTie(ctx, c) {
+  ctx.fillStyle = c(hex('#111111'));
+  ctx.beginPath();
+  ctx.moveTo(0, -19.5);
+  ctx.lineTo(-1.6, -20.6);
+  ctx.lineTo(-1.6, -18.4);
+  ctx.closePath();
+  ctx.moveTo(0, -19.5);
+  ctx.lineTo(1.6, -20.6);
+  ctx.lineTo(1.6, -18.4);
+  ctx.closePath();
+  ctx.fill();
 }
 
 /** Conductor or snack-cart attendant visiting the passenger, with a short dialogue. */
@@ -191,23 +240,26 @@ export function drawAisle(ctx, layout, state, L) {
   const waist = H * 0.8 + (walking ? Math.abs(stride) * v * 0.4 : 0);
   const c = (color) => rgba(lit(color, L));
   const beat = beatAt(ev);
-  const arm = staffArm(ev, beat, layout, x, waist, v, state.time);
+  const arm = staffArm(ev, beat, layout, x, waist, v, state.time, ev.kind === 'cart' && state.car === 'dining');
   ctx.save();
   ctx.translate(x, waist);
   ctx.scale(v, v);
-  if (ev.kind === 'cart') drawCart(ctx, c);
+  const waiter = ev.kind === 'cart' && state.car === 'dining';
+  if (ev.kind === 'cart' && !waiter) drawCart(ctx, c);
   drawPerson(ctx, c, {
-    jacket: ev.kind === 'conductor' ? NAVY : VEST,
+    jacket: ev.kind === 'conductor' ? NAVY : (waiter ? WAITER : VEST),
     cap: ev.kind === 'conductor',
     arm,
     swing: stride * 2.5,
     talking: beat?.who === 'staff',
     time: state.time,
   });
-  if (cupWithStaff(ev)) drawHandCup(ctx, c, arm);
+  if (waiter) drawBowTie(ctx, c);
+  if (waiter && ev.phase !== 'stop') drawTray(ctx, c, [-9, -20]);
+  if (cupWithStaff(ev)) (waiter ? drawHandPlate(ctx, c, arm, dishFor(ev.k)) : drawHandCup(ctx, c, arm));
   ctx.restore();
   if (!beat) return;
-  const text = lineText(beat, state);
+  const text = lineText(beat, state, ev);
   if (beat.who === 'staff') drawBubble(ctx, text, { x: x - 2 * v, y: waist - 35 * v }, u, W, 'staff');
   else drawBubble(ctx, text, passengerHead(layout), u, W, 'passenger');
 }

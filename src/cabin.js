@@ -2,6 +2,7 @@ import { aisleEventAt } from './aisleSchedule.js';
 import { isNight } from './clock.js';
 import { companionLine } from './companion.js';
 import { celebrating } from './destination.js';
+import { biting } from './dining.js';
 import { passerbyAt, passerbyLine } from './passersby.js';
 
 import { approach, hash } from './utils.js';
@@ -63,6 +64,7 @@ function targetActivity(state) {
   const visit = ev ? visitActivity(ev) : null;
   if (visit) return visit;
   if (celebrating(state)) return 'wave';
+  if (biting(state)) return 'eat';
   if (state.time < (state.sipUntil ?? 0) && state.coffee > 0.05) return 'sip';
   if (state.speech || companionLine(state, null) || passerbyEngages(state)) return 'talk';
   const woken = state.time < (state.wakeUntil ?? 0);
@@ -76,7 +78,7 @@ function targetActivity(state) {
 }
 
 export const initialCabin = () => ({
-  pose: { read: 0, sleep: 0, sip: 0, ticket: 0, talk: 0, receive: 0, wave: 0 },
+  pose: { read: 0, sleep: 0, sip: 0, ticket: 0, talk: 0, receive: 0, wave: 0, eat: 0 },
   coffee: 1,
   coffeeHotUntil: HOT_SECONDS,
 });

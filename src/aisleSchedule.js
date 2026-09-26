@@ -19,8 +19,8 @@ export function aisleEventAt(time, dayTime) {
   const kind = hash(k, 1802) < 0.5 ? 'conductor' : 'cart';
   const dayAtStart = mod(dayTime - local / DAY_SECONDS, 1);
   if (kind === 'cart' && isNight(dayAtStart)) return null;
-  if (local < WALK_IN) return { kind, phase: 'in', p: local / WALK_IN, t: local };
-  if (local < WALK_IN + STOP) return { kind, phase: 'stop', p: (local - WALK_IN) / STOP, t: local - WALK_IN };
+  if (local < WALK_IN) return { k, kind, phase: 'in', p: local / WALK_IN, t: local };
+  if (local < WALK_IN + STOP) return { k, kind, phase: 'stop', p: (local - WALK_IN) / STOP, t: local - WALK_IN };
   const t = local - WALK_IN - STOP;
-  return { kind, phase: 'out', p: t / WALK_OUT, t };
+  return { k, kind, phase: 'out', p: t / WALK_OUT, t };
 }

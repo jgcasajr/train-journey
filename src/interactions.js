@@ -27,7 +27,7 @@ function cabinTarget(view, state, p) {
   const cord = cordPosition(view);
   if (inBox(p, { x: cord.x - u * 2, y: cord.top, w: u * 4, h: cord.handle - cord.top + u * 2 })) return { type: 'brake', sound: 'brake' };
   if (near(p, lampPosition(view), u * 3.5)) return { type: 'lamp', sound: 'click' };
-  if (inBox(p, radioBox(view))) return { type: 'radio' };
+  if (state.car !== 'dining' && inBox(p, radioBox(view))) return { type: 'radio' };
   const o = passengerOrigin(view);
   const shifted = { x: p.x + view.lookX * u * 4, y: p.y + view.lookY * u * 2 };
   const cupX = o.x + u * 22;

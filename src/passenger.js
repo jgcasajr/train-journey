@@ -25,6 +25,7 @@ const HANDS = {
   ticket: { hand: [17, -33], elbow: [9, -26] },
   receive: { hand: [19, -27], elbow: [9, -21] },
   wave: { hand: [9, -52], elbow: [7, -38] },
+  eat: { hand: [7.6, -37], elbow: [10, -25] },
 };
 
 /** Screen position of the passenger's hip (origin of the passenger's unit space). */
@@ -149,7 +150,7 @@ function drawFaceProfile(ctx, L, head) {
 
 /** Blends the resting arm toward each active pose by its weight. */
 function armPose(pose) {
-  const active = ['read', 'sip', 'ticket', 'receive', 'wave'];
+  const active = ['read', 'sip', 'ticket', 'receive', 'wave', 'eat'];
   const sum = active.reduce((s, k) => s + pose[k], 0);
   const weight = (k) => (sum > 1 ? pose[k] / sum : pose[k]);
   const blend = (part, axis) => active.reduce(
@@ -252,6 +253,23 @@ function drawHeldCup(ctx, L, [x, y], amount) {
   ctx.restore();
 }
 
+/** A fork with a bite of food, raised to her mouth. */
+function drawFork(ctx, L, [x, y], amount) {
+  ctx.save();
+  ctx.globalAlpha = clamp((amount - 0.3) * 2);
+  ctx.strokeStyle = rgba(lit(hex('#c9c9c9'), L));
+  ctx.lineWidth = 0.35;
+  ctx.beginPath();
+  ctx.moveTo(x + 0.5, y + 1.5);
+  ctx.lineTo(x + 2.8, y - 1.6);
+  ctx.stroke();
+  ctx.fillStyle = rgba(lit(hex('#e07a2a'), L));
+  ctx.beginPath();
+  ctx.arc(x + 3, y - 2, 0.7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
 function drawTicket(ctx, L, [x, y], amount) {
   ctx.save();
   ctx.globalAlpha = clamp((amount - 0.3) * 2);
@@ -278,6 +296,7 @@ function drawArm(ctx, L, pose, holdingNewCup, time) {
   if (pose.read > 0.2) drawBook(ctx, L, hand, pose.read, time);
   if (pose.sip > 0.3) drawHeldCup(ctx, L, hand, pose.sip);
   if (holdingNewCup) drawHeldCup(ctx, L, hand, 1);
+  if (pose.eat > 0.3) drawFork(ctx, L, hand, pose.eat);
   if (pose.ticket > 0.3) drawTicket(ctx, L, hand, pose.ticket);
   ctx.fillStyle = rgba(lit(SKIN, L));
   ctx.beginPath();

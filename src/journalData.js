@@ -56,6 +56,7 @@ export const DISCOVERIES = [
   { id: 'animal', category: 'Momentos', icon: '🐮', title: 'Conversa com os bichos', hint: 'Clique em um animal.', test: (f) => f.animal },
   { id: 'flock', category: 'Momentos', icon: '🐦', title: 'Revoada', hint: 'Assuste os pássaros.', test: (f) => f.flock },
   { id: 'balloon', category: 'Momentos', icon: '🎈', title: 'Olá, balão!', hint: 'Acene para quem está lá no alto.', test: (f) => f.balloonWave },
+  { id: 'companion', category: 'Momentos', icon: '🧳', title: 'Companhia de viagem', hint: 'Alguém pode sentar no banco da frente.', test: (f) => f.companion },
   { id: 'woke', category: 'Momentos', icon: '😴', title: 'Acordou a passageira', hint: 'Não se faz isso com quem dorme...', test: (f) => f.woke },
   { id: 'km10', category: 'Marcos', icon: '🛤️', title: '10 km de viagem', hint: 'Continue a viagem.', test: (f) => f.traveled >= 10000 },
   { id: 'km50', category: 'Marcos', icon: '🏅', title: '50 km de viagem', hint: 'Uma longa jornada.', test: (f) => f.traveled >= 50000 },
@@ -89,6 +90,7 @@ export function factsFrom({ state, env, view, traveled }) {
     flock: state.time - (state.scatterAt ?? -99) < 1,
     balloonWave: effects.some((e) => e.kind === 'wave'),
     woke: state.time < (state.wakeUntil ?? 0),
+    companion: state.companion?.status === 'seated',
     traveled,
   };
 }

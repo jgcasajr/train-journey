@@ -1,4 +1,5 @@
 import { LIGHTHOUSE_DEPTH, lighthousesInView } from './coast.js';
+import { companionBox } from './companionView.js';
 import { layerFrame, trackX } from './frame.js';
 import { passingCoverage } from './passingTrain.js';
 import { tunnelsBetween } from './tunnel.js';
@@ -28,6 +29,7 @@ function cabinTarget(view, state, p) {
   const ledgeY = win.y + win.h + u * 1.2;
   if (inBox(p, { x: cupX - u * 3.5, y: ledgeY - u * 6, w: u * 7, h: u * 7 })) return { type: 'sip' };
   if (inBox(shifted, { x: o.x - u * 9, y: o.y - u * 50, w: u * 22, h: u * 50 })) return { type: 'talk' };
+  if (state.companion?.status === 'seated' && inBox(shifted, companionBox(view))) return { type: 'companion' };
   if (curtainBoxes(view, state.curtains).some((b) => inBox(p, b))) return { type: 'curtain', sound: 'swish' };
   return null;
 }

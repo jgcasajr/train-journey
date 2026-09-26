@@ -1,18 +1,18 @@
 import { biomeAt, num } from './biomes.js';
 import { initialCabin, updateCabin } from './cabin.js';
 import { DAY_SECONDS } from './clock.js';
+import { initialCompanion, updateCompanion } from './companion.js';
 import { EMERGENCY_DECEL, applyEvents, initialInteraction, updateInteraction } from './events.js';
 import { createDrops, updateDrops } from './glass.js';
 import { initialPassing, updatePassing } from './passingTrain.js';
 import { seasonWeights } from './seasons.js';
-import { nextStation } from './stations.js';
+import { DWELL, nextStation } from './stations.js';
 import { approach } from './utils.js';
 import { initialWeather, updateWeather } from './weather.js';
 
 export const RAIL_LENGTH = 25; // meters between rail joints ("clack")
 const ACCEL = 2.2; // m/s²
 const BRAKE = 0.9; // m/s², comfortable service braking into stations
-const DWELL = 14; // seconds stopped at a station
 const START_DISTANCE = 600;
 const DROP_COUNT = 140;
 
@@ -36,6 +36,7 @@ export function initialState(input, startKm) {
     ...initialPassing(),
     ...initialCabin(),
     ...initialInteraction(),
+    ...initialCompanion(),
   };
 }
 
@@ -124,7 +125,12 @@ function moving(state, dt, input) {
 export function step(prev, dt, input) {
   const state = applyEvents(prev, input.events ?? []);
   const next = state.dwell > 0 ? standing(state, dt, input) : moving(state, dt, input);
-  return { ...next, ...updateInteraction(next, dt), jolt: state.brakeStarted ? 1 : next.jolt };
+  return {
+    ...next,
+    ...updateInteraction(next, dt),
+    ...updateCompanion(next),
+    jolt: state.brakeStarted ? 1 : next.jolt,
+  };
 }
 
 /** Text for the destination board: current or next station. */

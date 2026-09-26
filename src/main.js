@@ -2,6 +2,7 @@ import { drawAisle } from './aisle.js';
 import { createAudio } from './audio.js';
 import { aisleEventAt, coffeeHot, cupWithPassenger } from './cabin.js';
 import { biomeAt, biomeName, num } from './biomes.js';
+import { drawCompanion } from './companionView.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
 import { LOOK_FAR } from './frame.js';
@@ -108,6 +109,7 @@ function render(ctx, layout, state, { fog, dt }) {
   ctx.save();
   ctx.translate(-lookX * u * 4, -lookY * u * 2);
   drawPassenger(ctx, layout, state, L, env, bob);
+  drawCompanion(ctx, layout, state, L);
   ctx.restore();
   ctx.save();
   ctx.translate(-lookX * u * 7, -lookY * u * 3);

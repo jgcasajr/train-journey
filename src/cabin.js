@@ -1,4 +1,7 @@
-import { DAY_SECONDS } from './clock.js';
+import { DAY_SECONDS, isNight } from './clock.js';
+import { companionLine } from './companion.js';
+
+export { isNight };
 import { approach, hash, mod } from './utils.js';
 
 const AISLE_PERIOD = 140; // seconds between aisle visits (conductor or snack cart)
@@ -32,7 +35,6 @@ export const SCRIPTS = {
   ],
 };
 
-export const isNight = (dayTime) => dayTime > 0.9 || dayTime < 0.2;
 
 /**
  * Who walks down the aisle right now, as a pure function of time:
@@ -74,7 +76,7 @@ function targetActivity(state) {
   const visit = ev ? visitActivity(ev) : null;
   if (visit) return visit;
   if (state.time < (state.sipUntil ?? 0) && state.coffee > 0.05) return 'sip';
-  if (state.speech) return 'talk';
+  if (state.speech || companionLine(state, null)) return 'talk';
   const woken = state.time < (state.wakeUntil ?? 0);
   if (isNight(state.dayTime) && state.dwell <= 0 && !woken) return 'sleep';
   const slot = Math.floor(state.time / ACTIVITY_SLOT);

@@ -1,4 +1,5 @@
 import { aisleEventAt, beatAt, cupWithPassenger } from './cabin.js';
+import { companionLine } from './companion.js';
 import { lit } from './interior.js';
 import { circle, clamp, hex, mix, rgba } from './utils.js';
 
@@ -300,7 +301,7 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
   const breath = Math.sin(state.time * (pose.sleep > 0.5 ? 0.8 : 1.3)) * 0.3;
   const nod = (Math.sin(state.time * 0.7) * 0.4 + bob / u) * (1 - pose.sleep);
   const ev = aisleEventAt(state.time, state.dayTime);
-  const speaking = beatAt(ev)?.who === 'passenger';
+  const speaking = beatAt(ev)?.who === 'passenger' || companionLine(state, null)?.who === 'p';
   const facing = Math.max(pose.talk, pose.ticket, pose.receive);
   const head = {
     tilt: nod * 0.02 + pose.read * 0.22 - pose.sleep * 0.32 - pose.sip * 0.12 - facing * 0.08,

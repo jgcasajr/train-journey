@@ -31,6 +31,7 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Litoral**: veleiros e barcos de pesca balançando no mar, e um farol listrado cujo facho gira à noite (com clarão quando aponta para você).
 - **Animais**: vacas, ovelhas e cavalos nas fazendas.
 - **A passageira vive a viagem**: alterna entre olhar a paisagem, ler um livro e tomar goles de café (a xícara vai esvaziando e o vapor some quando esfria). À noite cochila com a cabeça no encosto ("z z z"), e com o escuro lá fora o rosto dela aparece refletido no vidro.
+- **Companhia de viagem**: nas estações às vezes alguém embarca com a mala, pede licença e senta no banco da frente. Os dois conversam de tempos em tempos (de onde vêm, para onde vão, o tempo, o livro...), cochilam à noite e, algumas estações depois, a pessoa se despede e desce. Cada companheiro tem aparência própria; clique nele para ouvir algo. Na plataforma, parte das pessoas embarca e outras desembarcam rumo ao prédio da estação.
 - **Corredor**: a cada ~2 min passa o **condutor** ("Bilhete, por favor!") — ela levanta o bilhete — ou o **carrinho de lanches** ("Café? Pão de queijo?"), que reabastece o café. À noite o carrinho não passa.
 - **Trem no sentido oposto**: de tempos em tempos (a cada 1–2 min) um trem passa colado à janela, com tranco da onda de ar, "vuuush" no áudio e janelas acesas à noite.
 - **Olhar ao redor**: mover o mouse desloca a cabeça do observador; a paisagem se move em relação à moldura com paralaxe por profundidade e a passageira se move no sentido contrário.
@@ -50,7 +51,7 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 38 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, acordar a passageira) e marcos de 10 e 50 km. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 39 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira) e marcos de 10 e 50 km. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -58,6 +59,7 @@ O cursor vira mãozinha sobre o que é clicável.
 
 | Onde clicar | O que acontece |
 | --- | --- |
+| O companheiro da frente | Fala alguma coisa simpática |
 | A passageira | Ela vira e comenta algo do momento (paisagem, chuva, noite, estação...). Dormindo, acorda assustada. |
 | A xícara | Ela toma um gole (ou reclama que o café acabou) |
 | A lâmpada | Alterna automático / ligada / desligada |
@@ -129,6 +131,8 @@ src/
   pomodoro.js   lógica do timer
   lineMap.js    mapa da linha (SVG)
   aisle.js      condutor e carrinho de lanches
+  companion.js  quem embarca, conversas e despedidas (simulação)
+  companionView.js banco da frente e o companheiro de viagem
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro
 ```

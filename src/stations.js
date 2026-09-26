@@ -2,6 +2,7 @@ import { BIOMES, SEGMENT } from './biomes.js';
 import { mod } from './utils.js';
 
 export const PLATFORM_LENGTH = 170; // meters
+export const DWELL = 14; // seconds stopped at a station
 const STATION_POSITION = 0.4; // fraction into the biome segment (well before the blend zone)
 const STOP_OFFSET = 50; // meters from platform start where the window stops
 

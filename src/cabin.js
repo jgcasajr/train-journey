@@ -1,14 +1,13 @@
-import { DAY_SECONDS, isNight } from './clock.js';
+import { aisleEventAt } from './aisleSchedule.js';
+import { isNight } from './clock.js';
 import { companionLine } from './companion.js';
 import { celebrating } from './destination.js';
+import { passerbyAt, passerbyLine } from './passersby.js';
 
-export { isNight };
-import { approach, hash, mod } from './utils.js';
+import { approach, hash } from './utils.js';
 
-const AISLE_PERIOD = 140; // seconds between aisle visits (conductor or snack cart)
-const WALK_IN = 5;
-export const STOP = 14;
-const WALK_OUT = 5;
+export { aisleEventAt, isNight };
+
 const ACTIVITY_SLOT = 45; // seconds per passenger activity
 const POSE_RATE = 1.4; // pose easing speed (1/s)
 const SIP_RATE = 0.035; // coffee drunk per second while sipping
@@ -37,25 +36,6 @@ export const SCRIPTS = {
 };
 
 
-/**
- * Who walks down the aisle right now, as a pure function of time:
- * { kind: 'conductor' | 'cart', phase: 'in' | 'stop' | 'out', p: 0..1, t: seconds into the phase }.
- * The snack cart skips visits that *start* at night, so a visit never vanishes halfway through.
- */
-export function aisleEventAt(time, dayTime) {
-  const k = Math.floor(time / AISLE_PERIOD);
-  if (k < 1) return null;
-  const local = time - k * AISLE_PERIOD - (20 + hash(k, 1801) * 60);
-  if (local < 0 || local > WALK_IN + STOP + WALK_OUT) return null;
-  const kind = hash(k, 1802) < 0.5 ? 'conductor' : 'cart';
-  const dayAtStart = mod(dayTime - local / DAY_SECONDS, 1);
-  if (kind === 'cart' && isNight(dayAtStart)) return null;
-  if (local < WALK_IN) return { kind, phase: 'in', p: local / WALK_IN, t: local };
-  if (local < WALK_IN + STOP) return { kind, phase: 'stop', p: (local - WALK_IN) / STOP, t: local - WALK_IN };
-  const t = local - WALK_IN - STOP;
-  return { kind, phase: 'out', p: t / WALK_OUT, t };
-}
-
 /** The script beat playing now (who speaks, what, and any action), or null. */
 export function beatAt(ev) {
   if (ev?.phase !== 'stop') return null;
@@ -71,6 +51,12 @@ function visitActivity(ev) {
   return 'talk';
 }
 
+/** A passer-by stopping to chat with her, or a line she says to one passing by. */
+function passerbyEngages(state) {
+  const ev = passerbyAt(state.time, state.dayTime);
+  return Boolean(ev && (ev.phase === 'stop' || passerbyLine(ev)?.who === 'p'));
+}
+
 /** What the passenger wants to be doing: a visit first, then sleep, read, sip coffee or just watch. */
 function targetActivity(state) {
   const ev = aisleEventAt(state.time, state.dayTime);
@@ -78,7 +64,7 @@ function targetActivity(state) {
   if (visit) return visit;
   if (celebrating(state)) return 'wave';
   if (state.time < (state.sipUntil ?? 0) && state.coffee > 0.05) return 'sip';
-  if (state.speech || companionLine(state, null)) return 'talk';
+  if (state.speech || companionLine(state, null) || passerbyEngages(state)) return 'talk';
   const woken = state.time < (state.wakeUntil ?? 0);
   if (isNight(state.dayTime) && state.dwell <= 0 && !woken) return 'sleep';
   const slot = Math.floor(state.time / ACTIVITY_SLOT);

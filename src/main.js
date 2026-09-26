@@ -1,6 +1,7 @@
 import { drawAisle } from './aisle.js';
 import { createAudio } from './audio.js';
-import { aisleEventAt, coffeeHot, cupWithPassenger } from './cabin.js';
+import { aisleEventAt, beatAt, coffeeHot, cupWithPassenger } from './cabin.js';
+import { companionLine } from './companion.js';
 import { biomeAt, biomeName, num } from './biomes.js';
 import { drawCompanion } from './companionView.js';
 import { createArrival } from './arrival.js';
@@ -9,7 +10,7 @@ import { createFog } from './fog.js';
 import { LOOK_FAR } from './frame.js';
 import { drawDrops, drawGlass } from './glass.js';
 import { hitTest } from './interactions.js';
-import { drawFloats, drawSpeech } from './interactionsView.js';
+import { drawFloats, drawSpeech, drawThought } from './interactionsView.js';
 import {
   drawCord, drawCurtains, drawRadio, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
 } from './interior.js';
@@ -20,7 +21,10 @@ import { createModes } from './modes.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
+import { passerbyAt, passerbyCues } from './passersby.js';
+import { drawPasserby } from './passersbyView.js';
 import { createPointer } from './pointer.js';
+import { thoughtAt } from './thoughts.js';
 import { crossingNear } from './roads.js';
 import { SEASON_NAMES, dominantSeason } from './seasons.js';
 import { burstsExploded, drawFireworks, drawShootingStar } from './rareSky.js';
@@ -109,7 +113,7 @@ function render(ctx, layout, state, { fog, dt, station }) {
     level: state.coffee,
     hot: coffeeHot(state),
     inHand: state.pose.sip > 0.3 || cupWithPassenger(aisleEventAt(state.time, state.dayTime)),
-  });
+  }, { apple: state.time < state.appleUntil });
   drawRadio(ctx, layout, L, station, state.time);
   drawLamp(ctx, layout, L);
   ctx.save();
@@ -120,13 +124,23 @@ function render(ctx, layout, state, { fog, dt, station }) {
   ctx.save();
   ctx.translate(-lookX * u * 7, -lookY * u * 3);
   drawAisle(ctx, layout, state, L);
+  drawPasserby(ctx, layout, state, L);
   ctx.restore();
   drawSpeech(ctx, layout, state);
+  const thought = thoughtAt(state, env, isBusy(state));
+  if (thought) drawThought(ctx, layout, thought);
   drawVignette(ctx, layout);
   if (env.flash > 0.01) {
     ctx.fillStyle = `rgba(225,232,255,${env.flash * 0.12 * (1 - blocked)})`;
     ctx.fillRect(0, 0, layout.W, layout.H);
   }
+}
+
+/** Something is already going on around her, so she won't drift into her own thoughts. */
+function isBusy(state) {
+  return Boolean(state.speech || state.holding || state.pose.sleep > 0.5
+    || companionLine(state, null) || beatAt(aisleEventAt(state.time, state.dayTime))
+    || passerbyAt(state.time, state.dayTime));
 }
 
 function playSounds(audio, state) {
@@ -255,6 +269,7 @@ function start() {
     state = step(state, dt, { ...input, destination: arrival.destination(), events: clicks.takeEvents() });
     arrival.update(state);
     playSounds(audio, state);
+    passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue));
     modes.tick(state.distance, state.destination);
     if (input.autoDay) controls.showDayTime(state.dayTime);
     hudTimer += dt;

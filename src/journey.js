@@ -5,6 +5,7 @@ import { arrivalAtDestination, destinationStation, updateDestination } from './d
 import { initialCompanion, updateCompanion } from './companion.js';
 import { EMERGENCY_DECEL, applyEvents, initialInteraction, updateInteraction } from './events.js';
 import { createDrops, updateDrops } from './glass.js';
+import { initialPassersby, updatePassersby } from './passersby.js';
 import { initialPassing, updatePassing } from './passingTrain.js';
 import { seasonWeights } from './seasons.js';
 import { DWELL, nextStation } from './stations.js';
@@ -38,6 +39,7 @@ export function initialState(input, startKm) {
     ...initialCabin(),
     ...initialInteraction(),
     ...initialCompanion(),
+    ...initialPassersby(),
     destination: null,
     tripStart: null,
     holding: false,
@@ -137,6 +139,7 @@ export function step(prev, dt, input) {
     ...next,
     ...updateInteraction(next, dt),
     ...updateCompanion(next),
+    ...updatePassersby(next),
     jolt: state.brakeStarted ? 1 : next.jolt,
   };
 }

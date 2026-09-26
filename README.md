@@ -32,6 +32,8 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Animais**: vacas, ovelhas e cavalos nas fazendas.
 - **A passageira vive a viagem**: alterna entre olhar a paisagem, ler um livro e tomar goles de café (a xícara vai esvaziando e o vapor some quando esfria). À noite cochila com a cabeça no encosto ("z z z"), e com o escuro lá fora o rosto dela aparece refletido no vidro.
 - **Raridades**: estrelas cadentes em noites limpas, cervos pastando no meio da floresta, fogos de artifício sobre a cidade à noite (com estouros no áudio) e uma baleia que surge no mar do litoral, solta o jato de água e mergulha mostrando a cauda.
+- **Passantes no corredor** (um a cada ~1 min): criança com balão, violinista que para e toca, senhora que oferece maçã (e a maçã fica no parapeito), executivo gritando ao celular, turista que tira foto (com flash), cachorro fugido com o dono atrás, casal apaixonado, vendedor de balas, estudante de fones e — raramente — um mágico. Cada um tem suas falas, ela responde, e clicar neles arranca uma frase.
+- **Pensamentos**: de vez em quando, quando nada está acontecendo, ela pensa alto num balão de pensamento ("Nova fase, nova vida.", "Cada estação é um recomeço."...), conforme a paisagem, o clima e a hora.
 - **Companhia de viagem**: nas estações às vezes alguém embarca com a mala, pede licença e senta no banco da frente. Os dois conversam de tempos em tempos (de onde vêm, para onde vão, o tempo, o livro...), cochilam à noite e, algumas estações depois, a pessoa se despede e desce. Cada companheiro tem aparência própria; clique nele para ouvir algo. Na plataforma, parte das pessoas embarca e outras desembarcam rumo ao prédio da estação.
 - **Corredor**: a cada ~2 min passa o **condutor** ("Bilhete, por favor!") — ela levanta o bilhete — ou o **carrinho de lanches** ("Café? Pão de queijo?"), que reabastece o café. À noite o carrinho não passa.
 - **Trem no sentido oposto**: de tempos em tempos (a cada 1–2 min) um trem passa colado à janela, com tranco da onda de ar, "vuuush" no áudio e janelas acesas à noite.
@@ -67,7 +69,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 44 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), raridades (estrela cadente, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km). Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 54 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor, raridades (estrela cadente, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km). Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -75,6 +77,7 @@ O cursor vira mãozinha sobre o que é clicável.
 
 | Onde clicar | O que acontece |
 | --- | --- |
+| Quem passa pelo corredor | Fala algo próprio do personagem |
 | O companheiro da frente | Fala alguma coisa simpática |
 | A passageira | Ela vira e comenta algo do momento (paisagem, chuva, noite, estação...). Dormindo, acorda assustada. |
 | A xícara | Ela toma um gole (ou reclama que o café acabou) |
@@ -153,6 +156,10 @@ src/
   aisle.js      condutor e carrinho de lanches
   companion.js  quem embarca, conversas e despedidas (simulação)
   companionView.js banco da frente e o companheiro de viagem
+  aisleSchedule.js horários do condutor e do carrinho
+  passersby.js  elenco do corredor, cenas e falas (simulação)
+  passersbyView.js desenho dos passantes e seus adereços
+  thoughts.js   pensamentos espontâneos da passageira
   rareSky.js    estrela cadente e fogos de artifício
   wildlife.js   cervos e baleia
   audio.js      som gerado com Web Audio (sem arquivos)

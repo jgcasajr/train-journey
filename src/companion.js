@@ -23,6 +23,16 @@ const CHATS = [
   [['c', 'Que cheiro bom desse café.'], ['p', 'É do carrinho, recomendo!']],
   [['p', 'Você mora por aqui?'], ['c', 'Moro perto de {next}.']],
   [['c', 'Viajar de trem é outra coisa, né?'], ['p', 'Nem me fale. Dá pra pensar na vida.']],
+  [['c', 'Você vai a trabalho ou a passeio?'], ['p', 'Um pouco dos dois. Recomeço, sabe?'], ['c', 'Recomeços são os melhores.']],
+  [['p', 'Já reparou como a vida parece mais leve no trem?'], ['c', 'É o balanço. Acalma a gente.']],
+  [['c', 'Minha avó dizia que viagem boa é a que muda a gente.'], ['p', 'Sábia, sua avó.']],
+  [['c', 'Aceita um biscoito?'], ['p', 'Aceito! Obrigada!'], ['c', 'É de polvilho, receita de casa.']],
+  [['p', 'Qual a sua estação favorita da linha?'], ['c', 'Porto Azul, por causa do mar.'], ['p', 'Boa escolha!']],
+  [['c', 'Olha aquele pássaro!'], ['p', 'Onde? Ah, lá! Que bonito.']],
+  [['c', 'Você acredita em destino?'], ['p', 'Acredito em caminho.'], ['c', 'Gostei disso.']],
+  [['p', 'Tô começando uma fase nova.'], ['c', 'Que demais! Nova fase, novos ares.'], ['p', 'Exatamente.']],
+  [['c', 'Nunca canso dessa paisagem.'], ['p', 'Nem eu. Sempre tem algo diferente.']],
+  [['c', 'Que horas são? Perdi a noção.'], ['p', 'No trem o tempo corre diferente.']],
 ];
 const CLICK_LINES = ['Oi! Tudo bem?', 'Quer um biscoito?', 'Bela viagem, né?', 'Adoro essa linha.'];
 

@@ -263,7 +263,29 @@ function drawCup(ctx, y, u, L, time, bob, cup) {
   if (cup.hot) drawSteam(ctx, x, y - u * 4.8, u, time);
 }
 
-export function drawLedge(ctx, layout, L, time, bob, cup) {
+/** A red apple (the grandma's gift) resting on the ledge. */
+function drawApple(ctx, x, y, u, L) {
+  ctx.fillStyle = rgba(lit(hex('#c0392b'), L));
+  ctx.beginPath();
+  ctx.arc(x, y - u * 1.3, u * 1.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = rgba(lit(hex('#e8705e'), L));
+  ctx.beginPath();
+  ctx.arc(x - u * 0.45, y - u * 1.75, u * 0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = rgba(lit(hex('#4a3020'), L));
+  ctx.lineWidth = Math.max(1, u * 0.2);
+  ctx.beginPath();
+  ctx.moveTo(x, y - u * 2.6);
+  ctx.lineTo(x + u * 0.25, y - u * 3.3);
+  ctx.stroke();
+  ctx.fillStyle = rgba(lit(hex('#4f8f3f'), L));
+  ctx.beginPath();
+  ctx.ellipse(x + u * 0.7, y - u * 3.1, u * 0.6, u * 0.3, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+export function drawLedge(ctx, layout, L, time, bob, cup, { apple = false } = {}) {
   const { win, u } = layout;
   const y = win.y + win.h + u * 1.2;
   ctx.fillStyle = rgba(lit(LEDGE, L));
@@ -271,6 +293,7 @@ export function drawLedge(ctx, layout, L, time, bob, cup) {
   ctx.fillStyle = rgba(lit(LEDGE_TOP, L));
   ctx.fillRect(win.x - u * 4, y, win.w + u * 8, u * 0.5);
   drawCup(ctx, y + u * 0.2, u, L, time, bob, cup);
+  if (apple) drawApple(ctx, cup.x - u * 6, y + u * 0.2, u, L);
 }
 
 export function drawLamp(ctx, layout, L) {

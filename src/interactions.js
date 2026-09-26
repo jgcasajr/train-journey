@@ -6,6 +6,7 @@ import { tunnelsBetween } from './tunnel.js';
 import { cordPosition, curtainBoxes, lampPosition, radioBox } from './interior.js';
 import { FIELDS_DEPTH, farmPropsInView } from './landscape.js';
 import { passengerOrigin } from './passenger.js';
+import { passerbyBox } from './passersbyView.js';
 import { balloonsInView, flockBirds } from './skylife.js';
 
 const ANIMALS = {
@@ -20,6 +21,9 @@ const near = (p, q, r) => Math.hypot(p.x - q.x, p.y - q.y) <= r;
 /** Cabin objects, in screen coordinates (the passenger is shifted by the head-look parallax). */
 function cabinTarget(view, state, p) {
   const { u, win } = view;
+  const walker = passerbyBox(view, state);
+  const inAisle = { x: p.x + view.lookX * u * 7, y: p.y + view.lookY * u * 3 };
+  if (walker && inBox(inAisle, walker)) return { type: 'passerby', sound: 'click' };
   const cord = cordPosition(view);
   if (inBox(p, { x: cord.x - u * 2, y: cord.top, w: u * 4, h: cord.handle - cord.top + u * 2 })) return { type: 'brake', sound: 'brake' };
   if (near(p, lampPosition(view), u * 3.5)) return { type: 'lamp', sound: 'click' };

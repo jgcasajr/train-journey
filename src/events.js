@@ -1,6 +1,7 @@
 import { biomeName } from './biomes.js';
 import { isNight } from './clock.js';
 import { companionClicked } from './companion.js';
+import { passerbyClicked } from './passersby.js';
 import { approach, hash } from './utils.js';
 
 const SPEECH_SECONDS = 3.4;
@@ -68,6 +69,8 @@ function reduce(state, event) {
       if (state.speed < 2) return say(state, 'O trem já está parado...');
       if (state.time < state.brakeUntil) return {};
       return { ...say(state, 'Ai! O que foi isso?!'), brakeUntil: state.time + BRAKE_SECONDS, brakeStarted: true };
+    case 'passerby':
+      return passerbyClicked(state);
     case 'companion':
       return companionClicked(state);
     case 'continue':

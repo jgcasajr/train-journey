@@ -7,6 +7,7 @@ import { bridgeAt } from './rivers.js';
 import { crossingsBetween } from './roads.js';
 import { dominantSeason } from './seasons.js';
 import { tunnelCoverage } from './tunnel.js';
+import { CAST, passerbyAt } from './passersby.js';
 import { fireworkBursts, shootingStarAt } from './rareSky.js';
 import { precipitationKind, rainbowStrength } from './weatherView.js';
 import { deerInView, whaleAt } from './wildlife.js';
@@ -25,7 +26,7 @@ const SEASONS = [
   { id: 'winter', title: 'Inverno', icon: '⛄', hint: 'Tudo fica branquinho.' },
 ];
 
-export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu e clima', 'Pelo caminho', 'Momentos', 'Raridades', 'Marcos'];
+export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu e clima', 'Pelo caminho', 'Momentos', 'Personagens', 'Raridades', 'Marcos'];
 
 /**
  * Every collectible discovery. `test(f)` receives the facts of the current frame (see factsFrom);
@@ -60,6 +61,10 @@ export const DISCOVERIES = [
   { id: 'balloon', category: 'Momentos', icon: '🎈', title: 'Olá, balão!', hint: 'Acene para quem está lá no alto.', test: (f) => f.balloonWave },
   { id: 'companion', category: 'Momentos', icon: '🧳', title: 'Companhia de viagem', hint: 'Alguém pode sentar no banco da frente.', test: (f) => f.companion },
   { id: 'woke', category: 'Momentos', icon: '😴', title: 'Acordou a passageira', hint: 'Não se faz isso com quem dorme...', test: (f) => f.woke },
+  ...CAST.map((ch) => ({
+    id: `character:${ch.id}`, category: 'Personagens', icon: ch.icon, title: ch.name,
+    hint: ch.rarity <= 3 ? 'Esse é raro de ver...' : 'Alguém vai passar pelo corredor.', test: (f) => f.passerby === ch.id,
+  })),
   { id: 'shootingStar', category: 'Raridades', icon: '🌠', title: 'Estrela cadente', hint: 'Olhe o céu numa noite limpa.', test: (f) => f.shootingStar },
   { id: 'deer', category: 'Raridades', icon: '🦌', title: 'Cervo', hint: 'Bem no meio da floresta.', test: (f) => f.deer },
   { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
@@ -68,6 +73,13 @@ export const DISCOVERIES = [
   { id: 'km10', category: 'Marcos', icon: '🛤️', title: '10 km de viagem', hint: 'Continue a viagem.', test: (f) => f.traveled >= 10000 },
   { id: 'km50', category: 'Marcos', icon: '🏅', title: '50 km de viagem', hint: 'Uma longa jornada.', test: (f) => f.traveled >= 50000 },
 ];
+
+/** The passer-by counts as met once they stop by her or are halfway across the aisle. */
+function passerbySeen(state) {
+  const ev = passerbyAt(state.time, state.dayTime);
+  if (!ev) return null;
+  return ev.phase === 'stop' || (ev.phase === 'cross' && ev.p > 0.3 && ev.p < 0.7) ? ev.ch.id : null;
+}
 
 /** Facts about the current frame that discoveries are tested against. */
 export function factsFrom({ state, env, view, traveled }) {
@@ -103,6 +115,7 @@ export function factsFrom({ state, env, view, traveled }) {
     fireworks: fireworkBursts(state, env, view).some((b) => b.age > 0.5),
     whale: whaleAt(state, view) !== null,
     arrival: Boolean(state.holding),
+    passerby: passerbySeen(state),
     traveled,
   };
 }

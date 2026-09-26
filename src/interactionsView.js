@@ -26,6 +26,30 @@ export function drawFloats(ctx, layout, state) {
   });
 }
 
+/** A thought bubble (cloud with trailing dots) above her head: things she thinks on her own. */
+export function drawThought(ctx, layout, text) {
+  const { u, W } = layout;
+  const head = passengerHead(layout);
+  ctx.font = `italic 500 ${u * 2}px Georgia, serif`;
+  const w = ctx.measureText(text).width + u * 3;
+  const h = u * 4;
+  const x = Math.min(Math.max(u, head.x - w / 2 + u * 6), W - w - u);
+  const y = head.y - h - u * 3;
+  ctx.fillStyle = 'rgba(255,255,255,0.93)';
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, h / 2);
+  ctx.fill();
+  [[1.2, 1], [0.7, 2.6]].forEach(([r, k]) => {
+    ctx.beginPath();
+    ctx.arc(head.x + u * (1 + k), y + h + u * k * 0.9, u * r * 0.7, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.fillStyle = '#4a3a2a';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + w / 2, y + h / 2);
+}
+
 /** What she says when clicked (hidden while an aisle visitor's scene is playing). */
 export function drawSpeech(ctx, layout, state) {
   if (!state.speech) return;

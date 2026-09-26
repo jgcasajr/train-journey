@@ -20,7 +20,7 @@ const STREAMS = [
 const memo = new Map();
 
 function computeCrossing(k) {
-  if (k < 1 || hash(k, 1001) > 0.7) return null;
+  if (!Number.isFinite(k) || k < 1 || hash(k, 1001) > 0.7) return null;
   const at = k * CROSS_CELL + 300 + hash(k, 1002) * (CROSS_CELL - 600);
   const bm = biomeAt(at);
   const blocked = riverAt(at, 80)

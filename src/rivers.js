@@ -11,7 +11,7 @@ export const ABUTMENT = 15; // meters of stone abutment on each side of the rive
 const memo = new Map();
 
 function computeRiver(k) {
-  if (k < 1 || hash(k, 701) > 0.45) return null;
+  if (!Number.isFinite(k) || k < 1 || hash(k, 701) > 0.45) return null;
   const width = 40 + hash(k, 702) * 70;
   const start = k * CELL + 200 + hash(k, 703) * (CELL - width - 400);
   const end = start + width;

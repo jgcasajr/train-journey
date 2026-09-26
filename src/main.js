@@ -21,6 +21,7 @@ import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.
 import { createPointer } from './pointer.js';
 import { crossingNear } from './roads.js';
 import { SEASON_NAMES, dominantSeason } from './seasons.js';
+import { burstsExploded, drawFireworks, drawShootingStar } from './rareSky.js';
 import { drawSky, environment } from './sky.js';
 import { drawSkyLife } from './skylife.js';
 import { tunnelCoverage } from './tunnel.js';
@@ -82,6 +83,8 @@ function render(ctx, layout, state, { fog, dt }) {
   drawRainbow(ctx, layout, env);
   drawLightning(ctx, layout, state.lightning);
   drawSkyLife(ctx, layout, state, env);
+  drawShootingStar(ctx, layout, state, env);
+  drawFireworks(ctx, layout, state, env);
   drawLandscape(ctx, layout, state, env);
   drawPassingTrain(ctx, layout, state, env);
   drawFloats(ctx, layout, state);
@@ -238,7 +241,10 @@ function start() {
       const view = { ...layout, lookX: look.x, lookY: look.y };
       render(ctx, view, state, { fog, dt });
       scene = { view, state };
-      journal.observe(state, sceneEnvironment(state), view);
+      const env = sceneEnvironment(state);
+      journal.observe(state, env, view);
+      const booms = burstsExploded(state.time - dt, state, env, view);
+      if (booms > 0) audio.sfx('boom');
     }
     requestAnimationFrame(frame);
   }

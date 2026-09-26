@@ -14,6 +14,7 @@ import { drawStations } from './stationView.js';
 import { stationsBetween } from './stations.js';
 import { drawTunnels } from './tunnel.js';
 import { drawMist, drawPrecipitation, precipitationKind } from './weatherView.js';
+import { drawWhale, drawWildlife } from './wildlife.js';
 import { fbm, hash, hex, mix, noise1, rgba, scale } from './utils.js';
 
 const TRUNK = hex('#4a3526');
@@ -98,6 +99,7 @@ function drawWater(ctx, layout, state, env) {
     ctx.fillRect(x, top + depthT * win.h * 0.2, len, Math.max(1, u * 0.12));
   });
   drawBoats(ctx, layout, state, env, lf, top);
+  drawWhale(ctx, layout, state, env, top);
 }
 
 function drawHills(ctx, layout, state, env) {
@@ -173,6 +175,7 @@ function drawFields(ctx, layout, state, env) {
     else if (kind === 'tree') drawTree(ctx, pick(bm, hash(i, 54)).tree, x, y, s * (0.7 + hash(i, 55) * 0.6), treeStyle(bm, env, haze));
     else drawHouse(ctx, x, y, s * 0.7, houseStyle(i + 7000, env, haze));
   });
+  drawWildlife(ctx, layout, state, env, heightAt);
   drawMist(ctx, layout, state, env, horizon + win.h * 0.2, win.h * 0.07, 1611);
 }
 

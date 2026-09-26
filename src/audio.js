@@ -134,6 +134,10 @@ const SFX = {
   click: (g, t) => noiseBurst(g, t, { freq: 3500, q: 2, duration: 0.03, peak: 0.3 }),
   swish: (g, t) => noiseBurst(g, t, { freq: 1200, q: 0.4, duration: 0.5, peak: 0.12, type: 'lowpass' }),
   cheer: (g, t) => [880, 1175].forEach((freq, k) => tone(g, { type: 'triangle', freq, when: t + k * 0.12, duration: 0.3, peak: 0.05 })),
+  boom: (g, t) => {
+    noiseBurst(g, t, { freq: 120, q: 0.7, duration: 0.9, peak: 0.5, type: 'lowpass' });
+    Array.from({ length: 6 }, (_, k) => noiseBurst(g, t + 0.25 + k * 0.09, { freq: 4000, q: 1, duration: 0.05, peak: 0.08 }));
+  },
   discover: (g, t) => [1047, 1319, 1568, 2093].forEach((freq, k) => tone(g, { type: 'sine', freq, when: t + k * 0.08, duration: 0.6, peak: 0.06 })),
   chime: (g, t) => [1320, 1760].forEach((freq, k) => tone(g, { type: 'sine', freq, when: t + k * 0.15, duration: 1.2, peak: 0.08 })),
 };

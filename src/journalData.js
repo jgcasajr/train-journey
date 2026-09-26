@@ -7,7 +7,9 @@ import { bridgeAt } from './rivers.js';
 import { crossingsBetween } from './roads.js';
 import { dominantSeason } from './seasons.js';
 import { tunnelCoverage } from './tunnel.js';
+import { fireworkBursts, shootingStarAt } from './rareSky.js';
 import { precipitationKind, rainbowStrength } from './weatherView.js';
+import { deerInView, whaleAt } from './wildlife.js';
 
 const BIOME_ICONS = {
   Campos: '🌾', Fazenda: '🐄', Floresta: '🌲', Montanhas: '🏔️', Outono: '🍂', Subúrbio: '🏡', Cidade: '🏙️', Litoral: '🏖️',
@@ -23,7 +25,7 @@ const SEASONS = [
   { id: 'winter', title: 'Inverno', icon: '⛄', hint: 'Tudo fica branquinho.' },
 ];
 
-export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu e clima', 'Pelo caminho', 'Momentos', 'Marcos'];
+export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu e clima', 'Pelo caminho', 'Momentos', 'Raridades', 'Marcos'];
 
 /**
  * Every collectible discovery. `test(f)` receives the facts of the current frame (see factsFrom);
@@ -58,6 +60,10 @@ export const DISCOVERIES = [
   { id: 'balloon', category: 'Momentos', icon: '🎈', title: 'Olá, balão!', hint: 'Acene para quem está lá no alto.', test: (f) => f.balloonWave },
   { id: 'companion', category: 'Momentos', icon: '🧳', title: 'Companhia de viagem', hint: 'Alguém pode sentar no banco da frente.', test: (f) => f.companion },
   { id: 'woke', category: 'Momentos', icon: '😴', title: 'Acordou a passageira', hint: 'Não se faz isso com quem dorme...', test: (f) => f.woke },
+  { id: 'shootingStar', category: 'Raridades', icon: '🌠', title: 'Estrela cadente', hint: 'Olhe o céu numa noite limpa.', test: (f) => f.shootingStar },
+  { id: 'deer', category: 'Raridades', icon: '🦌', title: 'Cervo', hint: 'Bem no meio da floresta.', test: (f) => f.deer },
+  { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
+  { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
   { id: 'km10', category: 'Marcos', icon: '🛤️', title: '10 km de viagem', hint: 'Continue a viagem.', test: (f) => f.traveled >= 10000 },
   { id: 'km50', category: 'Marcos', icon: '🏅', title: '50 km de viagem', hint: 'Uma longa jornada.', test: (f) => f.traveled >= 50000 },
 ];
@@ -91,6 +97,10 @@ export function factsFrom({ state, env, view, traveled }) {
     balloonWave: effects.some((e) => e.kind === 'wave'),
     woke: state.time < (state.wakeUntil ?? 0),
     companion: state.companion?.status === 'seated',
+    shootingStar: shootingStarAt(state, env) !== null,
+    deer: deerInView(view, state).some((d) => d.x > view.win.x && d.x < view.win.x + view.win.w),
+    fireworks: fireworkBursts(state, env, view).some((b) => b.age > 0.5),
+    whale: whaleAt(state, view) !== null,
     traveled,
   };
 }

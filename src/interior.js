@@ -16,10 +16,15 @@ const CHINA = hex('#efe8dc');
 const COFFEE = hex('#3b2416');
 const WHITE = hex('#ffffff');
 
-/** Interior light: daylight through the window, plus the cabin lamp at night or in tunnels. */
-export function interiorLighting(env, tunnel) {
-  const daylight = env.light * (1 - tunnel);
-  const lamp = env.light < 0.4 || tunnel > 0.15 ? 1 : 0;
+const autoLamp = (env, tunnel) => (env.light < 0.4 || tunnel > 0.15 ? 1 : 0);
+
+/**
+ * Interior light: daylight through the window (less when the curtains are drawn), plus the cabin
+ * lamp — automatic at night or in tunnels, unless the viewer switched it on or off (`lampMode`).
+ */
+export function interiorLighting(env, tunnel, { lampMode = 'auto', curtains = 0 } = {}) {
+  const daylight = env.light * (1 - tunnel) * (1 - curtains * 0.65);
+  const lamp = lampMode === 'auto' ? autoLamp(env, tunnel) : Number(lampMode === 'on');
   return {
     daylight,
     lamp,
@@ -69,12 +74,13 @@ export function drawFrame(ctx, layout, L) {
   ctx.stroke();
 }
 
-function drawCurtain(ctx, { win, u }, L, sway) {
+/** `close` 0..1: tied back at the sides (0) or untied and drawn across half the window each (1). */
+function drawCurtain(ctx, { win, u }, L, sway, close) {
   const x0 = win.x - u * 4;
   const top = win.y - u * 3.5;
-  const width = win.w * 0.075 + u * 4;
+  const width = win.w * (0.075 + close * 0.44) + u * 4;
   const tieY = win.y + win.h * 0.55;
-  const tieX = x0 + width * 0.45 + sway;
+  const tieX = x0 + width * (0.45 + close * 0.5) + sway;
   const bottom = win.y + win.h + u;
   const folds = ctx.createLinearGradient(x0, 0, x0 + width, 0);
   for (let i = 0; i <= 6; i++) folds.addColorStop(i / 6, rgba(lit(i % 2 ? CURTAIN_DARK : CURTAIN, L)));
@@ -87,20 +93,58 @@ function drawCurtain(ctx, { win, u }, L, sway) {
   ctx.lineTo(x0, bottom);
   ctx.closePath();
   ctx.fill();
+  if (close > 0.5) return;
   ctx.fillStyle = rgba(lit(BRASS, L));
   ctx.fillRect(x0, tieY - u * 0.6, tieX - x0 + u * 0.6, u * 1.2);
 }
 
-export function drawCurtains(ctx, layout, L, sway) {
+/** Screen box of each curtain (for clicks), given how closed they are. */
+export function curtainBoxes({ win, u }, close) {
+  const width = win.w * (0.075 + close * 0.44) + u * 4;
+  const top = win.y - u * 3.5;
+  const h = win.h + u * 4.5;
+  return [
+    { x: win.x - u * 4, y: top, w: width, h },
+    { x: win.x + win.w + u * 4 - width, y: top, w: width, h },
+  ];
+}
+
+export function drawCurtains(ctx, layout, L, sway, close = 0) {
   const { win, u } = layout;
-  drawCurtain(ctx, layout, L, sway);
+  drawCurtain(ctx, layout, L, sway, close);
   ctx.save();
   ctx.translate(win.x * 2 + win.w, 0);
   ctx.scale(-1, 1);
-  drawCurtain(ctx, layout, L, -sway);
+  drawCurtain(ctx, layout, L, -sway, close);
   ctx.restore();
   ctx.fillStyle = rgba(lit(BRASS, L));
   ctx.fillRect(win.x - u * 5, win.y - u * 3.9, win.w + u * 10, u * 0.7);
+}
+
+const CORD_RED = hex('#b3261e');
+
+/** Emergency brake cord hanging by the top-right corner of the window. */
+export const cordPosition = ({ win, u }) => ({ x: win.x + win.w - u * 9, top: win.y - u * 3.2, handle: win.y + u * 5 });
+
+export function drawCord(ctx, layout, L, pulled) {
+  const { u } = layout;
+  const { x, top, handle } = cordPosition(layout);
+  const y = handle + pulled * u * 2.5;
+  ctx.strokeStyle = rgba(lit(CORD_RED, L));
+  ctx.lineWidth = Math.max(1, u * 0.3);
+  ctx.beginPath();
+  ctx.moveTo(x, top);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  ctx.fillStyle = rgba(lit(CORD_RED, L));
+  ctx.beginPath();
+  ctx.roundRect(x - u * 1.4, y, u * 2.8, u * 1.1, u * 0.4);
+  ctx.fill();
+  ctx.fillStyle = rgba(lit(WHITE, L));
+  ctx.font = `700 ${u * 0.8}px system-ui, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('SOS', x, y + u * 0.58);
 }
 
 function drawSteam(ctx, x, y, u, time) {

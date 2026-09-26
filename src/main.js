@@ -6,8 +6,10 @@ import { createControls } from './controls.js';
 import { createFog } from './fog.js';
 import { LOOK_FAR } from './frame.js';
 import { drawDrops, drawGlass } from './glass.js';
+import { hitTest } from './interactions.js';
+import { drawFloats, drawSpeech } from './interactionsView.js';
 import {
-  drawCurtains, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
+  drawCord, drawCurtains, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
 } from './interior.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
@@ -21,6 +23,7 @@ import { drawSky, environment } from './sky.js';
 import { drawSkyLife } from './skylife.js';
 import { tunnelCoverage } from './tunnel.js';
 import { flashLevel, thunderDelay, weatherTargets } from './weather.js';
+import { clamp } from './utils.js';
 import { drawLightning, drawRainbow, precipitationKind } from './weatherView.js';
 
 const WEATHER_NAMES = { clear: 'Limpo', rain: 'Chuva', storm: 'Tempestade' };
@@ -60,7 +63,7 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
 function render(ctx, layout, state, { fog, dt }) {
   const env = sceneEnvironment(state);
   const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
-  const L = interiorLighting(env, blocked);
+  const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains });
   const bob = trainBob(state, layout.u);
   const { win, u, lookX, lookY } = layout;
   const falling = precipitationKind(env, num(biomeAt(state.distance), 'snow'));
@@ -79,6 +82,7 @@ function render(ctx, layout, state, { fog, dt }) {
   drawSkyLife(ctx, layout, state, env);
   drawLandscape(ctx, layout, state, env);
   drawPassingTrain(ctx, layout, state, env);
+  drawFloats(ctx, layout, state);
   ctx.restore();
   if (env.flash > 0.01) {
     ctx.fillStyle = `rgba(235,240,255,${env.flash * 0.35 * (1 - blocked)})`;
@@ -91,7 +95,8 @@ function render(ctx, layout, state, { fog, dt }) {
   ctx.restore();
 
   drawFrame(ctx, layout, L);
-  drawCurtains(ctx, layout, L, Math.sin(state.time * 0.9) * u * 0.4 + bob * 0.5);
+  drawCurtains(ctx, layout, L, Math.sin(state.time * 0.9) * u * 0.4 + bob * 0.5, state.curtains);
+  drawCord(ctx, layout, L, state.time < state.brakeUntil ? clamp((state.brakeUntil - state.time - 5) / 2) : 0);
   drawLedge(ctx, layout, L, state.time, bob, {
     x: passengerOrigin(layout).x + u * 22,
     level: state.coffee,
@@ -107,6 +112,7 @@ function render(ctx, layout, state, { fog, dt }) {
   ctx.translate(-lookX * u * 7, -lookY * u * 3);
   drawAisle(ctx, layout, state, L);
   ctx.restore();
+  drawSpeech(ctx, layout, state);
   drawVignette(ctx, layout);
   if (env.flash > 0.01) {
     ctx.fillStyle = `rgba(225,232,255,${env.flash * 0.12 * (1 - blocked)})`;
@@ -135,13 +141,53 @@ function updatePanel(controls, state, input) {
   controls.showConditions(input.weather === 'auto' ? weather : '', input.season === 'auto' ? season : '');
 }
 
+/**
+ * Turns clicks into simulation events: hit-tests against the last rendered frame, plays the
+ * matching sound, and queues the event for the next step. Empty space toggles the panel.
+ */
+function createClicks({ canvas, audio, controls, getScene }) {
+  let pending = [];
+  const targetAt = (p) => {
+    const { view, state } = getScene();
+    if (!view || view.W <= 0) return null;
+    return hitTest(view, state, sceneEnvironment(state), trainBob(state, view.u), p);
+  };
+  const pointer = createPointer(canvas, {
+    onTap: (p) => {
+      const event = targetAt(p);
+      if (!event) {
+        controls.togglePanel();
+        return;
+      }
+      audio.sfx(event.sound);
+      pending = [...pending, event];
+    },
+    onHover: (p) => { canvas.style.cursor = targetAt(p) ? 'pointer' : ''; },
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.code !== 'Space' || e.repeat || e.target.closest?.('input, select, button')) return;
+    e.preventDefault();
+    audio.whistle();
+  });
+  return {
+    pointer,
+    takeEvents() {
+      const taken = pending;
+      pending = [];
+      return taken;
+    },
+  };
+}
+
 function start() {
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
   const controls = createControls(document);
   const audio = createAudio();
   const fog = createFog();
-  const pointer = createPointer(canvas, { onTap: controls.togglePanel });
+  let scene = { view: null, state: null };
+  const clicks = createClicks({ canvas, audio, controls, getScene: () => scene });
+  const { pointer } = clicks;
 
   let layout = resizeCanvas(canvas, ctx);
   const params = new URLSearchParams(window.location.search);
@@ -172,7 +218,7 @@ function start() {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const input = controls.read();
-    state = step(state, dt, input);
+    state = step(state, dt, { ...input, events: clicks.takeEvents() });
     playSounds(audio, state);
     modes.tick(state.distance);
     if (input.autoDay) controls.showDayTime(state.dayTime);
@@ -185,7 +231,9 @@ function start() {
     const strokes = pointer.takeStrokes();
     if (layout.W > 0 && layout.H > 0) {
       if (state.fog > 0.1 && strokes.length > 0) fog.wipe(strokes, layout);
-      render(ctx, { ...layout, lookX: look.x, lookY: look.y }, state, { fog, dt });
+      const view = { ...layout, lookX: look.x, lookY: look.y };
+      render(ctx, view, state, { fog, dt });
+      scene = { view, state };
     }
     requestAnimationFrame(frame);
   }

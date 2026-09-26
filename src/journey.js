@@ -1,6 +1,7 @@
 import { biomeAt, num } from './biomes.js';
 import { initialCabin, updateCabin } from './cabin.js';
 import { DAY_SECONDS } from './clock.js';
+import { EMERGENCY_DECEL, applyEvents, initialInteraction, updateInteraction } from './events.js';
 import { createDrops, updateDrops } from './glass.js';
 import { initialPassing, updatePassing } from './passingTrain.js';
 import { seasonWeights } from './seasons.js';
@@ -34,6 +35,7 @@ export function initialState(input, startKm) {
     drops: createDrops(DROP_COUNT),
     ...initialPassing(),
     ...initialCabin(),
+    ...initialInteraction(),
   };
 }
 
@@ -85,11 +87,15 @@ function stationLimit(state, input) {
   return { station, limit: Math.sqrt(2 * BRAKE * Math.max(0, station.stopAt - state.distance)) };
 }
 
-/** Pure simulation step: returns a new state, never mutates the previous one. */
-export function step(state, dt, input) {
-  if (state.dwell > 0) return standing(state, dt, input);
+/** Speed after dt: emergency braking to a halt if the cord was pulled, otherwise normal driving. */
+function nextSpeed(state, dt, input, limit) {
+  if (state.time < state.brakeUntil) return approach(state.speed, 0, EMERGENCY_DECEL * dt);
+  return approach(state.speed, Math.min(input.targetKmh / 3.6, limit), ACCEL * dt);
+}
+
+function moving(state, dt, input) {
   const { station, limit } = stationLimit(state, input);
-  const cruise = approach(state.speed, Math.min(input.targetKmh / 3.6, limit), ACCEL * dt);
+  const cruise = nextSpeed(state, dt, input, limit);
   const moved = state.distance + cruise * dt;
   const arrived = station !== null && moved >= station.stopAt - 0.3;
   const distance = arrived ? station.stopAt : moved;
@@ -97,6 +103,7 @@ export function step(state, dt, input) {
   const crossedJoint = joint !== state.joint;
   const amb = ambient(state, dt, input);
   return {
+    ...state,
     ...amb,
     distance,
     speed: arrived ? 0 : cruise,
@@ -108,6 +115,16 @@ export function step(state, dt, input) {
     arrived,
     departed: false,
   };
+}
+
+/**
+ * Pure simulation step: returns a new state, never mutates the previous one.
+ * `input.events` are the viewer's clicks this frame (see events.js).
+ */
+export function step(prev, dt, input) {
+  const state = applyEvents(prev, input.events ?? []);
+  const next = state.dwell > 0 ? standing(state, dt, input) : moving(state, dt, input);
+  return { ...next, ...updateInteraction(next, dt), jolt: state.brakeStarted ? 1 : next.jolt };
 }
 
 /** Text for the destination board: current or next station. */

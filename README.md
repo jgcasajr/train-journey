@@ -48,6 +48,24 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Mapa**: a linha inteira da volta atual (28 km) com estações, túneis, pontes, passagens de nível, biomas e a posição do trem.
 - **Foto**: salva o quadro atual como PNG (`train-journey-km12.3.png`).
 
+## Cliques na cena
+
+O cursor vira mãozinha sobre o que é clicável.
+
+| Onde clicar | O que acontece |
+| --- | --- |
+| A passageira | Ela vira e comenta algo do momento (paisagem, chuva, noite, estação...). Dormindo, acorda assustada. |
+| A xícara | Ela toma um gole (ou reclama que o café acabou) |
+| A lâmpada | Alterna automático / ligada / desligada |
+| As cortinas | Fecham ou abrem (a cabine escurece) |
+| A corda SOS | Freio de emergência: o trem freia bruscamente e depois segue |
+| Vacas, ovelhas, cavalos | "Muuu!", "Béééé!", "Hiiiin!" (com som) |
+| Pássaros | O bando se espalha |
+| Balão | O pessoal acena: "Olá!" |
+| Farol | Dá um clarão |
+| Barra de espaço | Apito do trem |
+| Espaço vazio | Mostra/oculta o painel |
+
 ## Controles
 
 | Controle | Efeito |
@@ -98,6 +116,9 @@ src/
   passenger.js  a passageira (poses e reflexo no vidro)
   cabin.js      atividades dela, café e visitas do corredor (simulação)
   modes.js      modos relaxar, Pomodoro, mapa e foto
+  interactions.js o que foi clicado (hit-test)
+  events.js     efeito de cada clique no estado (falas, gole, freio...)
+  interactionsView.js textos flutuantes e falas da passageira
   music.js      música ambiente generativa
   pomodoro.js   lógica do timer
   lineMap.js    mapa da linha (SVG)

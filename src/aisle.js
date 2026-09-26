@@ -145,7 +145,7 @@ function drawHandCup(ctx, c, [x, y]) {
   ctx.fill();
 }
 
-function drawBubble(ctx, text, anchor, u, W, tone) {
+export function drawBubble(ctx, text, anchor, u, W, tone) {
   ctx.font = `600 ${u * 2.1}px system-ui, sans-serif`;
   const w = ctx.measureText(text).width + u * 2.4;
   const h = u * 3.8;

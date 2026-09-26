@@ -133,5 +133,21 @@ export function drawLighthouses(ctx, layout, state, env, lf, heightAt) {
     ctx.lineTo(x + w1 * 0.6, lanternY - u * 0.6);
     ctx.fill();
     if (night > 0.05) drawBeam(ctx, x, lanternY, layout, state.time, night);
+    const flash = (state.effects ?? []).find((e) => e.kind === 'flash' && e.at === at);
+    const age = flash ? state.time - flash.born : Infinity;
+    if (age < FLASH_SECONDS) {
+      const k = 1 - age / FLASH_SECONDS;
+      radialGlow(ctx, x, lanternY, u * (6 + k * 26), LANTERN, 0.9 * k);
+    }
   });
+}
+
+const FLASH_SECONDS = 1.6;
+export const LIGHTHOUSE_DEPTH = 0.12; // lighthouses stand on the hills layer
+
+/** Lighthouses in view: track position and screen x (outside-view coordinates). */
+export function lighthousesInView(layout, lf) {
+  const m0 = (lf.offset - lf.margin) / lf.px - 50;
+  const m1 = (lf.offset + layout.win.w + lf.margin) / lf.px + 50;
+  return lighthousesBetween(m0, m1).map((at) => ({ at, x: layout.win.x + at * lf.px - lf.offset }));
 }

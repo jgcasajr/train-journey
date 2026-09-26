@@ -2,7 +2,7 @@ import { biomeAt, num, pick } from './biomes.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
 import { drawBoats, drawLighthouses } from './coast.js';
-import { drawCropPatches, drawFarmProp, drawFence } from './farm.js';
+import { drawCropPatches, drawFarmProp, drawFence, farmPropKind } from './farm.js';
 import { acrossGradient, fillRidge, forEachSlot, layerFrame, traceRidge } from './layers.js';
 import { drawBush, drawHouse, drawTree } from './props.js';
 import { bridgeAt } from './rivers.js';
@@ -124,32 +124,54 @@ function drawHills(ctx, layout, state, env) {
   drawMist(ctx, layout, state, env, horizon + win.h * 0.06, win.h * 0.06, 1601);
 }
 
+export const FIELDS_DEPTH = 0.3;
+const fieldsHeight = ({ win, horizon }) => (wx, bm) =>
+  horizon + win.h * (0.2 + num(bm, 'water') * 0.08) - fbm(wx * 0.006, 51, 2) * win.h * 0.05;
+
+/** What stands in a fields-layer slot: shared by the drawing and by click hit-testing. */
+function fieldSlotKind(i, bm) {
+  const r = hash(i, 53);
+  if (hash(i, 56) < num(bm, 'city') * 0.6) return 'city';
+  if (hash(i, 57) < num(bm, 'farm') * 0.12) return 'farm';
+  if (r < num(bm, 'trees') * 0.7) return 'tree';
+  return r > 1 - num(bm, 'houses') * 0.35 ? 'house' : null;
+}
+
+/** Visits the objects of the fields layer with their screen position (outside-view coordinates). */
+function forEachFieldObject(layout, state, fn) {
+  const lf = layerFrame(layout, state, FIELDS_DEPTH);
+  const heightAt = fieldsHeight(layout);
+  const s = layout.win.h * 0.12;
+  forEachSlot(layout.win, lf, s * 0.45, s * 1.2, 52, (i, x, wx, bm) => {
+    const kind = fieldSlotKind(i, bm);
+    if (kind) fn({ i, x, wx, y: heightAt(wx, bm) + s * 0.06, s, bm, kind });
+  });
+}
+
+/** Farm props currently in view (for clicks on animals, barns, windmills...). */
+export function farmPropsInView(layout, state) {
+  const props = [];
+  forEachFieldObject(layout, state, (o) => {
+    if (o.kind === 'farm') props.push({ ...o, prop: farmPropKind(o.i) });
+  });
+  return props;
+}
+
 function drawFields(ctx, layout, state, env) {
   const { win, horizon } = layout;
-  const lf = layerFrame(layout, state, 0.3);
+  const lf = layerFrame(layout, state, FIELDS_DEPTH);
   const haze = 0.06;
-  const heightAt = (wx, bm) =>
-    horizon + win.h * (0.2 + num(bm, 'water') * 0.08) - fbm(wx * 0.006, 51, 2) * win.h * 0.05;
+  const heightAt = fieldsHeight(layout);
   fillRidge(ctx, traceRidge(win, lf, heightAt), win.y + win.h + 40,
     acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, 'field', env), env, haze))));
   drawCropPatches(ctx, win, lf, heightAt, env, { spacing: win.h * 0.45, seed: 601, haze, rowGap: win.h * 0.006 });
   drawRiverBand(ctx, layout, state, lf, heightAt, env, haze);
   drawCrossingBand(ctx, layout, state, lf, heightAt, env, { haze, waitingCars: true });
-  const s = win.h * 0.12;
-  forEachSlot(win, lf, s * 0.45, s * 1.2, 52, (i, x, wx, bm) => {
-    const r = hash(i, 53);
-    const y = heightAt(wx, bm) + s * 0.06;
-    const city = num(bm, 'city');
-    if (hash(i, 56) < city * 0.6) {
-      drawCityBlock(ctx, x, y, s, env, haze, i, state.time, layout.u, city);
-    } else if (hash(i, 57) < num(bm, 'farm') * 0.12) {
-      drawFarmProp(ctx, x, y, s, env, haze, i, state.time);
-    } else if (r < num(bm, 'trees') * 0.7) {
-      const type = pick(bm, hash(i, 54)).tree;
-      drawTree(ctx, type, x, y, s * (0.7 + hash(i, 55) * 0.6), treeStyle(bm, env, haze));
-    } else if (r > 1 - num(bm, 'houses') * 0.35) {
-      drawHouse(ctx, x, y, s * 0.7, houseStyle(i + 7000, env, haze));
-    }
+  forEachFieldObject(layout, state, ({ i, x, y, s, bm, kind }) => {
+    if (kind === 'city') drawCityBlock(ctx, x, y, s, env, haze, i, state.time, layout.u, num(bm, 'city'));
+    else if (kind === 'farm') drawFarmProp(ctx, x, y, s, env, haze, i, state.time);
+    else if (kind === 'tree') drawTree(ctx, pick(bm, hash(i, 54)).tree, x, y, s * (0.7 + hash(i, 55) * 0.6), treeStyle(bm, env, haze));
+    else drawHouse(ctx, x, y, s * 0.7, houseStyle(i + 7000, env, haze));
   });
   drawMist(ctx, layout, state, env, horizon + win.h * 0.2, win.h * 0.07, 1611);
 }

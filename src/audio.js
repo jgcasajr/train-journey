@@ -89,6 +89,54 @@ function tone(g, { type, freq, when, duration, peak, vibrato = 0 }) {
   osc.stop(when + duration + 0.05);
 }
 
+/** A voiced animal call: sawtooth with a pitch contour, vibrato and a vowel-like band filter. */
+function voiceCall(g, t, { pitches, duration, vibrato, rate, formant, peak }) {
+  const osc = g.ac.createOscillator();
+  osc.type = 'sawtooth';
+  pitches.forEach(([f, at], i) => (i === 0 ? osc.frequency.setValueAtTime(f, t) : osc.frequency.linearRampToValueAtTime(f, t + at)));
+  const lfo = g.ac.createOscillator();
+  const depth = g.ac.createGain();
+  lfo.frequency.value = rate;
+  depth.gain.value = vibrato;
+  lfo.connect(depth).connect(osc.frequency);
+  const band = g.ac.createBiquadFilter();
+  band.type = 'bandpass';
+  band.frequency.value = formant;
+  band.Q.value = 1.5;
+  const gain = g.ac.createGain();
+  envelope(gain.gain, t, peak, duration);
+  osc.connect(band).connect(gain).connect(g.master);
+  [osc, lfo].forEach((n) => { n.start(t); n.stop(t + duration + 0.05); });
+}
+
+function noiseBurst(g, t, { freq, q = 1, duration, peak, type = 'bandpass' }) {
+  const src = g.ac.createBufferSource();
+  src.buffer = g.noise;
+  const filter = g.ac.createBiquadFilter();
+  filter.type = type;
+  filter.frequency.value = freq;
+  filter.Q.value = q;
+  const gain = g.ac.createGain();
+  envelope(gain.gain, t, peak, duration);
+  src.connect(filter).connect(gain).connect(g.master);
+  src.start(t, Math.random(), duration + 0.05);
+}
+
+const SFX = {
+  moo: (g, t) => voiceCall(g, t, { pitches: [[115, 0], [125, 0.3], [95, 1.1]], duration: 1.2, vibrato: 2, rate: 5, formant: 420, peak: 0.5 }),
+  baa: (g, t) => voiceCall(g, t, { pitches: [[330, 0], [360, 0.2], [310, 0.7]], duration: 0.75, vibrato: 30, rate: 16, formant: 1100, peak: 0.35 }),
+  neigh: (g, t) => voiceCall(g, t, { pitches: [[520, 0], [900, 0.25], [650, 0.6], [420, 1]], duration: 1, vibrato: 60, rate: 22, formant: 1400, peak: 0.3 }),
+  flutter: (g, t) => Array.from({ length: 9 }, (_, k) => noiseBurst(g, t + k * 0.07, { freq: 2200, q: 0.8, duration: 0.05, peak: 0.25 })),
+  brake: (g, t) => {
+    [1900, 2350].forEach((freq) => tone(g, { type: 'sine', freq, when: t, duration: 2.6, peak: 0.05, vibrato: 25 }));
+    noiseBurst(g, t, { freq: 3000, q: 0.5, duration: 2.6, peak: 0.12 });
+  },
+  click: (g, t) => noiseBurst(g, t, { freq: 3500, q: 2, duration: 0.03, peak: 0.3 }),
+  swish: (g, t) => noiseBurst(g, t, { freq: 1200, q: 0.4, duration: 0.5, peak: 0.12, type: 'lowpass' }),
+  cheer: (g, t) => [880, 1175].forEach((freq, k) => tone(g, { type: 'triangle', freq, when: t + k * 0.12, duration: 0.3, peak: 0.05 })),
+  chime: (g, t) => [1320, 1760].forEach((freq, k) => tone(g, { type: 'sine', freq, when: t + k * 0.15, duration: 1.2, peak: 0.08 })),
+};
+
 export function createAudio() {
   let graph = null;
   let enabled = false;
@@ -138,6 +186,11 @@ export function createAudio() {
       src.connect(low).connect(gain).connect(graph.master);
       src.start(t);
       src.stop(t + duration + 0.1);
+    },
+    /** Short sound effect for a click interaction (see SFX). */
+    sfx(name) {
+      if (!enabled || !SFX[name]) return;
+      SFX[name](graph, graph.ac.currentTime + 0.02);
     },
     /** Station arrival: two-note "ding-dong" chime. */
     chime() {

@@ -73,7 +73,10 @@ function targetActivity(state) {
   const ev = aisleEventAt(state.time, state.dayTime);
   const visit = ev ? visitActivity(ev) : null;
   if (visit) return visit;
-  if (isNight(state.dayTime) && state.dwell <= 0) return 'sleep';
+  if (state.time < (state.sipUntil ?? 0) && state.coffee > 0.05) return 'sip';
+  if (state.speech) return 'talk';
+  const woken = state.time < (state.wakeUntil ?? 0);
+  if (isNight(state.dayTime) && state.dwell <= 0 && !woken) return 'sleep';
   const slot = Math.floor(state.time / ACTIVITY_SLOT);
   const r = hash(slot, 1811);
   const local = state.time - slot * ACTIVITY_SLOT;

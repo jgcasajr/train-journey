@@ -209,9 +209,12 @@ function drawHorse(ctx, x, y, s, c, id) {
 
 const KINDS = ['barn', 'barn', 'silo', 'bales', 'bales', 'cows', 'cows', 'windmill', 'sheep', 'sheep', 'horses'];
 
+/** Which farm prop stands in slot `id` (barn, silo, bales, cows, sheep, horses, windmill). */
+export const farmPropKind = (id) => KINDS[Math.floor(hash(id, 501) * KINDS.length)];
+
 export function drawFarmProp(ctx, x, y, s, env, haze, id, time) {
   const c = (color) => rgba(shade(color, env, haze));
-  const kind = KINDS[Math.floor(hash(id, 501) * KINDS.length)];
+  const kind = farmPropKind(id);
   if (kind === 'barn') {
     drawBarn(ctx, x, y, s, c);
     if (hash(id, 502) > 0.4) drawSilo(ctx, x + s * 0.72, y, s, c);

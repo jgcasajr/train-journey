@@ -5,9 +5,10 @@ const TAP_SLOP = 6; // px of movement below which a press counts as a tap
 
 /**
  * Pointer input: hovering the mouse moves the viewer's head (look), dragging draws
- * strokes (used to wipe the fogged glass), and a short tap calls onTap.
+ * strokes (used to wipe the fogged glass), a short tap calls onTap(point), and
+ * onHover(point) reports the mouse position (for the hand cursor over clickable things).
  */
-export function createPointer(canvas, { onTap }) {
+export function createPointer(canvas, { onTap, onHover = () => {} }) {
   let target = { x: 0, y: 0 };
   let look = { x: 0, y: 0 };
   let press = null; // { last, moved } while a button/finger is down
@@ -24,7 +25,10 @@ export function createPointer(canvas, { onTap }) {
   });
 
   canvas.addEventListener('pointermove', (e) => {
-    if (e.pointerType === 'mouse') target = toLook(e);
+    if (e.pointerType === 'mouse') {
+      target = toLook(e);
+      onHover({ x: e.clientX, y: e.clientY });
+    }
     if (!press) return;
     const p = { x: e.clientX, y: e.clientY };
     strokes = [...strokes, [press.last, p]];
@@ -32,7 +36,7 @@ export function createPointer(canvas, { onTap }) {
   });
 
   const release = () => {
-    if (press && press.moved < TAP_SLOP) onTap();
+    if (press && press.moved < TAP_SLOP) onTap(press.last);
     press = null;
   };
   canvas.addEventListener('pointerup', release);

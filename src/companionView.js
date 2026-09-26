@@ -1,7 +1,8 @@
 import { drawBubble } from './aisle.js';
 import { isNight } from './clock.js';
-import { BOARD, LEAVE, companionLine, companionLook } from './companion.js';
+import { BOARD, LEAVE, companionLine, companionLook, companionPersona } from './companion.js';
 import { lit } from './interior.js';
+import { drawBackProps, drawFrontProps, drawHeadExtras, drawShawl, personaPose } from './personaProps.js';
 import { passengerHead, passengerOrigin } from './passenger.js';
 import { nextStation } from './stations.js';
 import { circle, clamp, hex, lerp, mix, rgba } from './utils.js';
@@ -66,10 +67,10 @@ function drawHair(ctx, look, c) {
 }
 
 /** Head in profile facing right: eye, nose, mouth (moving while talking), optional glasses. */
-function drawHead(ctx, look, c, { mouth, dozing }) {
+function drawHead(ctx, look, c, { mouth, dozing, tilt = 0 }) {
   ctx.save();
   ctx.translate(1.4, -42 + (dozing ? 1 : 0));
-  ctx.rotate(dozing ? 0.25 : 0);
+  ctx.rotate(dozing ? Math.max(0.25, tilt) : tilt);
   const skin = c(hex(look.skin));
   ctx.fillStyle = skin;
   ctx.fillRect(-1.8, 3, 3.6, 5);
@@ -79,6 +80,7 @@ function drawHead(ctx, look, c, { mouth, dozing }) {
   ctx.quadraticCurveTo(7.6, 0.6, 5.9, 1.5);
   ctx.fill();
   drawHair(ctx, look, c);
+  drawHeadExtras(ctx, c, look);
   ctx.fillStyle = c(hex('#2a1c14'));
   ctx.strokeStyle = ctx.fillStyle;
   ctx.lineWidth = 0.45;
@@ -134,7 +136,11 @@ function drawArm(ctx, look, c, elbow, hand) {
   ctx.fill();
 }
 
-function drawSeated(ctx, look, c, talk) {
+/** Seated, doing their personality's activity (knitting, studying, rocking the baby...). */
+function drawSeated(ctx, look, c, talk, persona, extra) {
+  const pose = personaPose(persona, extra);
+  if (persona.activity === 'rock') ctx.rotate(Math.sin(extra.time * 2) * 0.03);
+  drawBackProps(ctx, c, persona, look);
   ctx.strokeStyle = c(TROUSERS);
   ctx.lineCap = 'round';
   ctx.lineWidth = 9;
@@ -148,8 +154,24 @@ function drawSeated(ctx, look, c, talk) {
   ctx.lineTo(19, 30);
   ctx.stroke();
   drawTorso(ctx, look, c);
-  drawHead(ctx, look, c, talk);
-  drawArm(ctx, look, c, [1, -13], [10, -8]);
+  drawShawl(ctx, c, look);
+  drawHead(ctx, look, c, { ...talk, tilt: pose.tilt, dozing: talk.dozing || pose.dozing });
+  const props = () => drawFrontProps(ctx, c, persona, look, { hand: pose.hand, time: extra.time, action: extra.action });
+  const held = persona.activity === 'rock'; // the baby is cradled in front of the arm
+  if (!held) props();
+  drawArm(ctx, look, c, pose.elbow, pose.hand);
+  if (held) props();
+  if (pose.dozing) drawZ(ctx, extra.time);
+}
+
+function drawZ(ctx, time) {
+  ctx.fillStyle = 'rgba(240,240,255,0.85)';
+  ctx.font = '600 3px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  const t = (time * 0.5) % 1;
+  ctx.globalAlpha = 1 - t;
+  ctx.fillText('z', 2 + t * 5, -52 - t * 8);
+  ctx.globalAlpha = 1;
 }
 
 /** Standing and walking with a small suitcase; `stride` swings the legs. */
@@ -213,15 +235,17 @@ export function drawCompanion(ctx, layout, state, L) {
   const comp = state.companion;
   if (!comp) return;
   const look = companionLook(comp.seed);
+  const persona = companionPersona(comp.seed);
   const place = placement(comp, state.time, layout);
   const line = companionLine(state, destinationName(state));
   const talk = { mouth: line?.who === 'c' ? Math.abs(Math.sin(state.time * 11)) : 0, dozing: isNight(state.dayTime) && comp.status === 'seated' };
+  const extra = { time: state.time, action: line?.action ?? null, doze: studentDozing(comp, persona, state, line) };
   ctx.save();
   ctx.translate(place.x, seat.y);
   ctx.scale(place.faceLeft ? -u : u, u);
   if (place.seated > 0) {
     ctx.globalAlpha = place.seated;
-    drawSeated(ctx, look, c, talk);
+    drawSeated(ctx, look, c, talk, persona, extra);
   }
   if (place.seated < 1) {
     ctx.globalAlpha = 1 - place.seated;
@@ -232,5 +256,13 @@ export function drawCompanion(ctx, layout, state, L) {
   const speech = state.companionSpeech ? { who: 'c', text: state.companionSpeech.text } : line;
   if (!speech) return;
   if (speech.who === 'c') drawBubble(ctx, speech.text, { x: place.x - u * 3, y: seat.y - u * 51 }, u, W, 'staff');
+  else if (speech.who === 'b') drawBubble(ctx, speech.text, { x: place.x - u * 10, y: seat.y - u * 25 }, u, W, 'staff');
   else drawBubble(ctx, speech.text, passengerHead(layout), u, W, 'passenger');
+}
+
+/** The student sometimes nods off over the books between chats. */
+function studentDozing(comp, persona, state, line) {
+  if (persona.id !== 'student' || comp.status !== 'seated' || line) return false;
+  const t = (state.time - comp.seatedAt) % 75;
+  return t > 40 && t < 60;
 }

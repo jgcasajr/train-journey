@@ -7,7 +7,9 @@ import { bridgeAt } from './rivers.js';
 import { crossingsBetween } from './roads.js';
 import { dominantSeason } from './seasons.js';
 import { tunnelCoverage } from './tunnel.js';
+import { companionPersona } from './companion.js';
 import { CAST, passerbyAt } from './passersby.js';
+import { PERSONAS } from './personas.js';
 import { fireworkBursts, shootingStarAt } from './rareSky.js';
 import { precipitationKind, rainbowStrength } from './weatherView.js';
 import { deerInView, whaleAt } from './wildlife.js';
@@ -61,6 +63,10 @@ export const DISCOVERIES = [
   { id: 'balloon', category: 'Momentos', icon: '🎈', title: 'Olá, balão!', hint: 'Acene para quem está lá no alto.', test: (f) => f.balloonWave },
   { id: 'companion', category: 'Momentos', icon: '🧳', title: 'Companhia de viagem', hint: 'Alguém pode sentar no banco da frente.', test: (f) => f.companion },
   { id: 'woke', category: 'Momentos', icon: '😴', title: 'Acordou a passageira', hint: 'Não se faz isso com quem dorme...', test: (f) => f.woke },
+  ...PERSONAS.map((pe) => ({
+    id: `persona:${pe.id}`, category: 'Personagens', icon: pe.icon, title: pe.name,
+    hint: 'Alguém pode sentar no banco da frente.', test: (f) => f.companionPersona === pe.id,
+  })),
   ...CAST.map((ch) => ({
     id: `character:${ch.id}`, category: 'Personagens', icon: ch.icon, title: ch.name,
     hint: ch.rarity <= 3 ? 'Esse é raro de ver...' : 'Alguém vai passar pelo corredor.', test: (f) => f.passerby === ch.id,
@@ -116,6 +122,7 @@ export function factsFrom({ state, env, view, traveled }) {
     whale: whaleAt(state, view) !== null,
     arrival: Boolean(state.holding),
     passerby: passerbySeen(state),
+    companionPersona: state.companion?.status === 'seated' ? companionPersona(state.companion.seed).id : null,
     traveled,
   };
 }

@@ -250,6 +250,7 @@ function start() {
   let state = params.has('pass') ? { ...start, nextPassing: 2 } : start;
   let last = performance.now();
   let hudTimer = 0;
+  let lastBabyLine = null;
 
   window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx); });
   controls.onSoundClick(async (e) => {
@@ -270,6 +271,10 @@ function start() {
     arrival.update(state);
     playSounds(audio, state);
     passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue));
+    const baby = companionLine(state, null);
+    const babyLine = baby?.who === 'b' ? baby.text : null;
+    if (babyLine && babyLine !== lastBabyLine) audio.sfx(babyLine.startsWith('Uá') ? 'cry' : 'babble');
+    lastBabyLine = babyLine;
     modes.tick(state.distance, state.destination);
     if (input.autoDay) controls.showDayTime(state.dayTime);
     hudTimer += dt;

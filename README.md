@@ -34,7 +34,7 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Raridades**: estrelas cadentes em noites limpas, cervos pastando no meio da floresta, fogos de artifício sobre a cidade à noite (com estouros no áudio) e uma baleia que surge no mar do litoral, solta o jato de água e mergulha mostrando a cauda.
 - **Passantes no corredor** (um a cada ~1 min): criança com balão, violinista que para e toca, senhora que oferece maçã (e a maçã fica no parapeito), executivo gritando ao celular, turista que tira foto (com flash), cachorro fugido com o dono atrás, casal apaixonado, vendedor de balas, estudante de fones e — raramente — um mágico. Cada um tem suas falas, ela responde, e clicar neles arranca uma frase.
 - **Pensamentos**: de vez em quando, quando nada está acontecendo, ela pensa alto num balão de pensamento ("Nova fase, nova vida.", "Cada estação é um recomeço."...), conforme a paisagem, o clima e a hora.
-- **Companhia de viagem**: nas estações às vezes alguém embarca com a mala, pede licença e senta no banco da frente. Os dois conversam de tempos em tempos (de onde vêm, para onde vão, o tempo, o livro...), cochilam à noite e, algumas estações depois, a pessoa se despede e desce. Cada companheiro tem aparência própria; clique nele para ouvir algo. Na plataforma, parte das pessoas embarca e outras desembarcam rumo ao prédio da estação.
+- **Companhia de viagem**: nas estações às vezes alguém embarca com a mala, pede licença e senta no banco da frente. Cada um tem personalidade, atividade e conversas próprias: a **avó** que tricota e conta do tempo do trem a vapor, o **estudante** que estuda (e cochila em cima dos livros), a **mãe com bebê** (que chora, balbucia e é acalmado), o **pescador** de histórias de pescador ("um peixe DESSE tamanho!"), a **artista** que desenha a paisagem e mostra o desenho, e o **mochileiro estrangeiro** com mapa e português engraçado. Os dois conversam de tempos em tempos (de onde vêm, para onde vão, o tempo, o livro...), cochilam à noite e, algumas estações depois, a pessoa se despede e desce. Cada companheiro tem aparência própria; clique nele para ouvir algo. Na plataforma, parte das pessoas embarca e outras desembarcam rumo ao prédio da estação.
 - **Corredor**: a cada ~2 min passa o **condutor** ("Bilhete, por favor!") — ela levanta o bilhete — ou o **carrinho de lanches** ("Café? Pão de queijo?"), que reabastece o café. À noite o carrinho não passa.
 - **Trem no sentido oposto**: de tempos em tempos (a cada 1–2 min) um trem passa colado à janela, com tranco da onda de ar, "vuuush" no áudio e janelas acesas à noite.
 - **Olhar ao redor**: mover o mouse desloca a cabeça do observador; a paisagem se move em relação à moldura com paralaxe por profundidade e a passageira se move no sentido contrário.
@@ -69,7 +69,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 54 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor, raridades (estrela cadente, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km). Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 60 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km). Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -156,6 +156,8 @@ src/
   aisle.js      condutor e carrinho de lanches
   companion.js  quem embarca, conversas e despedidas (simulação)
   companionView.js banco da frente e o companheiro de viagem
+  personas.js   personalidades do banco da frente (falas e jeito)
+  personaProps.js adereços e poses de cada personalidade
   aisleSchedule.js horários do condutor e do carrinho
   passersby.js  elenco do corredor, cenas e falas (simulação)
   passersbyView.js desenho dos passantes e seus adereços

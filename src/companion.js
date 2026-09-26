@@ -1,4 +1,5 @@
 import { isNight } from './clock.js';
+import { personaOf } from './personas.js';
 import { hash } from './utils.js';
 
 // Timeline (seconds since the status began) of someone boarding or leaving at a station stop.
@@ -34,20 +35,16 @@ const CHATS = [
   [['c', 'Nunca canso dessa paisagem.'], ['p', 'Nem eu. Sempre tem algo diferente.']],
   [['c', 'Que horas são? Perdi a noção.'], ['p', 'No trem o tempo corre diferente.']],
 ];
-const CLICK_LINES = ['Oi! Tudo bem?', 'Quer um biscoito?', 'Bela viagem, né?', 'Adoro essa linha.'];
 
 export const initialCompanion = () => ({ companion: null, companionSpeech: null });
 
-/** Appearance of the companion, derived from their seed. */
+/** Who this traveller is (grandma, student, mother with baby...), derived from their seed. */
+export const companionPersona = (seed) => personaOf(hash(seed, 2041));
+
+/** Appearance: the personality's style, with a skin tone of their own. */
 export function companionLook(seed) {
-  const pick = (list, s) => list[Math.floor(hash(seed, s) * list.length)];
-  return {
-    coat: pick(['#2f5d8a', '#6a3d6e', '#3f6b4a', '#8a3a3a', '#c9a24a', '#44474d'], 2011),
-    skin: pick(['#e0b18f', '#b9835f', '#8a5a3c', '#f1c9a5'], 2012),
-    hair: pick(['#2a1c14', '#6b4a2a', '#b8b2a8', '#d9b36a', '#111111'], 2013),
-    style: pick(['short', 'long', 'bun', 'hat', 'short'], 2014),
-    glasses: hash(seed, 2015) < 0.35,
-  };
+  const skins = ['#e0b18f', '#b9835f', '#8a5a3c', '#f1c9a5'];
+  return { ...companionPersona(seed).look, skin: skins[Math.floor(hash(seed, 2012) * skins.length)] };
 }
 
 /**
@@ -82,7 +79,8 @@ export function updateCompanion(state) {
 
 /** A click on the companion: a short friendly line. */
 export function companionClicked(state) {
-  const text = CLICK_LINES[Math.floor(hash(state.clicks, 2021) * CLICK_LINES.length)];
+  const lines = state.companion ? companionPersona(state.companion.seed).clicks : ['Oi!'];
+  const text = lines[Math.floor(hash(state.clicks, 2021) * lines.length)];
   return { companionSpeech: { text, until: state.time + LINE_SECONDS } };
 }
 
@@ -93,19 +91,22 @@ function lineAt(lines, t, start) {
 }
 
 /**
- * The line being spoken right now between the two: { who: 'c'|'p', text } or null.
+ * The line being spoken right now: { who: 'c'|'p'|'b' (baby), text, action } or null.
  * Greeting after sitting, a chat every ~30 s (not at night, when both doze), goodbye when leaving.
  */
 export function companionLine(state, nextName) {
   const c = state.companion;
   if (!c) return null;
-  const fill = (line) => line && { who: line[0], text: line[1].replace('{next}', nextName ?? 'a próxima') };
-  if (c.status === 'leaving') return fill(lineAt(BYE, state.time - c.since, 0));
+  const persona = companionPersona(c.seed);
+  const fill = (line) => line && { who: line[0], text: line[1].replace('{next}', nextName ?? 'a próxima'), action: line[2] ?? null };
+  if (c.status === 'leaving') return fill(lineAt(persona.bye ?? BYE, state.time - c.since, 0));
   if (c.status !== 'seated') return null;
   const t = state.time - c.seatedAt;
-  if (t < 8) return fill(lineAt(GREET, t, 0.5));
+  if (t < 8) return fill(lineAt(persona.greet ?? GREET, t, 0.5));
   if (isNight(state.dayTime)) return null;
   const slot = Math.floor(t / CHAT_SLOT);
-  const chat = CHATS[Math.floor(hash(c.seed * 7 + slot, 2031) * CHATS.length)];
+  const own = hash(c.seed * 7 + slot, 2032) < 0.6;
+  const pool = own ? persona.chats : CHATS;
+  const chat = pool[Math.floor(hash(c.seed * 7 + slot, 2031) * pool.length)];
   return fill(lineAt(chat, t - slot * CHAT_SLOT, 6));
 }

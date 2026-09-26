@@ -138,6 +138,8 @@ const SFX = {
     noiseBurst(g, t, { freq: 120, q: 0.7, duration: 0.9, peak: 0.5, type: 'lowpass' });
     Array.from({ length: 6 }, (_, k) => noiseBurst(g, t + 0.25 + k * 0.09, { freq: 4000, q: 1, duration: 0.05, peak: 0.08 }));
   },
+  cry: (g, t) => [0, 0.7].forEach((d) => voiceCall(g, t + d, { pitches: [[480, 0], [620, 0.15], [430, 0.6]], duration: 0.6, vibrato: 25, rate: 9, formant: 1300, peak: 0.12 })),
+  babble: (g, t) => [0, 0.25, 0.5].forEach((d, k) => voiceCall(g, t + d, { pitches: [[520 + k * 60, 0], [600 + k * 40, 0.1]], duration: 0.18, vibrato: 10, rate: 8, formant: 1500, peak: 0.08 })),
   violin: (g, t) => [76, 79, 81, 79, 76, 74, 76, 72, 74, 76].forEach((m, k) => voiceCall(g, t + k * 0.5, { pitches: [[440 * 2 ** ((m - 69) / 12), 0]], duration: 0.55, vibrato: 5, rate: 6, formant: 1800, peak: 0.12 })),
   bark: (g, t) => [0, 0.28].forEach((d) => voiceCall(g, t + d, { pitches: [[520, 0], [380, 0.12]], duration: 0.16, vibrato: 0, rate: 1, formant: 900, peak: 0.35 })),
   magic: (g, t) => [1568, 1976, 2349, 2637, 3136].forEach((freq, k) => tone(g, { type: 'sine', freq, when: t + k * 0.06, duration: 0.5, peak: 0.05 })),

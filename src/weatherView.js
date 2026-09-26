@@ -7,9 +7,11 @@ const MIST = hex('#e8ecef');
 const LEAVES = ['#c8642d', '#e0a030', '#a8401f', '#d98a2b'].map(hex);
 
 /** Rainbow opposite the sun once the rain stops while the ground is still wet. */
+export const rainbowStrength = (env) => env.wetness * (1 - smoothstep(0.1, 0.5, env.rain))
+  * smoothstep(0.02, 0.2, env.sunElev) * (1 - env.storm);
+
 export function drawRainbow(ctx, layout, env) {
-  const strength = env.wetness * (1 - smoothstep(0.1, 0.5, env.rain)) * smoothstep(0.02, 0.2, env.sunElev)
-    * (1 - env.storm);
+  const strength = rainbowStrength(env);
   if (strength < 0.02) return;
   const { win, horizon, u } = layout;
   const sunLeft = env.dayTime < 0.5;

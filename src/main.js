@@ -11,6 +11,7 @@ import { drawFloats, drawSpeech } from './interactionsView.js';
 import {
   drawCord, drawCurtains, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
 } from './interior.js';
+import { createJournal } from './journal.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
 import { createModes } from './modes.js';
@@ -188,6 +189,7 @@ function start() {
   let scene = { view: null, state: null };
   const clicks = createClicks({ canvas, audio, controls, getScene: () => scene });
   const { pointer } = clicks;
+  const journal = createJournal(document, { onDiscover: () => audio.sfx('discover') });
 
   let layout = resizeCanvas(canvas, ctx);
   const params = new URLSearchParams(window.location.search);
@@ -234,6 +236,7 @@ function start() {
       const view = { ...layout, lookX: look.x, lookY: look.y };
       render(ctx, view, state, { fog, dt });
       scene = { view, state };
+      journal.observe(state, sceneEnvironment(state), view);
     }
     requestAnimationFrame(frame);
   }

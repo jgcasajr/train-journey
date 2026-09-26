@@ -48,6 +48,7 @@
     </label>
     <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
     <button id="sound" type="button" aria-pressed="false">Ativar som</button>
+    <button id="journal-btn" type="button" class="journal-btn">Diário</button>
     <div class="buttons">
       <button id="relax" type="button" aria-pressed="false" title="Tela cheia, sem painel, com música ambiente">Relaxar</button>
       <button id="pomodoro" type="button" aria-pressed="false" title="Timer de foco 25 min / pausa 5 min">Pomodoro</button>
@@ -64,6 +65,20 @@
     <svg id="map-svg" viewBox="0 -40 1000 140" preserveAspectRatio="xMidYMid meet"></svg>
     <footer><span class="key station">Estação</span><span class="key tunnel">Túnel</span><span class="key bridge">Ponte</span><span class="key crossing">Passagem de nível</span></footer>
   </section>
+
+  <section id="journal" class="journal hidden" aria-label="Diário de viagem">
+    <header>
+      <div>
+        <h2>Diário de viagem</h2>
+        <p id="journal-count"></p>
+      </div>
+      <button id="journal-close" type="button" aria-label="Fechar diário">✕</button>
+    </header>
+    <div id="journal-grid" class="journal-grid"></div>
+    <footer><button id="journal-reset" type="button" class="journal-reset">Recomeçar diário</button></footer>
+  </section>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <div id="photo-flash" class="photo-flash" aria-hidden="true"></div>
 

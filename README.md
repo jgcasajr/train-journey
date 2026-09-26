@@ -48,6 +48,10 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Mapa**: a linha inteira da volta atual (28 km) com estações, túneis, pontes, passagens de nível, biomas e a posição do trem.
 - **Foto**: salva o quadro atual como PNG (`train-journey-km12.3.png`).
 
+## Diário de viagem
+
+Botão **Diário** no painel: um caderno com 38 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, acordar a passageira) e marcos de 10 e 50 km. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+
 ## Cliques na cena
 
 O cursor vira mãozinha sobre o que é clicável.
@@ -119,6 +123,8 @@ src/
   interactions.js o que foi clicado (hit-test)
   events.js     efeito de cada clique no estado (falas, gole, freio...)
   interactionsView.js textos flutuantes e falas da passageira
+  journalData.js as descobertas do diário e quando cada uma acontece
+  journal.js    diário: progresso salvo, avisos e o caderno
   music.js      música ambiente generativa
   pomodoro.js   lógica do timer
   lineMap.js    mapa da linha (SVG)

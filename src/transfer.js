@@ -1,6 +1,7 @@
-import { LINES } from './biomes.js';
+import { LINES, lineAt } from './biomes.js';
 import { t } from './i18n.js';
 import { canTransfer, needsChange, otherLine } from './lineChange.js';
+import { SCENE_SECONDS } from './platformScene.js';
 import { DWELL } from './stations.js';
 
 const FADE_MS = 500;
@@ -12,26 +13,51 @@ function element(doc, id) {
   return node;
 }
 
-/** The "change trains" button shown at the Nexus platform; fades the view while she crosses. */
-export function createTransfer(doc, { onTransfer }) {
+/**
+ * The "change trains" button shown at the Nexus platform. Changing fades to black, applies the
+ * transfer and then plays the platform scene (she walks from one train to the other).
+ */
+export function createTransfer(doc, { onTransfer, onAnnounce }) {
   const button = element(doc, 'transfer-btn');
   const fade = element(doc, 'car-fade');
   let busy = false;
   let label = '';
+  let scene = null; // { start (ms), from, to } while the platform scene plays
+  let fromLine = 0;
   function change() {
     if (busy) return;
     busy = true;
     fade.classList.add('on');
+    const to = (fromLine + 1) % LINES.length;
     setTimeout(() => {
       onTransfer();
+      scene = { start: performance.now(), from: LINES[fromLine].id, to: LINES[to].id, toName: LINES[to].name };
       fade.classList.remove('on');
-      busy = false;
+      onAnnounce();
     }, FADE_MS);
   }
   button.addEventListener('click', (e) => { e.stopPropagation(); change(); });
   return {
     /** Called every frame: shows the button while a transfer is possible. */
+    /** The platform scene to draw now ({ t, from, to, announcement }), or null. */
+    sceneAt(now) {
+      if (!scene) return null;
+      const sec = (now - scene.start) / 1000;
+      if (sec <= SCENE_SECONDS) {
+        return { t: sec, from: scene.from, to: scene.to, announcement: t(`Atenção: trem da ${scene.toName} na plataforma 2. Boa viagem!`) };
+      }
+      scene = null;
+      busy = false;
+      // Soft fade back into the cabin of the new train.
+      fade.style.transition = 'none';
+      fade.classList.add('on');
+      void fade.offsetWidth; // commit the black frame before fading out
+      fade.style.transition = '';
+      fade.classList.remove('on');
+      return null;
+    },
     update(state) {
+      if (!busy) fromLine = lineAt(state.distance);
       const show = canTransfer(state) && !busy;
       button.classList.toggle('hidden', !show);
       if (!show) return;

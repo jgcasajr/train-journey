@@ -24,6 +24,7 @@ import { currentLang } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
 import { createTransfer } from './transfer.js';
+import { drawPlatformScene } from './platformScene.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
@@ -76,8 +77,12 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
   moonPhase: moonPhase(state.dayCount, state.dayTime),
 });
 
-function render(ctx, layout, state, { fog, dt, station, intention }) {
+function render(ctx, layout, state, { fog, dt, station, intention, platform }) {
   const env = sceneEnvironment(state);
+  if (platform) {
+    drawPlatformScene(ctx, layout, env, platform);
+    return;
+  }
   const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
   const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains });
   const bob = trainBob(state, layout.u);
@@ -275,7 +280,10 @@ function start() {
     onReturn: () => { journal.award('intentionReturned'); audio.sfx('chime'); },
     makePostcard: (extra) => modes.postcard(extra),
   });
-  const transfer = createTransfer(document, { onTransfer: () => { clicks.queue({ type: 'transfer' }); audio.sfx('chime'); } });
+  const transfer = createTransfer(document, {
+    onTransfer: () => clicks.queue({ type: 'transfer' }),
+    onAnnounce: () => audio.chime(),
+  });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
   const day = Number(params.get('dia'));
@@ -322,7 +330,7 @@ function start() {
     if (layout.W > 0 && layout.H > 0) {
       if (state.fog > 0.1 && strokes.length > 0) fog.wipe(strokes, layout);
       const view = { ...layout, lookX: look.x, lookY: look.y };
-      render(ctx, view, state, { fog, dt, station: radio.station, intention: intention.current() });
+      render(ctx, view, state, { fog, dt, station: radio.station, intention: intention.current(), platform: transfer.sceneAt(now) });
       scene = { view, state };
       const env = sceneEnvironment(state);
       journal.observe(state, env, view);

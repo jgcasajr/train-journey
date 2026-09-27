@@ -596,6 +596,7 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^Atenção: trem da (.+) na plataforma 2\. Boa viagem!$/, (tr, line) => `Attention: the ${tr(line)} train is at platform 2. Have a good trip!`],
   [/^Fazer baldeação: (.+)$/, (tr, line) => `Change trains: ${tr(line)}`],
   [/^Destino: (.+) · baldeação em (.+) · ([\d.]+) km$/, (tr, dest, via, km) => `Destination: ${dest} · change at ${via} · ${km} km`],
   [/^Minha intenção: “(.+)”$/s, (tr, text) => `My intention: “${text}”`],

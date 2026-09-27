@@ -64,6 +64,10 @@ A Horizonte tem outra ordem de paisagens (começa no litoral) e cenário própri
 
 Botão **Respirar**: um círculo suave cresce enquanto você inspira e diminui enquanto solta — **4 tempos para dentro, 4 para fora**, com a contagem na tela. O tempo segue o "tum" das juntas dos trilhos (uma a cada 25 m): a 90 km/h, um tempo por segundo; mais devagar, a respiração fica mais lenta (e parado na estação, um por segundo). São 6 ciclos; no fim, "Que bom. Siga viagem com calma." e uma figurinha no diário. **Parar** ou Esc interrompe.
 
+## A passageira tem vida própria
+
+Além de ler, tomar café e dormir à noite, ela vai trocando de atividade a cada ~45 s: **tricota** (as agulhas batendo e um cachecol listrado que cresce ao longo da viagem, com o novelo no colo — cerca de 1 h de viagem rende a figurinha "Cachecol de tricô"), **desenha** a paisagem num bloquinho (o lápis vai traçando o morro, e cada desenho vira uma linha no caderno), **cochila** de dia com a cabeça tombando para o vidro e **come um sanduíche**.
+
 ## Caderno da passageira
 
 Botão **Caderno**: ela vai escrevendo a viagem num caderno de papel pautado, com letra de mão — uma linha para cada descoberta do diário ("Parei em Nexus. Gente chegando, gente partindo.", "Vi algo raro: Aurora boreal! Nem acredito."), com data, hora e km, e metade dos pensamentos que passam pela cabeça dela ("Pensei: …"). A primeira página: "Comecei este caderno hoje. Nova fase, página em branco." Fica salvo no navegador, aparece no idioma escolhido e pode ser baixado em **.txt**.
@@ -131,7 +135,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 106 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 107 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 

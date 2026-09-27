@@ -72,13 +72,18 @@ function targetActivity(state) {
   const slot = Math.floor(state.time / ACTIVITY_SLOT);
   const r = hash(slot, 1811);
   const local = state.time - slot * ACTIVITY_SLOT;
-  if (r < 0.35) return 'read';
-  if (r > 0.6 && state.coffee > 0.05 && local > 12 && local < 17) return 'sip';
+  if (r < 0.28) return 'read';
+  if (r < 0.4) return 'knit';
+  if (r < 0.5) return 'sketch';
+  if (r < 0.57) return state.dwell > 0 ? 'look' : 'rest'; // dozing with her head on the glass
+  if (r < 0.63) return local > 4 && local < 22 ? 'snack' : 'look';
+  if (r > 0.7 && state.coffee > 0.05 && local > 12 && local < 17) return 'sip';
   return 'look';
 }
 
 export const initialCabin = () => ({
-  pose: { read: 0, sleep: 0, sip: 0, ticket: 0, talk: 0, receive: 0, wave: 0, eat: 0 },
+  pose: { read: 0, sleep: 0, sip: 0, ticket: 0, talk: 0, receive: 0, wave: 0, eat: 0, knit: 0, sketch: 0, snack: 0, rest: 0 },
+  knitted: 0, // seconds spent knitting: the scarf grows with it
   coffee: 1,
   coffeeHotUntil: HOT_SECONDS,
 });
@@ -93,6 +98,7 @@ export function updateCabin(state, dt) {
   const coffee = refill ? 1 : Math.max(0, state.coffee - (pose.sip > 0.9 ? SIP_RATE * dt : 0));
   return {
     pose,
+    knitted: (state.knitted ?? 0) + dt * (pose.knit > 0.8 ? 1 : 0),
     coffee,
     coffeeHotUntil: refill ? state.time + HOT_SECONDS : state.coffeeHotUntil,
   };

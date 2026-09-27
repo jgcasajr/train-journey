@@ -1,4 +1,4 @@
-import { lineKm } from './biomes.js';
+import { biomeName, lineKm } from './biomes.js';
 import { onLangChange, t } from './i18n.js';
 import { thoughtAt } from './thoughts.js';
 import { hash } from './utils.js';
@@ -20,6 +20,7 @@ const TEMPLATES = {
   'Conquistas': 'Conquista: {x}. Um passo de cada vez.',
 };
 const THOUGHT = 'Pensei: “{x}”';
+const SKETCH = 'Desenhei a paisagem no bloquinho: {x}.';
 const FIRST_PAGE = 'Comecei este caderno hoje. Nova fase, página em branco.';
 
 function load() {
@@ -100,6 +101,7 @@ export function createNotebook(doc) {
   onLangChange(() => { if (!ui.book.classList.contains('hidden')) render(); });
 
   let lastThought = null;
+  let sketching = false;
   const stampOf = (state) => ({ clock: clockOf(state.dayTime), km: lineKm(state.distance), date: new Date().toLocaleDateString('pt-BR') });
 
   return {
@@ -112,6 +114,9 @@ export function createNotebook(doc) {
     /** Called every frame: the first page (once), and about half of her thoughts get written down. */
     observe(state, env) {
       if (entries.length === 0) write([{ ...stampOf(state), tpl: FIRST_PAGE, x: '' }]);
+      const sketchingNow = (state.pose?.sketch ?? 0) > 0.8;
+      if (sketchingNow && !sketching) write([{ ...stampOf(state), tpl: SKETCH, x: biomeName(state.distance) }]);
+      sketching = sketchingNow;
       const thought = thoughtAt(state, env, false);
       if (!thought || thought === lastThought) return;
       lastThought = thought;

@@ -23,7 +23,11 @@ const HANDS = {
   receive: { hand: [19, -27], elbow: [9, -21] },
   wave: { hand: [9, -52], elbow: [7, -38] },
   eat: { hand: [7.6, -37], elbow: [10, -25] },
+  knit: { hand: [11.5, -17], elbow: [3, -12] },
+  sketch: { hand: [10.5, -21], elbow: [4, -13] },
+  snack: { hand: [7.6, -37], elbow: [10, -25] },
 };
+const YARN = ['#7a5bc4', '#efe3c8'].map(hex);
 
 /** Screen position of the passenger's hip (origin of the passenger's unit space). */
 export const passengerOrigin = ({ win, u }) => ({ x: win.x + win.w * 0.12, y: win.y + win.h * 0.62 + 42 * u });
@@ -147,7 +151,7 @@ function drawFaceProfile(ctx, L, head) {
 
 /** Blends the resting arm toward each active pose by its weight. */
 function armPose(pose) {
-  const active = ['read', 'sip', 'ticket', 'receive', 'wave', 'eat'];
+  const active = ['read', 'sip', 'ticket', 'receive', 'wave', 'eat', 'knit', 'sketch', 'snack'];
   const sum = active.reduce((s, k) => s + pose[k], 0);
   const weight = (k) => (sum > 1 ? pose[k] / sum : pose[k]);
   const blend = (part, axis) => active.reduce(
@@ -277,7 +281,85 @@ function drawTicket(ctx, L, [x, y], amount) {
   ctx.restore();
 }
 
-function drawArm(ctx, L, pose, holdingNewCup, time) {
+/** Two needles clicking, the scarf hanging from them (longer the more she knitted) and the yarn ball. */
+function drawKnitting(ctx, L, [x, y], amount, time, knitted) {
+  ctx.save();
+  ctx.globalAlpha = clamp((amount - 0.2) * 1.6);
+  const length = 2.5 + Math.min(12, knitted / 40);
+  for (let k = 0; k < length; k += 1.2) {
+    ctx.fillStyle = rgba(lit(YARN[Math.floor(k / 1.2) % 2], L));
+    ctx.fillRect(x - 2.4 + Math.sin(time * 0.8 + k) * 0.15, y + 0.6 + k, 3.4, 1.25);
+  }
+  const click = Math.sin(time * 8) * 0.5;
+  ctx.strokeStyle = rgba(lit(hex('#c9ced2'), L));
+  ctx.lineWidth = 0.35;
+  ctx.beginPath();
+  ctx.moveTo(x - 4.5, y - 3 + click);
+  ctx.lineTo(x + 2.5, y + 1);
+  ctx.moveTo(x - 3.5, y + 1.5);
+  ctx.lineTo(x + 3, y - 3.5 - click);
+  ctx.stroke();
+  ctx.fillStyle = rgba(lit(YARN[0], L));
+  ctx.beginPath();
+  ctx.arc(x + 7, y + 11, 1.9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = rgba(lit(YARN[0], L));
+  ctx.lineWidth = 0.2;
+  ctx.beginPath();
+  ctx.moveTo(x + 6, y + 10);
+  ctx.quadraticCurveTo(x + 3, y + 6, x + 0.5, y + 1);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** A sketch pad on her knee: the landscape line grows as the pencil moves along it. */
+function drawSketch(ctx, L, [x, y], amount, time) {
+  ctx.save();
+  ctx.globalAlpha = clamp((amount - 0.2) * 1.6);
+  ctx.translate(x - 1, y - 1);
+  ctx.rotate(-0.35);
+  ctx.fillStyle = rgba(lit(hex('#5a3a2a'), L));
+  ctx.fillRect(-8.3, -0.3, 8.6, 5.9);
+  ctx.fillStyle = rgba(lit(PAGE, L));
+  ctx.fillRect(-8, 0, 8, 5.3);
+  const p = (time % 14) / 14;
+  ctx.strokeStyle = rgba(lit(hex('#3a3a44'), L));
+  ctx.lineWidth = 0.2;
+  ctx.beginPath();
+  for (let i = 0; i <= 20 * p; i++) {
+    const px = -7.5 + (i / 20) * 7;
+    const py = 3 - Math.sin(i * 0.5) * 0.9 - (i > 8 && i < 13 ? 1.2 : 0);
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  const tip = [-7.5 + p * 7, 3 - Math.sin(p * 10) * 0.9];
+  ctx.strokeStyle = rgba(lit(hex('#e0a030'), L));
+  ctx.lineWidth = 0.45;
+  ctx.beginPath();
+  ctx.moveTo(tip[0], tip[1]);
+  ctx.lineTo(tip[0] + 2.2, tip[1] - 2.6);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** A sandwich on its way to her mouth. */
+function drawSandwich(ctx, L, [x, y], amount) {
+  ctx.save();
+  ctx.globalAlpha = clamp((amount - 0.3) * 2);
+  ctx.translate(x + 1, y - 1.2);
+  ctx.rotate(-0.4);
+  ctx.fillStyle = rgba(lit(hex('#e2b673'), L));
+  ctx.fillRect(-0.5, -1.6, 4.6, 1);
+  ctx.fillRect(-0.5, 0.4, 4.6, 1);
+  ctx.fillStyle = rgba(lit(hex('#5fa04a'), L));
+  ctx.fillRect(-0.8, -0.6, 5.2, 0.5);
+  ctx.fillStyle = rgba(lit(hex('#d8453a'), L));
+  ctx.fillRect(-0.3, -0.1, 4.4, 0.5);
+  ctx.restore();
+}
+
+function drawArm(ctx, L, pose, holdingNewCup, time, knitted = 0) {
   const base = armPose(pose);
   const hand = [base.hand[0] + Math.sin(time * 9) * 1.6 * pose.wave, base.hand[1]]; // waving side to side
   const { elbow } = base;
@@ -294,6 +376,9 @@ function drawArm(ctx, L, pose, holdingNewCup, time) {
   if (pose.sip > 0.3) drawHeldCup(ctx, L, hand, pose.sip);
   if (holdingNewCup) drawHeldCup(ctx, L, hand, 1);
   if (pose.eat > 0.3) drawFork(ctx, L, hand, pose.eat);
+  if (pose.knit > 0.2) drawKnitting(ctx, L, hand, pose.knit, time, knitted);
+  if (pose.sketch > 0.2) drawSketch(ctx, L, hand, pose.sketch, time);
+  if (pose.snack > 0.3) drawSandwich(ctx, L, hand, pose.snack);
   if (pose.ticket > 0.3) drawTicket(ctx, L, hand, pose.ticket);
   ctx.fillStyle = rgba(lit(SKIN, L));
   ctx.beginPath();
@@ -319,15 +404,15 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
   const { pose } = state;
   const origin = passengerOrigin(layout);
   const breath = Math.sin(state.time * (pose.sleep > 0.5 ? 0.8 : 1.3)) * 0.3;
-  const nod = (Math.sin(state.time * 0.7) * 0.4 + bob / u) * (1 - pose.sleep);
+  const nod = (Math.sin(state.time * 0.7) * 0.4 + bob / u) * Math.max(0, 1 - pose.sleep - pose.rest);
   const ev = aisleEventAt(state.time, state.dayTime);
   const speaking = beatAt(ev)?.who === 'passenger' || companionLine(state, null)?.who === 'p'
     || passerbyLine(passerbyAt(state.time, state.dayTime))?.who === 'p';
   const facing = Math.max(pose.talk, pose.ticket, pose.receive, pose.wave);
   const head = {
-    tilt: nod * 0.02 + pose.read * 0.22 - pose.sleep * 0.32 - pose.sip * 0.12 - facing * 0.08,
-    dx: -pose.sleep * 1.4,
-    dy: nod * 0.2 + pose.read * 0.8 + pose.sleep * 0.6,
+    tilt: nod * 0.02 + (pose.read + pose.knit + pose.sketch) * 0.22 - pose.sleep * 0.32 - pose.sip * 0.12 - facing * 0.08 + pose.rest * 0.42,
+    dx: -pose.sleep * 1.4 + pose.rest * 3, // dozing: head leaning toward the window glass
+    dy: nod * 0.2 + (pose.read + pose.knit + pose.sketch) * 0.8 + pose.sleep * 0.6 + pose.rest * 1.6,
     face: facing,
     mouth: speaking ? Math.abs(Math.sin(state.time * 11)) : 0,
   };
@@ -340,7 +425,7 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
   ctx.translate(0, -breath);
   drawTorso(ctx, L, rim);
   drawHead(ctx, L, head, rim);
-  drawArm(ctx, L, pose, cupWithPassenger(ev), state.time);
+  drawArm(ctx, L, pose, cupWithPassenger(ev), state.time, state.knitted ?? 0);
   drawZzz(ctx, state.time, pose.sleep);
   ctx.restore();
 }
@@ -387,7 +472,7 @@ export function drawReflection(ctx, layout, state, L) {
   ctx.lineWidth = 0.5;
   [-2, 2].forEach((ex) => {
     ctx.beginPath();
-    if (pose.sleep > 0.5 || pose.read > 0.5) {
+    if (pose.sleep > 0.5 || pose.rest > 0.5 || pose.read > 0.5 || pose.knit > 0.5 || pose.sketch > 0.5) {
       ctx.arc(ex, eyesY, 0.9, 0.15 * Math.PI, 0.85 * Math.PI);
       ctx.stroke();
     } else {

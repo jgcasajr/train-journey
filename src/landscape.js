@@ -1,5 +1,6 @@
 import { biomeAt, num, pick } from './biomes.js';
 import { drawDistantLights } from './nightView.js';
+import { drawViaduct } from './viaduct.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
 import { drawBoats, drawLighthouses } from './coast.js';
@@ -83,6 +84,52 @@ function drawMountains(ctx, layout, state, env, cfg) {
   drawSnowCaps(ctx, pts, horizon - win.h * cfg.snowLine, win.h * 0.14, rgba(shade(SNOW, env, cfg.haze * 0.8)), env);
 }
 
+/** Mountains mirrored in still lake water (only where the biome has `mirror`). */
+function drawReflection(ctx, layout, state, env, top) {
+  const { win } = layout;
+  const cfg = MOUNTAINS[1];
+  const lf = layerFrame(layout, state, cfg.depth);
+  const depthAt = (wx, bm) => (0.3 + 0.7 * fbm(wx * cfg.freq, cfg.seed, 5)) * win.h * cfg.amp * num(bm, 'mtn') * num(bm, 'mirror');
+  const pts = traceRidge(win, lf, (wx, bm) => top + depthAt(wx, bm) * 0.55);
+  const fill = acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, cfg.key, env), env, cfg.haze + 0.15), 0.55 * num(bm, 'mirror')));
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, top);
+  pts.forEach((p) => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(pts[pts.length - 1].x, top);
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.restore();
+}
+
+/** Vineyard rows on the fields: posts with leafy vines (grapes from summer to autumn). */
+function drawVines(ctx, layout, lf, heightAt, env, seasonPhase) {
+  const { win } = layout;
+  const s = win.h * 0.022;
+  const grapes = env.season.summer + env.season.autumn;
+  forEachSlot(win, lf, s * 1.6, s, 631, (i, x, wx, bm) => {
+    const vines = num(bm, 'vines');
+    if (vines < 0.1 || hash(i, 632) > vines) return;
+    for (let row = 0; row < 3; row++) {
+      const y = heightAt(wx, bm) + s * (0.6 + row * 1.4);
+      const size = s * (0.8 + row * 0.35);
+      ctx.fillStyle = rgba(shade(hex('#5a4030'), env, 0.05));
+      ctx.fillRect(x - size * 0.05, y - size, size * 0.1, size);
+      ctx.fillStyle = rgba(shade(tint(bm, 'leaf', env), env, 0.05));
+      ctx.beginPath();
+      ctx.ellipse(x, y - size * 0.9, size * 0.55, size * 0.35, 0, 0, Math.PI * 2);
+      ctx.fill();
+      if (grapes > 0.3 && hash(i + row, 633) < 0.6) {
+        ctx.fillStyle = rgba(shade(hex('#5b2a5e'), env, 0.05));
+        ctx.beginPath();
+        ctx.arc(x + size * 0.2, y - size * 0.7, size * 0.12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  });
+}
+
 function drawWater(ctx, layout, state, env) {
   const { win, horizon, u } = layout;
   const lf = layerFrame(layout, state, 0.08);
@@ -90,6 +137,7 @@ function drawWater(ctx, layout, state, env) {
   const base = shade(mix(WATER, env.bottom, 0.3), env, 0.1);
   ctx.fillStyle = acrossGradient(ctx, win, lf, (bm) => rgba(base, num(bm, 'water')));
   ctx.fillRect(win.x - lf.margin, top, win.w + lf.margin * 2, win.y + win.h - top + 40);
+  drawReflection(ctx, layout, state, env, top);
   const glint = mix(env.bottom, WHITE, 0.6);
   forEachSlot(win, lf, u * 2.5, 0, 131, (i, x, wx, bm) => {
     const water = num(bm, 'water');
@@ -176,6 +224,7 @@ function drawFields(ctx, layout, state, env) {
     else if (kind === 'tree') drawTree(ctx, pick(bm, hash(i, 54)).tree, x, y, s * (0.7 + hash(i, 55) * 0.6), treeStyle(bm, env, haze));
     else drawHouse(ctx, x, y, s * 0.7, houseStyle(i + 7000, env, haze));
   });
+  drawVines(ctx, layout, lf, heightAt, env, state.seasonPhase);
   drawWildlife(ctx, layout, state, env, heightAt);
   drawMist(ctx, layout, state, env, horizon + win.h * 0.2, win.h * 0.07, 1611);
 }
@@ -282,6 +331,7 @@ export function drawLandscape(ctx, layout, state, env) {
   drawRush(ctx, layout, state, env);
   drawCrossingGates(ctx, layout, state, env);
   drawBridges(ctx, layout, state, env);
+  drawViaduct(ctx, layout, state, env);
   drawStations(ctx, layout, state, env);
   drawPrecipitation(ctx, layout, state, env, precipitationKind(env, num(biomeAt(state.distance), 'snow')));
   drawTunnels(ctx, layout, state, env);

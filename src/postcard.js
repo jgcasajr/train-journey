@@ -19,10 +19,14 @@ const MESSAGES = {
   Subúrbio: 'Cada casinha, uma história. Cada janela acesa, alguém recomeçando.',
   Cidade: 'A cidade corre lá fora, mas aqui dentro o tempo é meu.',
   Litoral: 'Cheiro de maresia pela janela. O mar sempre parece um começo.',
+  Deserto: 'O deserto passa em silêncio. Dunas, cactos e um céu enorme para pensar.',
+  Vinhedos: 'Fileiras de parreiras até onde a vista alcança. Tudo tem o seu tempo de colheita.',
+  Lago: 'Um lago tão parado que as montanhas se olham nele. Queria essa calma pra mim.',
 };
 const FROM = {
   Campos: 'dos Campos', Fazenda: 'da Fazenda', Floresta: 'da Floresta', Montanhas: 'das Montanhas',
   Outono: 'do Bosque de Outono', Subúrbio: 'do Subúrbio', Cidade: 'da Cidade', Litoral: 'do Litoral',
+  Deserto: 'do Deserto', Vinhedos: 'dos Vinhedos', Lago: 'do Lago',
 };
 const GENERIC = 'Nova fase, nova vida. O caminho também é o destino.';
 

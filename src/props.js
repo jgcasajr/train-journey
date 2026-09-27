@@ -86,8 +86,24 @@ function drawPalm(ctx, x, y, s, { leaf, trunk }) {
   ctx.stroke();
 }
 
+/** Saguaro cactus: a ribbed column with two raised arms. */
+function drawCactus(ctx, x, y, s, { leaf }) {
+  ctx.strokeStyle = leaf;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = Math.max(1.5, s * 0.14);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y - s * 0.85);
+  ctx.moveTo(x, y - s * 0.4);
+  ctx.quadraticCurveTo(x - s * 0.28, y - s * 0.42, x - s * 0.28, y - s * 0.65);
+  ctx.moveTo(x, y - s * 0.3);
+  ctx.quadraticCurveTo(x + s * 0.26, y - s * 0.32, x + s * 0.26, y - s * 0.55);
+  ctx.stroke();
+}
+
 export function drawTree(ctx, type, x, y, s, style) {
   if (type === 'pine') return drawPine(ctx, x, y, s, style);
+  if (type === 'cactus') return drawCactus(ctx, x, y, s, style);
   if (type === 'palm') return drawPalm(ctx, x, y, s, style);
   return drawRound(ctx, x, y, s, style);
 }

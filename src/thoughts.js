@@ -35,6 +35,9 @@ const BIOME = {
   Subúrbio: ['Cada janela, uma história.'],
   Cidade: ['Tanta gente, tanta pressa.'],
   Litoral: ['Cheiro de maresia!'],
+  Deserto: ['No deserto, até o tempo anda devagar.'],
+  Vinhedos: ['Cada uva esperou o seu tempo.'],
+  Lago: ['Queria ser calma assim, como esse lago.'],
 };
 
 const shorten = (text) => (text.length > 60 ? `${text.slice(0, 57).trimEnd()}…` : text);

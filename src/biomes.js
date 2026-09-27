@@ -4,7 +4,7 @@ import { clamp, hex, lerp, mix, mod, smoothstep } from './utils.js';
 export const SEGMENT = 3500;
 const BLEND = 0.22;
 const COLOR_KEYS = ['far', 'mid', 'hills', 'field', 'near', 'ground', 'leaf'];
-const DEFAULTS = { mtn: 0.5, snow: 0, hillAmp: 1, water: 0, trees: 0.3, houses: 0.2, farm: 0, city: 0, station: null };
+const DEFAULTS = { mtn: 0.5, snow: 0, hillAmp: 1, water: 0, trees: 0.3, houses: 0.2, farm: 0, city: 0, vines: 0, mirror: 0, station: null };
 
 const RAW = [
   {
@@ -39,6 +39,18 @@ const RAW = [
     name: 'Litoral', station: 'Porto Azul', tree: 'palm', mtn: 0.25, hillAmp: 0.35, water: 1, trees: 0.35, houses: 0.15,
     far: '#8fa6c4', mid: '#7f9eab', hills: '#c9b98a', field: '#d8c890', near: '#6f9a4a', ground: '#c2b27f', leaf: '#4f8f3f',
   },
+  {
+    name: 'Deserto', station: 'Oásis', tree: 'cactus', mtn: 0.7, hillAmp: 0.6, trees: 0.3, houses: 0.03,
+    far: '#c9a27a', mid: '#c98f5a', hills: '#e0b57a', field: '#e8c88f', near: '#d4aa70', ground: '#c9a26a', leaf: '#5f8f4a',
+  },
+  {
+    name: 'Vinhedos', station: 'Vila Videira', tree: 'round', mtn: 0.45, hillAmp: 1.1, trees: 0.2, houses: 0.2, vines: 1,
+    far: '#8f9fbf', mid: '#7f8f8f', hills: '#7f9a4a', field: '#9aa84f', near: '#6a8a3a', ground: '#7a6a45', leaf: '#4f7f35',
+  },
+  {
+    name: 'Lago', station: 'Lago Sereno', tree: 'pine', mtn: 1.3, snow: 0.5, hillAmp: 0.2, water: 1, mirror: 1, trees: 0.35, houses: 0.06,
+    far: '#8a9ec4', mid: '#6d80a0', hills: '#5f7f60', field: '#6f8a58', near: '#4f6f3a', ground: '#5f6a4a', leaf: '#34583a',
+  },
 ];
 
 export const BIOMES = RAW.map((b) => ({
@@ -61,10 +73,11 @@ export const LINES = [
   {
     id: 'horizonte',
     name: 'Linha Horizonte',
-    order: ['Litoral', 'Floresta', 'Montanhas', 'Outono', 'Fazenda', 'Campos', 'Cidade', 'Subúrbio'],
+    order: ['Litoral', 'Floresta', 'Montanhas', 'Outono', 'Fazenda', 'Vinhedos', 'Campos', 'Lago', 'Cidade', 'Subúrbio', 'Deserto'],
     stations: {
       Litoral: 'Maré Mansa', Floresta: 'Bosque Velho', Montanhas: 'Serra Clara', Outono: 'Nexus',
-      Fazenda: 'Vale Novo', Campos: null, Cidade: 'Horizonte', Subúrbio: 'Jardim do Sol',
+      Fazenda: 'Vale Novo', Vinhedos: null, Campos: null, Lago: 'Espelho d\'Água', Cidade: 'Horizonte',
+      Subúrbio: 'Jardim do Sol', Deserto: 'Dunas Douradas',
     },
   },
 ];

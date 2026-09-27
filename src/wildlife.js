@@ -81,7 +81,8 @@ export function whaleAt(state, layout) {
   const x = 0.2 + hash(k, 2213) * 0.6;
   const lf = layerFrame(layout, state, 0.08);
   const meters = (lf.offset + x * layout.win.w) / lf.px;
-  return num(biomeAt(meters), 'water') > 0.8 ? { k, t, x } : null;
+  const bm = biomeAt(meters);
+  return num(bm, 'water') > 0.8 && num(bm, 'mirror') < 0.2 ? { k, t, x } : null;
 }
 
 export function drawWhale(ctx, layout, state, env, waterTop) {

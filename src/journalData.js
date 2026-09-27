@@ -11,6 +11,7 @@ import { companionPersona } from './companion.js';
 import { CAST, passerbyAt } from './passersby.js';
 import { PERSONAS } from './personas.js';
 import { moonFullness } from './moon.js';
+import { onViaduct } from './viaduct.js';
 import { auroraStrength } from './nightView.js';
 import { fireworkBursts, meteorsAt, shootingStarAt } from './rareSky.js';
 import { precipitationKind, rainbowStrength } from './weatherView.js';
@@ -18,10 +19,11 @@ import { deerInView, whaleAt } from './wildlife.js';
 
 const BIOME_ICONS = {
   Campos: '🌾', Fazenda: '🐄', Floresta: '🌲', Montanhas: '🏔️', Outono: '🍂', Subúrbio: '🏡', Cidade: '🏙️', Litoral: '🏖️',
+  Deserto: '🏜️', Vinhedos: '🍇', Lago: '🏞️',
 };
 const STATION_WHERE = {
   Campos: 'nos campos', Fazenda: 'na fazenda', Montanhas: 'nas montanhas',
-  Floresta: 'na floresta', Outono: 'no bosque de outono', Subúrbio: 'no subúrbio', Cidade: 'na cidade', Litoral: 'no litoral',
+  Floresta: 'na floresta', Outono: 'no bosque de outono', Deserto: 'no deserto', Vinhedos: 'nos vinhedos', Lago: 'à beira do lago', Subúrbio: 'no subúrbio', Cidade: 'na cidade', Litoral: 'no litoral',
 };
 const SEASONS = [
   { id: 'spring', title: 'Primavera', icon: '🌸', hint: 'Quando as árvores florescem.' },
@@ -52,6 +54,7 @@ export const DISCOVERIES = [
   { id: 'cat', category: 'Personagens', icon: '🐈', title: 'Gato clandestino', hint: 'Alguém dorme no vagão de bagagem.', test: (f) => f.catPets > 0 },
   { id: 'car:cab', category: 'Momentos', icon: '🚂', title: 'Cabine do maquinista', hint: 'Veja os trilhos lá da frente.', test: (f) => f.car === 'cab' },
   { id: 'horn', category: 'Momentos', icon: '📯', title: 'Apito do maquinista', hint: 'Na cabine, aperte o botão vermelho.', test: (f) => f.horns > 0 },
+  { id: 'viaduct', category: 'Pelo caminho', icon: '🌉', title: 'Viaduto sobre o vale', hint: 'Entre as parreiras, o chão some lá embaixo...', test: (f) => f.viaduct },
   { id: 'transfer', category: 'Momentos', icon: '🔁', title: 'Baldeação na Nexus', hint: 'Troque de trem na estação Nexus.', test: (f) => f.transfers > 0 },
   { id: 'line:horizonte', category: 'Marcos', icon: '🌅', title: 'Linha Horizonte', hint: 'Existe outra linha além da Nexus...', test: (f) => f.line === 1 },
   ...BIOMES.map((b) => ({
@@ -161,6 +164,7 @@ export function factsFrom({ state, env, view, traveled }) {
     traveled,
     transfers: state.transfers ?? 0,
     car: state.car,
+    viaduct: onViaduct(state.distance),
     night: env.sunElev < -0.1,
     aurora: auroraStrength(state, env) > 0.3,
     catPets: state.catPets ?? 0,

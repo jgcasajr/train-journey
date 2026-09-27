@@ -21,6 +21,9 @@ const BIOME_LINES = {
   Subúrbio: ['Que bairro tranquilo.', 'Já morei numa casinha assim.'],
   Cidade: ['A cidade não para, né?', 'Quanto prédio!'],
   Litoral: ['O mar! Finalmente!', 'Queria estar na areia agora.'],
+  Deserto: ['Quanto silêncio nessas dunas.', 'Olha o cacto! Parece que está acenando.'],
+  Vinhedos: ['Um vinho agora cairia bem...', 'Quanta uva!'],
+  Lago: ['Tem duas montanhas: uma no céu e outra na água.', 'Que água parada, parece um espelho.'],
 };
 const GENERIC_LINES = ['Oi! Tudo bem?', 'Essa viagem tá uma delícia.', 'Já estamos chegando?', 'Adoro viajar de trem.'];
 

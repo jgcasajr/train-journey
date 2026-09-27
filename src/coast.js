@@ -70,7 +70,7 @@ function lighthousesBetween(m0, m1) {
   const first = Math.floor(m0 / SEGMENT);
   const count = Math.floor(m1 / SEGMENT) - first + 1;
   return Array.from({ length: count }, (_, i) => first + i)
-    .filter((k) => segmentBiome(k).water > 0.5)
+    .filter((k) => segmentBiome(k).water > 0.5 && !segmentBiome(k).mirror)
     .map((k) => k * SEGMENT + SEGMENT * LIGHTHOUSE_POSITION)
     .filter((at) => at > m0 && at < m1);
 }

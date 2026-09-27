@@ -1,5 +1,6 @@
 import { biomeName } from './biomes.js';
 import { isNight } from './clock.js';
+import { meteorNight } from './moon.js';
 import { hash } from './utils.js';
 
 const SLOT = 70; // seconds between chances of a thought
@@ -19,6 +20,7 @@ const GENERIC = [
   'Tudo passa tão rápido lá fora...',
   'Um dia vou morar numa casinha dessas.',
 ];
+const METEORS = ['Uma chuva de meteoros! Faz um pedido!', 'Quantas estrelas cadentes... já perdi a conta.', 'Pedi uma vida nova. Acho que já começou.'];
 const NIGHT = ['As estrelas parecem acompanhar o trem.', 'Que silêncio bom...', 'A noite tem outro ritmo.'];
 const RAIN = ['Chuva no vidro dá vontade de escrever.', 'Tomara que pare até eu chegar.', 'Barulhinho bom de chuva.'];
 const WINTER = ['Brr... ainda bem que trouxe casaco.', 'Chocolate quente ia bem agora.'];
@@ -34,6 +36,7 @@ const BIOME = {
 };
 
 function pool(state, env) {
+  if (isNight(state.dayTime) && meteorNight(state.dayCount ?? 0) && env.rain < 0.2) return METEORS;
   if (isNight(state.dayTime)) return [...NIGHT, ...GENERIC];
   if (env.rain > 0.5) return [...RAIN, ...GENERIC];
   if (env.season.winter > 0.5) return [...WINTER, ...GENERIC];

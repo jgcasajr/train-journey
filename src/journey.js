@@ -17,6 +17,7 @@ export const RAIL_LENGTH = 25; // meters between rail joints ("clack")
 const ACCEL = 2.2; // m/s²
 const BRAKE = 0.9; // m/s², comfortable service braking into stations
 const START_DISTANCE = 600;
+const START_DAY = 2; // the trip starts with a waxing moon
 const DROP_COUNT = 140;
 
 export function initialState(input, startKm) {
@@ -26,6 +27,7 @@ export function initialState(input, startKm) {
     distance,
     speed: input.targetKmh / 3.6,
     dayTime: input.dayTime,
+    dayCount: START_DAY,
     ...initialWeather(input),
     jolt: 0,
     joint: Math.floor(distance / RAIL_LENGTH),
@@ -55,11 +57,18 @@ function fogTarget(state) {
   return Math.max(state.rain > 0.3 ? 0.85 : 0, cold);
 }
 
+/** Time of day; counts whole days as midnight passes (for the moon phases). */
+function nextDay(state, dt, input) {
+  if (!input.autoDay) return { dayTime: input.dayTime };
+  const raw = state.dayTime + dt / DAY_SECONDS;
+  return { dayTime: raw % 1, dayCount: state.dayCount + (raw >= 1 ? 1 : 0) };
+}
+
 /** Fields that evolve the same way whether the train is moving or standing. */
 function ambient(state, dt, input) {
   return {
     time: state.time + dt,
-    dayTime: input.autoDay ? (state.dayTime + dt / DAY_SECONDS) % 1 : input.dayTime,
+    ...nextDay(state, dt, input),
     ...updateWeather(state, dt, input),
     fog: approach(state.fog, fogTarget(state), dt * 0.05),
     drops: updateDrops(state.drops, dt, state.speed),

@@ -45,6 +45,10 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Som** (opcional): ronco do trem e o "tá-dum tá-dum" das juntas dos trilhos a cada 25 m, sincronizado com a velocidade.
 - Balanço do vagão, cafezinho com vapor, cortinas e a passageira respirando.
 
+## Lua e meteoros
+
+A lua muda de fase a cada noite (um ciclo completo a cada 8 dias de viagem): nova, crescente, quarto, gibosa, cheia e de volta. A lua cheia ilumina a paisagem; na lua nova a noite fica bem escura. Algumas noites limpas trazem uma **chuva de meteoros** — riscos no céu a cada instante, e a passageira faz pedidos.
+
 ## Vagão-restaurante
 
 O botão **Ir ao vagão-restaurante** leva a passageira (com uma transição escura) a um vagão com lambris de madeira, arandelas de latão, mesa com toalha branca, taça de vinho, vaso com rosa e vela acesa à noite. Ali o carrinho de lanches vira um **garçom** de paletó branco e gravata-borboleta que anuncia o prato do dia (feijoada, moqueca, risoto, salada tropical, macarrão ao sugo ou pudim), serve o prato na mão dela, e ela come em garfadas até o prato esvaziar. **Voltar ao vagão** retorna ao assento de sempre.
@@ -73,7 +77,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 61 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km). Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 64 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km). Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -110,6 +114,7 @@ O cursor vira mãozinha sobre o que é clicável.
 | Arrastar na janela | Desenhar no vidro embaçado |
 | `H` ou clique/toque na cena | Oculta o painel |
 | `?pass` na URL | Faz um trem passar em 2 s (para testar) |
+| `?dia=N` na URL | Começa no dia N (muda a fase da lua; ex.: `?dia=3` lua cheia, `?dia=7` lua nova) |
 | `?km=22` na URL | Começa em outro ponto do trajeto (fazenda ≈ 5, cidade ≈ 22, litoral ≈ 26, ponte ≈ 3.07, estação ≈ 1.44, passagem de nível ≈ 3.94, farol ≈ 26.75) |
 
 ## Estrutura
@@ -168,7 +173,8 @@ src/
   passersby.js  elenco do corredor, cenas e falas (simulação)
   passersbyView.js desenho dos passantes e seus adereços
   thoughts.js   pensamentos espontâneos da passageira
-  rareSky.js    estrela cadente e fogos de artifício
+  rareSky.js    estrela cadente, chuva de meteoros e fogos de artifício
+  moon.js       fases da lua e noites de meteoros
   wildlife.js   cervos e baleia
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro

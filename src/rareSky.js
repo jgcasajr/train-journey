@@ -1,4 +1,5 @@
 import { biomeAt, num } from './biomes.js';
+import { meteorNight } from './moon.js';
 import { hash, hex, rgba } from './utils.js';
 
 const FIREWORK_COLORS = ['#ff5a5a', '#ffd166', '#6be38a', '#5ab0ff', '#d58bff', '#ffffff'].map(hex);
@@ -22,13 +23,31 @@ export function shootingStarAt(state, env) {
   return { x: 0.15 + hash(k, 2105) * 0.7, y: 0.08 + hash(k, 2106) * 0.25, dir, p };
 }
 
+const METEOR_PERIOD = 0.7;
+const METEOR_SECONDS = 0.9;
+
+/** On a meteor-shower night, a streak every fraction of a second (clear skies only). */
+export function meteorsAt(state, env) {
+  if (env.sunElev > -0.15 || env.rain > 0.2 || !meteorNight(state.dayCount ?? 0)) return [];
+  const k0 = Math.floor(state.time / METEOR_PERIOD);
+  return [k0 - 1, k0].flatMap((k) => {
+    if (hash(k, 2711) > 0.8) return [];
+    const p = (state.time - k * METEOR_PERIOD - hash(k, 2712) * 0.3) / METEOR_SECONDS;
+    if (p < 0 || p > 1) return [];
+    return [{ x: 0.05 + hash(k, 2713) * 0.9, y: 0.03 + hash(k, 2714) * 0.3, dir: hash(k, 2715) > 0.35 ? 1 : -1, p, short: true }];
+  });
+}
+
 export function drawShootingStar(ctx, layout, state, env) {
   const star = shootingStarAt(state, env);
-  if (!star) return;
+  [...(star ? [star] : []), ...meteorsAt(state, env)].forEach((s) => drawStreak(ctx, layout, s));
+}
+
+function drawStreak(ctx, layout, star) {
   const { win, horizon, u } = layout;
   const x0 = win.x + star.x * win.w;
   const y0 = win.y + star.y * (horizon - win.y);
-  const travel = u * 55 * star.p;
+  const travel = u * (star.short ? 30 : 55) * star.p;
   const hx = x0 + star.dir * travel * 0.94;
   const hy = y0 + travel * 0.34;
   const tail = u * 20;

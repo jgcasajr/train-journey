@@ -19,6 +19,7 @@ import { createJournal } from './journal.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
 import { createModes } from './modes.js';
+import { moonPhase } from './moon.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
@@ -68,6 +69,7 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
   wetness: state.wetness,
   flash: flashLevel(state.lightning),
   seasonPhase: state.seasonPhase,
+  moonPhase: moonPhase(state.dayCount, state.dayTime),
 });
 
 function render(ctx, layout, state, { fog, dt, station }) {
@@ -251,7 +253,9 @@ function start() {
   });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
-  let state = params.has('pass') ? { ...start, nextPassing: 2 } : start;
+  const day = Number(params.get('dia'));
+  const withDay = params.has('dia') && Number.isFinite(day) ? { ...start, dayCount: Math.floor(day) } : start;
+  let state = params.has('pass') ? { ...withDay, nextPassing: 2 } : withDay;
   let last = performance.now();
   let hudTimer = 0;
   let lastBabyLine = null;

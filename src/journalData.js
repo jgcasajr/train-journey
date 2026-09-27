@@ -10,7 +10,8 @@ import { tunnelCoverage } from './tunnel.js';
 import { companionPersona } from './companion.js';
 import { CAST, passerbyAt } from './passersby.js';
 import { PERSONAS } from './personas.js';
-import { fireworkBursts, shootingStarAt } from './rareSky.js';
+import { moonFullness } from './moon.js';
+import { fireworkBursts, meteorsAt, shootingStarAt } from './rareSky.js';
 import { precipitationKind, rainbowStrength } from './weatherView.js';
 import { deerInView, whaleAt } from './wildlife.js';
 
@@ -46,6 +47,8 @@ export const DISCOVERIES = [
   ...SEASONS.map((s) => ({ ...s, id: `season:${s.id}`, category: 'Estações do ano', test: (f) => f.season === s.id })),
   { id: 'rainbow', category: 'Céu e clima', icon: '🌈', title: 'Arco-íris', hint: 'Algo colorido depois da chuva.', test: (f) => f.rainbow },
   { id: 'lightning', category: 'Céu e clima', icon: '⚡', title: 'Relâmpago', hint: 'Só aparece quando o tempo fecha.', test: (f) => f.lightning },
+  { id: 'fullMoon', category: 'Céu e clima', icon: '🌕', title: 'Lua cheia', hint: 'A lua muda de fase a cada noite.', test: (f) => f.fullMoon },
+  { id: 'newMoon', category: 'Céu e clima', icon: '🌑', title: 'Noite de lua nova', hint: 'Uma noite sem lua nenhuma.', test: (f) => f.newMoon },
   { id: 'snowfall', category: 'Céu e clima', icon: '❄️', title: 'Nevando', hint: 'Frio + precipitação.', test: (f) => f.snowing },
   { id: 'mist', category: 'Céu e clima', icon: '🌫️', title: 'Neblina da manhã', hint: 'Bem cedinho, nos vales.', test: (f) => f.mist },
   { id: 'stars', category: 'Céu e clima', icon: '✨', title: 'Céu estrelado', hint: 'Uma noite sem nuvens.', test: (f) => f.stars },
@@ -73,6 +76,7 @@ export const DISCOVERIES = [
     hint: ch.rarity <= 3 ? 'Esse é raro de ver...' : 'Alguém vai passar pelo corredor.', test: (f) => f.passerby === ch.id,
   })),
   { id: 'shootingStar', category: 'Raridades', icon: '🌠', title: 'Estrela cadente', hint: 'Olhe o céu numa noite limpa.', test: (f) => f.shootingStar },
+  { id: 'meteorShower', category: 'Raridades', icon: '☄️', title: 'Chuva de meteoros', hint: 'Algumas noites limpas são especiais.', test: (f) => f.meteorShower },
   { id: 'deer', category: 'Raridades', icon: '🦌', title: 'Cervo', hint: 'Bem no meio da floresta.', test: (f) => f.deer },
   { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
@@ -121,6 +125,9 @@ export function factsFrom({ state, env, view, traveled }) {
     deer: deerInView(view, state).some((d) => d.x > view.win.x && d.x < view.win.x + view.win.w),
     fireworks: fireworkBursts(state, env, view).some((b) => b.age > 0.5),
     whale: whaleAt(state, view) !== null,
+    meteorShower: meteorsAt(state, env).length > 0,
+    fullMoon: env.sunElev < -0.1 && env.rain < 0.3 && moonFullness(env.moonPhase ?? 0.5) > 0.93,
+    newMoon: env.sunElev < -0.1 && moonFullness(env.moonPhase ?? 0.5) < 0.05,
     arrival: Boolean(state.holding),
     dining: state.car === 'dining' && Boolean(state.meal),
     passerby: passerbySeen(state),

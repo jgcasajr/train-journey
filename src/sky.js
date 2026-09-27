@@ -1,3 +1,4 @@
+import { drawMoonDisc, moonFullness } from './moon.js';
 import { seasonWeights } from './seasons.js';
 import { circle, clamp, hash, hex, mix, radialGlow, rgba, scale, smoothstep } from './utils.js';
 
@@ -27,7 +28,7 @@ function morningMist(dayTime, wetness, storm, season) {
  * dayTime: 0 = midnight, 0.25 = sunrise, 0.5 = noon, 0.75 = sunset.
  * weather: { rain, storm, wetness, flash, seasonPhase } — all optional.
  */
-export function environment(dayTime, { rain = 0, storm = 0, wetness = 0, flash = 0, seasonPhase = 1.2 } = {}) {
+export function environment(dayTime, { rain = 0, storm = 0, wetness = 0, flash = 0, seasonPhase = 1.2, moonPhase = 0.5 } = {}) {
   const sunElev = -Math.cos(dayTime * Math.PI * 2);
   const clear = smoothstep(-0.25, 0.3, sunElev);
   const gloom = Math.min(1, rain * 0.75 + storm * 0.2);
@@ -44,7 +45,9 @@ export function environment(dayTime, { rain = 0, storm = 0, wetness = 0, flash =
     mist: morningMist(dayTime, wetness, storm, season),
     top: mix(skyColor('top', sunElev), overcast('top'), gloom),
     bottom: mix(skyColor('bottom', sunElev), overcast('bottom'), gloom),
-    light: clear * (1 - rain * 0.35) * (1 - storm * 0.3),
+    moonPhase,
+    // A full moon lifts the darkness a little on clear nights.
+    light: Math.max(clear, (1 - clear) * moonFullness(moonPhase) * 0.12 * (1 - rain)) * (1 - rain * 0.35) * (1 - storm * 0.3),
     warm: clamp(1 - Math.abs(sunElev) / 0.35) * (1 - rain * 0.7),
   };
 }
@@ -84,12 +87,11 @@ function drawMoon(ctx, layout, env) {
   const r = layout.u * 1.8;
   const vis = (1 - env.rain * 0.9) * smoothstep(-0.12, 0.05, elev) * (1 - env.light * 0.6);
   const pale = hex('#eef0ff');
-  radialGlow(ctx, x, y, r * 6, pale, 0.18 * vis);
-  ctx.fillStyle = rgba(pale, vis);
-  ctx.beginPath();
-  circle(ctx, x, y, r);
-  ctx.fill();
-  ctx.fillStyle = rgba(hex('#9aa0c0'), 0.35 * vis);
+  const fullness = moonFullness(env.moonPhase);
+  radialGlow(ctx, x, y, r * (3 + fullness * 5), pale, 0.18 * vis * (0.3 + fullness));
+  drawMoonDisc(ctx, x, y, r, env.moonPhase, rgba(pale, vis), rgba(mix(env.top, pale, 0.12), vis * 0.85));
+  if (fullness < 0.35) return;
+  ctx.fillStyle = rgba(hex('#9aa0c0'), 0.35 * vis * fullness);
   ctx.beginPath();
   circle(ctx, x - r * 0.3, y - r * 0.2, r * 0.25);
   circle(ctx, x + r * 0.35, y + r * 0.3, r * 0.18);

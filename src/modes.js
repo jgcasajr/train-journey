@@ -1,4 +1,5 @@
 import { createLineMap } from './lineMap.js';
+import { makePostcard } from './postcard.js';
 import { durationsFromParams, pomodoroLabel, startPomodoro, tickPomodoro } from './pomodoro.js';
 
 const PILL_INTERVAL = 250; // ms between pomodoro label refreshes
@@ -11,8 +12,8 @@ function element(doc, id) {
 
 const setPressed = (button, on) => button.setAttribute('aria-pressed', String(on));
 
-/** Saves the current frame as a PNG named after the track position. */
-function savePhoto(canvas, km, flash) {
+/** Downloads a canvas as a PNG and flashes the screen like a camera. */
+function saveCanvas(canvas, filename, flash) {
   canvas.toBlob((blob) => {
     if (!blob) {
       console.error('Photo failed: canvas produced no image');
@@ -21,7 +22,7 @@ function savePhoto(canvas, km, flash) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `train-journey-km${km.toFixed(1)}.png`;
+    link.download = filename;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }, 'image/png');
@@ -34,12 +35,13 @@ function savePhoto(canvas, km, flash) {
  * Relax mode (fullscreen, hidden UI, ambient music), Pomodoro timer, line map and photo.
  * `chime` is played when a Pomodoro phase ends (in addition to the music bell).
  */
-export function createModes(doc, { canvas, panel, params, chime, radio }) {
+export function createModes(doc, { canvas, panel, params, chime, radio, describe, onPostcard }) {
   const ui = {
     relax: element(doc, 'relax'),
     pomodoro: element(doc, 'pomodoro'),
     map: element(doc, 'map-btn'),
     photo: element(doc, 'photo'),
+    postcard: element(doc, 'postcard'),
     pill: element(doc, 'pomo-pill'),
     lineMap: element(doc, 'line-map'),
     flash: element(doc, 'photo-flash'),
@@ -82,7 +84,20 @@ export function createModes(doc, { canvas, panel, params, chime, radio }) {
     const visible = ui.lineMap.classList.toggle('hidden') === false;
     setPressed(ui.map, visible);
   });
-  ui.photo.addEventListener('click', (e) => { stop(e); savePhoto(canvas, distanceKm, ui.flash); });
+  ui.photo.addEventListener('click', (e) => {
+    stop(e);
+    saveCanvas(canvas, `train-journey-km${distanceKm.toFixed(1)}.png`, ui.flash);
+  });
+  ui.postcard.addEventListener('click', (e) => {
+    stop(e);
+    try {
+      const card = makePostcard(doc, canvas, { ...describe(), km: distanceKm });
+      saveCanvas(card, `cartao-postal-km${distanceKm.toFixed(1)}.png`, ui.flash);
+      onPostcard();
+    } catch (err) {
+      console.error('Postcard failed:', err);
+    }
+  });
 
   return {
     /** Called every frame with the simulation distance (meters). */

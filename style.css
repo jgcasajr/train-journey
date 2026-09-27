@@ -111,6 +111,7 @@ button[aria-pressed="true"] { border-color: var(--accent); }
 
 .buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .buttons button { padding: 6px 8px; }
+.buttons .wide { grid-column: span 2; }
 
 /* Relax mode: nothing but the view. */
 body.relax .board { opacity: 0; }

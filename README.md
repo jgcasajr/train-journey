@@ -74,10 +74,11 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 - **Pomodoro**: timer de foco 25 min / pausa 5 min no canto inferior esquerdo, com sino na troca. Durações personalizáveis pela URL: `?foco=50&pausa=10`.
 - **Mapa**: a linha inteira da volta atual (28 km) com estações, túneis, pontes, passagens de nível, biomas e a posição do trem.
 - **Foto**: salva o quadro atual como PNG (`train-journey-km12.3.png`).
+- **Cartão-postal**: transforma a vista num cartão — foto com "Lembranças do Litoral" (ou da estação), selo, carimbo com km e data e um recado escrito à mão sobre a paisagem (`cartao-postal-km12.3.png`).
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 64 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km). Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 72 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -150,7 +151,8 @@ src/
   coast.js      barcos e farol
   passenger.js  a passageira (poses e reflexo no vidro)
   cabin.js      atividades dela, café e visitas do corredor (simulação)
-  modes.js      modos relaxar, Pomodoro, mapa e foto
+  modes.js      modos relaxar, Pomodoro, mapa, foto e cartão-postal
+  postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   interactions.js o que foi clicado (hit-test)
   events.js     efeito de cada clique no estado (falas, gole, freio...)
   interactionsView.js textos flutuantes e falas da passageira

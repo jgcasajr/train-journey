@@ -225,6 +225,17 @@ function createRadioControls(doc) {
   return { ...radio, get station() { return radio.station; }, next: () => radio.next().catch(report) };
 }
 
+/** Where and when the train is, written on a postcard. */
+function postcardInfo(state) {
+  const minutes = Math.round(state.dayTime * 1440) % 1440;
+  return {
+    biome: biomeName(state.distance),
+    station: state.dwell > 0 ? state.served?.name ?? null : null,
+    clock: `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
+    date: new Date().toLocaleDateString('pt-BR'),
+  };
+}
+
 function start() {
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
@@ -250,6 +261,8 @@ function start() {
     params,
     chime: () => audio.chime(),
     radio,
+    describe: () => postcardInfo(state),
+    onPostcard: () => journal.award('postcard'),
   });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));

@@ -29,7 +29,7 @@ const SEASONS = [
   { id: 'winter', title: 'Inverno', icon: '⛄', hint: 'Tudo fica branquinho.' },
 ];
 
-export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu e clima', 'Pelo caminho', 'Momentos', 'Personagens', 'Raridades', 'Marcos'];
+export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu e clima', 'Pelo caminho', 'Momentos', 'Personagens', 'Raridades', 'Marcos', 'Conquistas'];
 
 /**
  * Every collectible discovery. `test(f)` receives the facts of the current frame (see factsFrom);
@@ -82,6 +82,14 @@ export const DISCOVERIES = [
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
   { id: 'arrival', category: 'Marcos', icon: '🏁', title: 'Chegada ao destino', hint: 'Escolha um destino no painel.', test: (f) => f.arrival },
   { id: 'km10', category: 'Marcos', icon: '🛤️', title: '10 km de viagem', hint: 'Continue a viagem.', test: (f) => f.traveled >= 10000 },
+  { id: 'km100', category: 'Conquistas', icon: '🏆', title: '100 km de viagem', hint: 'Uma jornada de verdade.', test: (f) => f.traveled >= 100000 },
+  { id: 'min10', category: 'Conquistas', icon: '⏱️', title: '10 minutos a bordo', hint: 'Fique um pouco na janela.', test: (f) => f.minutes >= 10 },
+  { id: 'min30', category: 'Conquistas', icon: '☕', title: 'Meia hora a bordo', hint: 'Tempo de um café sem pressa.', test: (f) => f.minutes >= 30 },
+  { id: 'hour1', category: 'Conquistas', icon: '⌛', title: 'Uma hora a bordo', hint: 'O trem virou companhia.', test: (f) => f.minutes >= 60 },
+  { id: 'hour3', category: 'Conquistas', icon: '🧘', title: 'Três horas a bordo', hint: 'Viajante de longa data.', test: (f) => f.minutes >= 180 },
+  { id: 'day1', category: 'Conquistas', icon: '🌅', title: 'Um dia inteiro no trem', hint: 'Veja o sol nascer de novo.', test: (f) => f.days >= 1 },
+  { id: 'lunar', category: 'Conquistas', icon: '🌙', title: 'Um ciclo da lua', hint: 'Viaje por 8 dias.', test: (f) => f.days >= 8 },
+  { id: 'postcard', category: 'Conquistas', icon: '💌', title: 'Primeiro cartão-postal', hint: 'Mande notícias da viagem.', test: (f) => f.awarded?.has('postcard') },
   { id: 'km50', category: 'Marcos', icon: '🏅', title: '50 km de viagem', hint: 'Uma longa jornada.', test: (f) => f.traveled >= 50000 },
 ];
 

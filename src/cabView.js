@@ -150,7 +150,12 @@ function drawHouse(ctx, cam, env, lat, z, k, city) {
     ctx.fill();
   }
   ctx.fillStyle = rgba(mix(shade(hex('#2f3a44'), env), hex('#ffd28c'), smoothstep(0.5, 0.15, env.light) * 0.8));
-  for (let row = 1; row < tall / 3; row++) ctx.fillRect(x + w * 0.2, base - cam.s(row * 3, z), w * 0.6, Math.max(1, cam.s(1, z)));
+  // A grid of windows: two or three per floor.
+  const cols = city > 0.5 ? 3 : 2;
+  const win = Math.max(1, cam.s(1.2, z));
+  for (let row = 1; row < tall / 3; row++) {
+    for (let c = 0; c < cols; c++) ctx.fillRect(x + (w * (c + 0.5)) / cols - win / 2, base - cam.s(row * 3, z) - win / 2, win, win);
+  }
 }
 
 function drawPole(ctx, cam, env, z) {

@@ -237,7 +237,7 @@ export function drawPlatformScene(ctx, layout, env, { t, from, to, announcement 
   drawCanopy(ctx, g);
   drawLamps(ctx, g);
   drawTraveler(ctx, g, walker(g, t));
-  if (t > T.talk[0] && t < T.talk[1]) drawBubble(ctx, announcement, { x: g.W * 0.08 + g.u * 10, y: g.top - g.u * 11 }, g.u, g.W, 'staff');
+  if (t > T.talk[0] && t < T.talk[1]) drawBubble(ctx, announcement, { x: g.W * 0.08 + g.u * 10, y: g.top - g.u * 1.5 }, g.u, g.W, 'staff');
   const fade = Math.max(1 - smoothstep(0, 0.6, t), smoothstep(SCENE_SECONDS - 0.7, SCENE_SECONDS, t));
   if (fade > 0) {
     ctx.fillStyle = `rgba(11,8,6,${fade})`;

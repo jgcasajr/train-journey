@@ -2,6 +2,7 @@ import { drawBubble } from './aisle.js';
 import { aisleEventAt, beatAt } from './cabin.js';
 import { layerFrame } from './frame.js';
 import { passengerHead } from './passenger.js';
+import { t } from './i18n.js';
 
 const FLOAT_SECONDS = 1.8;
 
@@ -20,14 +21,15 @@ export function drawFloats(ctx, layout, state) {
     const alpha = 1 - age / FLOAT_SECONDS;
     ctx.lineWidth = u * 0.5;
     ctx.strokeStyle = `rgba(40,30,20,${alpha * 0.6})`;
-    ctx.strokeText(e.text, x, y);
+    ctx.strokeText(t(e.text), x, y);
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
-    ctx.fillText(e.text, x, y);
+    ctx.fillText(t(e.text), x, y);
   });
 }
 
 /** A thought bubble (cloud with trailing dots) above her head: things she thinks on her own. */
-export function drawThought(ctx, layout, text) {
+export function drawThought(ctx, layout, source) {
+  const text = t(source);
   const { u, W } = layout;
   const head = passengerHead(layout);
   ctx.font = `italic 500 ${u * 2}px Georgia, serif`;

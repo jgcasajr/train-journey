@@ -1,3 +1,5 @@
+import { t } from './i18n.js';
+
 const W = 1500;
 const H = 1000;
 const PAD = 40;
@@ -25,7 +27,7 @@ const GENERIC = 'Nova fase, nova vida. O caminho também é o destino.';
 /** Greeting and message for a postcard from where the train is now. */
 export function postcardText({ biome, station }) {
   const from = station ? `de ${station}` : FROM[biome] ?? 'da viagem';
-  return { title: `Lembranças ${from}`, message: MESSAGES[biome] ?? GENERIC };
+  return { title: t(`Lembranças ${from}`), message: t(MESSAGES[biome] ?? GENERIC) };
 }
 
 function coverImage(ctx, img, x, y, w, h) {
@@ -82,7 +84,7 @@ function drawStamp(ctx, x, y) {
   ctx.fillText('🚂', x + w / 2, y + 120);
   ctx.fillStyle = INK;
   ctx.font = `600 20px ${SERIF}`;
-  ctx.fillText('CORREIO · TREM', x + w / 2, y + h - 16);
+  ctx.fillText(t('CORREIO · TREM'), x + w / 2, y + h - 16);
   ctx.textAlign = 'left';
 }
 
@@ -123,7 +125,7 @@ function drawBack(ctx, { message, clock, date, km }) {
   const lines = wrap(ctx, message, w);
   lines.forEach((line, i) => ctx.fillText(line, x, 390 + i * 52));
   ctx.font = `28px ${HAND}`;
-  ctx.fillText(`— da janela do trem, às ${clock}`, x, 390 + lines.length * 52 + 30, w);
+  ctx.fillText(t(`— da janela do trem, às ${clock}`), x, 390 + lines.length * 52 + 30, w);
   ctx.strokeStyle = 'rgba(58, 44, 32, 0.35)';
   ctx.lineWidth = 2;
   [0, 1, 2].forEach((i) => {
@@ -133,7 +135,7 @@ function drawBack(ctx, { message, clock, date, km }) {
     ctx.stroke();
   });
   ctx.font = `30px ${HAND}`;
-  ctx.fillText('Para: você, na nova fase', x, H - 210, w);
+  ctx.fillText(t('Para: você, na nova fase'), x, H - 210, w);
 }
 
 /** Composes a postcard (photo with greeting + stamp, postmark and a handwritten note). */

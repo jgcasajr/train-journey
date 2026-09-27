@@ -1,6 +1,7 @@
 import { num } from './biomes.js';
 import { forEachSlot, layerFrame } from './layers.js';
 import { shade } from './sky.js';
+import { t } from './i18n.js';
 import { clamp, hash, hex, rgba, smoothstep } from './utils.js';
 
 const BIRD = hex('#2a2a30');
@@ -170,7 +171,7 @@ function drawWave(ctx, { x, y, s }, age, env, u) {
   ctx.fillStyle = `rgba(255,255,255,${1 - age / WAVE_SECONDS})`;
   ctx.font = `600 ${u * 1.5}px system-ui, sans-serif`;
   ctx.textAlign = 'center';
-  ctx.fillText('Olá!', x, y - s * 1.25 - age * u * 1.5);
+  ctx.fillText(t('Olá!'), x, y - s * 1.25 - age * u * 1.5);
 }
 
 export function drawBalloons(ctx, layout, state, env) {

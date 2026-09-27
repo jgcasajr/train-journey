@@ -101,6 +101,10 @@ O cursor vira mãozinha sobre o que é clicável.
 | Barra de espaço | Apito do trem |
 | Espaço vazio | Mostra/oculta o painel |
 
+## No celular
+
+No celular a vista vem primeiro: o painel fica guardado atrás do botão ☰ e abre como uma gaveta (de lado, com o aparelho deitado). Para olhar ao redor, arraste o dedo ou incline o aparelho (no iPhone, o navegador pede permissão no primeiro toque). Botões maiores para o dedo, respeito ao notch e às bordas da tela, e o diário abre em tela cheia.
+
 ## Controles
 
 | Controle | Efeito |
@@ -110,10 +114,13 @@ O cursor vira mãozinha sobre o que é clicável.
 | Clima | Automático, limpo, chuva ou tempestade |
 | Estação do ano | Automática, primavera, verão, outono ou inverno |
 | Parar nas estações | Liga/desliga as paradas (desligado, o trem passa direto) |
+| Idioma | Português ou English — troca na hora, sem reiniciar a viagem (lembrado no navegador; `?lang=en` na URL também funciona) |
 | Som | Ativa o áudio (navegadores exigem um clique) |
 | Mover o mouse | Olhar ao redor |
 | Arrastar na janela | Desenhar no vidro embaçado |
 | `H` ou clique/toque na cena | Oculta o painel |
+| Celular: arrastar o dedo ou inclinar o aparelho | Olhar ao redor |
+| Celular: botão ☰ | Abre/fecha o painel (começa fechado para a vista vir primeiro) |
 | `?pass` na URL | Faz um trem passar em 2 s (para testar) |
 | `?dia=N` na URL | Começa no dia N (muda a fase da lua; ex.: `?dia=3` lua cheia, `?dia=7` lua nova) |
 | `?km=22` na URL | Começa em outro ponto do trajeto (fazenda ≈ 5, cidade ≈ 22, litoral ≈ 26, ponte ≈ 3.07, estação ≈ 1.44, passagem de nível ≈ 3.94, farol ≈ 26.75) |
@@ -153,6 +160,8 @@ src/
   cabin.js      atividades dela, café e visitas do corredor (simulação)
   modes.js      modos relaxar, Pomodoro, mapa, foto e cartão-postal
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
+  i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN
+  lang/en.js    dicionário português → inglês (frases e padrões)
   interactions.js o que foi clicado (hit-test)
   events.js     efeito de cada clique no estado (falas, gole, freio...)
   interactionsView.js textos flutuantes e falas da passageira

@@ -2,33 +2,36 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#120d0a">
   <title>Train Journey</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <canvas id="scene" aria-label="Vista da janela de um trem em movimento"></canvas>
 
-  <div class="board" aria-hidden="true">
+  <div class="board" aria-hidden="true" data-i18n-skip>
     <span id="hud-km">km 0.0</span><span class="sep">•</span>
     <span id="hud-biome">—</span><span class="sep">•</span>
     <span id="hud-speed">0 km/h</span>
     <span class="sep station-part">•</span><span id="hud-station" class="station-part"></span>
   </div>
 
+  <button id="menu-btn" type="button" class="menu-btn" aria-controls="panel" aria-label="Abrir ou fechar o painel">☰</button>
+
   <aside id="panel" class="panel">
     <h1>Train Journey</h1>
     <label class="field">
-      <span>Velocidade <output id="speed-out">90 km/h</output></span>
+      <span>Velocidade <output id="speed-out" data-i18n-skip>90 km/h</output></span>
       <input type="range" id="speed" min="0" max="220" value="90">
     </label>
     <label class="field">
-      <span>Hora do dia <output id="time-out">07:40</output></span>
+      <span>Hora do dia <output id="time-out" data-i18n-skip>07:40</output></span>
       <input type="range" id="time" min="0" max="0.999" step="0.001" value="0.32">
     </label>
     <label class="check"><input type="checkbox" id="auto-day" checked> Ciclo automático do dia</label>
     <label class="field">
-      <span>Clima <output id="weather-out"></output></span>
+      <span>Clima <output id="weather-out" data-i18n-skip></output></span>
       <select id="weather">
         <option value="auto">Automático</option>
         <option value="clear" selected>Limpo</option>
@@ -37,7 +40,7 @@
       </select>
     </label>
     <label class="field">
-      <span>Estação do ano <output id="season-out"></output></span>
+      <span>Estação do ano <output id="season-out" data-i18n-skip></output></span>
       <select id="season">
         <option value="auto">Automática</option>
         <option value="spring">Primavera</option>
@@ -51,6 +54,13 @@
       <select id="destination"><option value="" selected>Viagem livre</option></select>
     </label>
     <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
+    <label class="field">
+      <span>Idioma</span>
+      <select id="lang">
+        <option value="pt">Português</option>
+        <option value="en">English</option>
+      </select>
+    </label>
     <div class="radio-row">
       <label class="field">
         <span>Rádio</span>
@@ -67,9 +77,9 @@
         <input type="range" id="radio-volume" min="0" max="1" step="0.05" value="0.8">
       </label>
     </div>
-    <button id="sound" type="button" aria-pressed="false">Ativar som</button>
-    <button id="journal-btn" type="button" class="journal-btn">Diário</button>
-    <button id="car-btn" type="button" aria-pressed="false">Ir ao vagão-restaurante</button>
+    <button id="sound" data-i18n-skip type="button" aria-pressed="false">Ativar som</button>
+    <button id="journal-btn" data-i18n-skip type="button" class="journal-btn">Diário</button>
+    <button id="car-btn" data-i18n-skip type="button" aria-pressed="false">Ir ao vagão-restaurante</button>
     <div class="buttons">
       <button id="relax" type="button" aria-pressed="false" title="Tela cheia, sem painel, com música ambiente">Relaxar</button>
       <button id="pomodoro" type="button" aria-pressed="false" title="Timer de foco 25 min / pausa 5 min">Pomodoro</button>
@@ -77,14 +87,15 @@
       <button id="photo" type="button">Foto</button>
       <button id="postcard" type="button" class="wide" title="Salva a vista como cartão-postal, com selo e carimbo">Cartão-postal</button>
     </div>
-    <p class="hint">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
+    <p class="hint hint-mouse">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
+    <p class="hint hint-touch">Arraste o dedo ou incline o celular para olhar ao redor. Toque nas coisas da cena para interagir. O botão ☰ abre e fecha o painel.</p>
   </aside>
 
-  <div id="pomo-pill" class="pill hidden" role="timer" aria-live="off"></div>
+  <div id="pomo-pill" data-i18n-skip class="pill hidden" role="timer" aria-live="off"></div>
 
   <section id="line-map" class="line-map hidden" aria-label="Mapa da linha">
-    <header><strong>Mapa da linha</strong><span id="map-lap"></span></header>
-    <svg id="map-svg" viewBox="0 -40 1000 140" preserveAspectRatio="xMidYMid meet"></svg>
+    <header><strong>Mapa da linha</strong><span id="map-lap" data-i18n-skip></span></header>
+    <svg id="map-svg" data-i18n-skip viewBox="0 -40 1000 140" preserveAspectRatio="xMidYMid meet"></svg>
     <footer><span class="key station">Estação</span><span class="key tunnel">Túnel</span><span class="key bridge">Ponte</span><span class="key crossing">Passagem de nível</span></footer>
   </section>
 
@@ -92,25 +103,25 @@
     <header>
       <div>
         <h2>Diário de viagem</h2>
-        <p id="journal-count"></p>
+        <p id="journal-count" data-i18n-skip></p>
       </div>
       <button id="journal-close" type="button" aria-label="Fechar diário">✕</button>
     </header>
-    <div id="journal-grid" class="journal-grid"></div>
-    <footer><button id="journal-reset" type="button" class="journal-reset">Recomeçar diário</button></footer>
+    <div id="journal-grid" class="journal-grid" data-i18n-skip></div>
+    <footer><button id="journal-reset" data-i18n-skip type="button" class="journal-reset">Recomeçar diário</button></footer>
   </section>
 
   <section id="arrival" class="arrival hidden" aria-live="polite">
     <p class="arrival-kicker">Fim da viagem</p>
-    <h2 id="arrival-title"></h2>
-    <p id="arrival-stats"></p>
+    <h2 id="arrival-title" data-i18n-skip></h2>
+    <p id="arrival-stats" data-i18n-skip></p>
     <div class="arrival-actions">
       <button id="arrival-continue" type="button">Continuar viajando</button>
       <button id="arrival-choose" type="button">Escolher outro destino</button>
     </div>
   </section>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="toast" data-i18n-skip class="toast" role="status" aria-live="polite"></div>
 
   <div id="photo-flash" class="photo-flash" aria-hidden="true"></div>
   <div id="car-fade" class="car-fade" aria-hidden="true"></div>

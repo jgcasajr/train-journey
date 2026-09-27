@@ -1,5 +1,6 @@
 import { eta } from './destination.js';
 import { STATION_NAMES } from './stations.js';
+import { t } from './i18n.js';
 
 const CARD_DELAY = 2.5; // seconds after arriving (after her wave) before the summary card shows
 
@@ -46,9 +47,9 @@ export function createArrival(doc, { panel, onContinue, foundCount }) {
 
     /** Text for the board: remaining distance and time, or the arrival. */
     boardText(state, targetKmh) {
-      if (state.holding && state.arrivedAt) return `Chegamos: ${state.arrivedAt.name}`;
+      if (state.holding && state.arrivedAt) return t(`Chegamos: ${state.arrivedAt.name}`);
       const e = eta(state, targetKmh);
-      return e ? `Destino: ${e.name} · ${e.km.toFixed(1)} km · ~${e.minutes} min` : null;
+      return e ? t(`Destino: ${e.name} · ${e.km.toFixed(1)} km · ~${e.minutes} min`) : null;
     },
 
     update(state) {
@@ -59,8 +60,8 @@ export function createArrival(doc, { panel, onContinue, foundCount }) {
       shownFor = state.arrivedAt.time;
       const { name, km, minutes } = state.arrivedAt;
       const found = Math.max(0, foundCount() - foundAtStart);
-      ui.title.textContent = `Você chegou a ${name}!`;
-      ui.stats.textContent = `${km.toFixed(1)} km em ${Math.max(1, Math.round(minutes))} min · ${plural(found, 'descoberta nova', 'descobertas novas')} no diário`;
+      ui.title.textContent = t(`Você chegou a ${name}!`);
+      ui.stats.textContent = t(`${km.toFixed(1)} km em ${Math.max(1, Math.round(minutes))} min · ${plural(found, 'descoberta nova', 'descobertas novas')} no diário`);
       foundAtStart = foundCount();
     },
   };

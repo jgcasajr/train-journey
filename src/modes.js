@@ -1,5 +1,6 @@
 import { createLineMap } from './lineMap.js';
 import { makePostcard } from './postcard.js';
+import { onLangChange, t } from './i18n.js';
 import { durationsFromParams, pomodoroLabel, startPomodoro, tickPomodoro } from './pomodoro.js';
 
 const PILL_INTERVAL = 250; // ms between pomodoro label refreshes
@@ -47,6 +48,7 @@ export function createModes(doc, { canvas, panel, params, chime, radio, describe
     flash: element(doc, 'photo-flash'),
   };
   const lineMap = createLineMap(element(doc, 'map-svg'), element(doc, 'map-lap'));
+  onLangChange(() => lineMap.invalidate());
   const durations = durationsFromParams(params);
   let pomodoro = null;
   let lastPill = 0;
@@ -117,7 +119,7 @@ export function createModes(doc, { canvas, panel, params, chime, radio, describe
       }
       if (now - lastPill < PILL_INTERVAL) return;
       lastPill = now;
-      ui.pill.textContent = pomodoroLabel(pomodoro, now);
+      ui.pill.textContent = t(pomodoroLabel(pomodoro, now));
       ui.pill.dataset.phase = pomodoro.phase;
     },
   };

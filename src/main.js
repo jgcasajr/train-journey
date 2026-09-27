@@ -20,6 +20,7 @@ import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
 import { createModes } from './modes.js';
 import { moonPhase } from './moon.js';
+import { currentLang } from './i18n.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
@@ -232,7 +233,7 @@ function postcardInfo(state) {
     biome: biomeName(state.distance),
     station: state.dwell > 0 ? state.served?.name ?? null : null,
     clock: `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
-    date: new Date().toLocaleDateString('pt-BR'),
+    date: new Date().toLocaleDateString(currentLang() === 'pt' ? 'pt-BR' : 'en-GB'),
   };
 }
 

@@ -299,3 +299,55 @@ body.relax .toast { top: 16px; }
   .board { top: 8px; gap: 6px; padding: 5px 10px; font-size: 11px; }
   .panel { right: 8px; bottom: 8px; width: calc(100vw - 16px); }
 }
+
+/* ---------- Phones and touch screens ---------- */
+.menu-btn {
+  position: fixed;
+  right: calc(12px + env(safe-area-inset-right));
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 5;
+  display: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  font-size: 22px;
+  border-radius: 50%;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+}
+.hint-touch { display: none; }
+button, select, .check { touch-action: manipulation; }
+
+@media (pointer: coarse) {
+  .hint-mouse { display: none; }
+  .hint-touch { display: block; }
+  button { min-height: 42px; }
+  select { min-height: 38px; }
+  input[type="range"] { height: 28px; }
+  .check input { width: 20px; height: 20px; }
+}
+
+@media (max-width: 560px), (pointer: coarse) and (max-height: 560px) {
+  .menu-btn { display: block; }
+  body.relax .menu-btn { opacity: 0.25; }
+  .panel {
+    right: calc(8px + env(safe-area-inset-right));
+    left: calc(8px + env(safe-area-inset-left));
+    bottom: calc(68px + env(safe-area-inset-bottom));
+    width: auto;
+    max-height: calc(100dvh - 140px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .board { top: calc(8px + env(safe-area-inset-top)); }
+  .pill { left: calc(12px + env(safe-area-inset-left)); bottom: calc(18px + env(safe-area-inset-bottom)); }
+  .journal { inset: env(safe-area-inset-top) 0 0 0; transform: none; width: 100%; max-height: none; height: 100dvh; border-radius: 0; }
+  .journal-grid ul { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+  .toast { white-space: normal; max-width: calc(100vw - 32px); text-align: center; }
+  .arrival { bottom: calc(76px + env(safe-area-inset-bottom)); }
+}
+
+/* Phone held sideways: little height, so the panel becomes a right-hand drawer. */
+@media (pointer: coarse) and (max-height: 560px) and (orientation: landscape) {
+  .panel { left: auto; width: min(320px, 50vw); top: calc(8px + env(safe-area-inset-top)); bottom: calc(8px + env(safe-area-inset-bottom)); right: calc(68px + env(safe-area-inset-right)); max-height: none; }
+}

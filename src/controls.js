@@ -1,3 +1,5 @@
+import { currentLang, onLangChange, setLang, t, translateDom } from './i18n.js';
+
 function formatClock(dayTime) {
   const minutes = Math.round(dayTime * 24 * 60) % (24 * 60);
   const hh = String(Math.floor(minutes / 60)).padStart(2, '0');
@@ -23,16 +25,26 @@ export function createControls(doc) {
   const stops = el('stops');
   const sound = el('sound');
   const panel = el('panel');
+  const lang = el('lang');
+  lang.value = currentLang();
+  lang.addEventListener('change', () => setLang(lang.value, doc));
+  translateDom(doc.body);
   const carBtn = el('car-btn');
   const carFade = el('car-fade');
   let car = 'passenger';
+  let soundOn = false;
+  const showCar = () => { carBtn.textContent = t(car === 'dining' ? 'Voltar ao vagão' : 'Ir ao vagão-restaurante'); };
+  const showSoundLabel = () => { sound.textContent = t(soundOn ? 'Desligar som' : 'Ativar som'); };
+  onLangChange(() => { showCar(); showSoundLabel(); });
+  showCar();
+  showSoundLabel();
   // Walking to the other car: fade to dark, switch, fade back in.
   carBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     carFade.classList.add('on');
     setTimeout(() => {
       car = car === 'dining' ? 'passenger' : 'dining';
-      carBtn.textContent = car === 'dining' ? 'Voltar ao vagão' : 'Ir ao vagão-restaurante';
+      showCar();
       carBtn.setAttribute('aria-pressed', String(car === 'dining'));
       carFade.classList.remove('on');
     }, 500);
@@ -40,7 +52,13 @@ export function createControls(doc) {
   const hud = { km: el('hud-km'), biome: el('hud-biome'), speed: el('hud-speed'), station: el('hud-station') };
   const board = hud.km.parentElement;
 
-  const togglePanel = () => panel.classList.toggle('hidden');
+  const menu = el('menu-btn');
+  const showMenuState = () => menu.setAttribute('aria-expanded', String(!panel.classList.contains('hidden')));
+  const togglePanel = () => { panel.classList.toggle('hidden'); showMenuState(); };
+  menu.addEventListener('click', (e) => { e.stopPropagation(); togglePanel(); });
+  // On phones the view comes first: the panel starts folded away behind the menu button.
+  if (window.matchMedia('(max-width: 560px)').matches) panel.classList.add('hidden');
+  showMenuState();
   speed.addEventListener('input', () => { speedOut.textContent = `${speed.value} km/h`; });
   time.addEventListener('input', () => {
     autoDay.checked = false;
@@ -67,20 +85,21 @@ export function createControls(doc) {
     },
     showHud({ km, biome, kmh, station }) {
       hud.km.textContent = `km ${km.toFixed(1)}`;
-      hud.biome.textContent = biome;
+      hud.biome.textContent = t(biome);
       hud.speed.textContent = `${Math.round(kmh)} km/h`;
-      hud.station.textContent = station;
+      hud.station.textContent = t(station);
       board.classList.toggle('no-station', !station);
     },
     /** Current weather and season names, shown next to the selectors (useful in automatic mode). */
     showConditions(weatherName, seasonName) {
-      weatherOut.textContent = weatherName;
-      seasonOut.textContent = seasonName;
+      weatherOut.textContent = t(weatherName);
+      seasonOut.textContent = t(seasonName);
     },
     togglePanel,
     onSoundClick: (handler) => sound.addEventListener('click', handler),
     showSound(on) {
-      sound.textContent = on ? 'Desligar som' : 'Ativar som';
+      soundOn = on;
+      showSoundLabel();
       sound.setAttribute('aria-pressed', String(on));
     },
   };

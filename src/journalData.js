@@ -46,6 +46,10 @@ export const DISCOVERIES = [
     id: `station:${b.station}`, category: 'Estações', icon: b.station === 'Nexus' ? '💠' : '🚉', title: b.station,
     hint: `Uma parada ${STATION_WHERE[b.name] ?? 'pelo caminho'}.`, test: (f) => f.station === b.station,
   })),
+  { id: 'car:panorama', category: 'Momentos', icon: '🔭', title: 'Vagão panorâmico', hint: 'Um vagão com teto de vidro...', test: (f) => f.car === 'panorama' },
+  { id: 'cat', category: 'Personagens', icon: '🐈', title: 'Gato clandestino', hint: 'Alguém dorme no vagão de bagagem.', test: (f) => f.catPets > 0 },
+  { id: 'car:cab', category: 'Momentos', icon: '🚂', title: 'Cabine do maquinista', hint: 'Veja os trilhos lá da frente.', test: (f) => f.car === 'cab' },
+  { id: 'horn', category: 'Momentos', icon: '📯', title: 'Apito do maquinista', hint: 'Na cabine, aperte o botão vermelho.', test: (f) => f.horns > 0 },
   { id: 'transfer', category: 'Momentos', icon: '🔁', title: 'Baldeação na Nexus', hint: 'Troque de trem na estação Nexus.', test: (f) => f.transfers > 0 },
   { id: 'line:horizonte', category: 'Marcos', icon: '🌅', title: 'Linha Horizonte', hint: 'Existe outra linha além da Nexus...', test: (f) => f.line === 1 },
   ...BIOMES.map((b) => ({
@@ -152,6 +156,9 @@ export function factsFrom({ state, env, view, traveled }) {
     companionPersona: state.companion?.status === 'seated' ? companionPersona(state.companion.seed).id : null,
     traveled,
     transfers: state.transfers ?? 0,
+    car: state.car,
+    catPets: state.catPets ?? 0,
+    horns: state.horns ?? 0,
     line: lineAt(state.distance),
   };
 }

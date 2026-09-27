@@ -7,6 +7,9 @@ import { cordPosition, curtainBoxes, lampPosition, radioBox } from './interior.j
 import { FIELDS_DEPTH, farmPropsInView } from './landscape.js';
 import { passengerOrigin } from './passenger.js';
 import { passerbyBox } from './passersbyView.js';
+import { catBox } from './baggageView.js';
+import { hornBox } from './cabDash.js';
+import { carLayout, seatedCar } from './cars.js';
 import { balloonsInView, flockBirds } from './skylife.js';
 
 const ANIMALS = {
@@ -39,6 +42,15 @@ function cabinTarget(view, state, p) {
   return null;
 }
 
+/** In the panorama car she is the only thing to click on inside. */
+function panoramaTarget(view, state, p) {
+  if (state.car !== 'panorama') return null;
+  const { u } = view;
+  const o = passengerOrigin(view);
+  const shifted = { x: p.x + view.lookX * u * 4, y: p.y + view.lookY * u * 2 };
+  return inBox(shifted, { x: o.x - u * 9, y: o.y - u * 50, w: u * 22, h: u * 50 }) ? { type: 'talk' } : null;
+}
+
 /** Things outside the window; `q` is the click in outside-view coordinates. */
 function outsideTarget(view, state, env, q) {
   const { u } = view;
@@ -61,8 +73,11 @@ function outsideTarget(view, state, env, q) {
  * What the viewer clicked, as an event for the simulation (or null for empty space).
  * `view` is the layout with lookX/lookY; `bob` is the carriage sway applied to the outside view.
  */
-export function hitTest(view, state, env, bob, p) {
-  const cabin = cabinTarget(view, state, p);
+export function hitTest(layout, state, env, bob, p) {
+  if (state.car === 'cab') return inBox(p, hornBox(layout)) ? { type: 'horn' } : null;
+  if (state.car === 'baggage' && inBox(p, catBox(layout))) return { type: 'cat', sound: 'meow' };
+  const view = carLayout(layout, state.car);
+  const cabin = seatedCar(state.car) ? cabinTarget(view, state, p) : panoramaTarget(view, state, p);
   if (cabin) return cabin;
   const { win, u } = view;
   const inWindow = inBox(p, { x: win.x, y: win.y, w: win.w, h: win.h });

@@ -494,6 +494,20 @@ export const EN = {
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
   'apresenta': 'presents',
+  'Vagão': 'Car',
+  'Passageiros': 'Passenger car',
+  'Restaurante': 'Dining car',
+  'Panorâmico': 'Panorama car',
+  'Bagagem': 'Baggage car',
+  'Cabine do maquinista': 'Driver\'s cab',
+  'APITO': 'HORN',
+  'Vagão panorâmico': 'Panorama car',
+  'Um vagão com teto de vidro...': 'A car with a glass roof...',
+  'Gato clandestino': 'Stowaway cat',
+  'Alguém dorme no vagão de bagagem.': 'Someone is sleeping in the baggage car.',
+  'Veja os trilhos lá da frente.': 'See the rails from the very front.',
+  'Apito do maquinista': 'Driver\'s horn',
+  'Na cabine, aperte o botão vermelho.': 'In the cab, press the red button.',
   'Linha Aurora': 'Aurora Line',
   'Linha Horizonte': 'Horizon Line',
   'Baldeação na Nexus': 'Change at Nexus',
@@ -622,6 +636,7 @@ export const EN_PATTERNS = [
 
   // Station board (journey.js)
   [/^Próx\.: (.+) ([\d.]+) km$/, (tr, name, km) => `Next: ${name} ${km} km`],
+  [/^Próx\.: (.+)$/, (tr, name) => `Next: ${name}`],
 
   // Journal (journal.js)
   [/^Diário (\d+)\/(\d+)$/, (tr, done, total) => `Journal ${done}/${total}`],

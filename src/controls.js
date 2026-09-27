@@ -29,23 +29,18 @@ export function createControls(doc) {
   lang.value = currentLang();
   lang.addEventListener('change', () => setLang(lang.value, doc));
   translateDom(doc.body);
-  const carBtn = el('car-btn');
+  const carSelect = el('car');
   const carFade = el('car-fade');
   let car = 'passenger';
   let soundOn = false;
-  const showCar = () => { carBtn.textContent = t(car === 'dining' ? 'Voltar ao vagão' : 'Ir ao vagão-restaurante'); };
   const showSoundLabel = () => { sound.textContent = t(soundOn ? 'Desligar som' : 'Ativar som'); };
-  onLangChange(() => { showCar(); showSoundLabel(); });
-  showCar();
+  onLangChange(showSoundLabel);
   showSoundLabel();
-  // Walking to the other car: fade to dark, switch, fade back in.
-  carBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
+  // Walking to another car: fade to dark, switch, fade back in.
+  carSelect.addEventListener('change', () => {
     carFade.classList.add('on');
     setTimeout(() => {
-      car = car === 'dining' ? 'passenger' : 'dining';
-      showCar();
-      carBtn.setAttribute('aria-pressed', String(car === 'dining'));
+      car = carSelect.value;
       carFade.classList.remove('on');
     }, 500);
   });

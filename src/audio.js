@@ -145,6 +145,7 @@ const SFX = {
   magic: (g, t) => [1568, 1976, 2349, 2637, 3136].forEach((freq, k) => tone(g, { type: 'sine', freq, when: t + k * 0.06, duration: 0.5, peak: 0.05 })),
   flash: (g, t) => { noiseBurst(g, t, { freq: 4000, q: 1.5, duration: 0.04, peak: 0.3 }); noiseBurst(g, t + 0.09, { freq: 2500, q: 1.5, duration: 0.05, peak: 0.25 }); },
   discover: (g, t) => [1047, 1319, 1568, 2093].forEach((freq, k) => tone(g, { type: 'sine', freq, when: t + k * 0.08, duration: 0.6, peak: 0.06 })),
+  meow: (g, t) => voiceCall(g, t, { pitches: [[520, 0], [760, 0.18], [480, 0.55]], duration: 0.6, vibrato: 8, rate: 7, formant: 1600, peak: 0.18 }),
   chime: (g, t) => [1320, 1760].forEach((freq, k) => tone(g, { type: 'sine', freq, when: t + k * 0.15, duration: 1.2, peak: 0.08 })),
 };
 

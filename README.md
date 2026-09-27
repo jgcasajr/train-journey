@@ -70,7 +70,15 @@ A lua muda de fase a cada noite (um ciclo completo a cada 8 dias de viagem): nov
 
 ## Vagão-restaurante
 
-O botão **Ir ao vagão-restaurante** leva a passageira (com uma transição escura) a um vagão com lambris de madeira, arandelas de latão, mesa com toalha branca, taça de vinho, vaso com rosa e vela acesa à noite. Ali o carrinho de lanches vira um **garçom** de paletó branco e gravata-borboleta que anuncia o prato do dia (feijoada, moqueca, risoto, salada tropical, macarrão ao sugo ou pudim), serve o prato na mão dela, e ela come em garfadas até o prato esvaziar. **Voltar ao vagão** retorna ao assento de sempre.
+No painel, **Vagão** escolhe onde ela está. O **Restaurante** leva a passageira (com uma transição escura) a um vagão com lambris de madeira, arandelas de latão, mesa com toalha branca, taça de vinho, vaso com rosa e vela acesa à noite. Ali o carrinho de lanches vira um **garçom** de paletó branco e gravata-borboleta que anuncia o prato do dia (feijoada, moqueca, risoto, salada tropical, macarrão ao sugo ou pudim), serve o prato na mão dela, e ela come em garfadas até o prato esvaziar. **Passageiros** retorna ao assento de sempre.
+
+## Outros vagões
+
+- **Panorâmico**: a janela sobe até o teto de vidro, com nervuras de aço — muito mais céu para ver a lua, as estrelas e a chuva de meteoros.
+- **Bagagem**: vagão de tábuas escuras com caixotes, malas coloridas e uma lâmpada balançando; a paisagem passa pela porta de correr entreaberta. Em cima do baú dorme um **gato laranja clandestino** — de vez em quando ele senta e olha em volta; clicando nele, ele mia, ronrona e solta corações.
+- **Cabine do maquinista**: a vista **para a frente** — os trilhos correndo em perspectiva até o horizonte, dormentes vindo na sua direção, postes, árvores e casas passando dos lados, plataformas das estações chegando, túneis surgindo como uma boca escura no morro (e lá dentro, só a saída brilhando longe), farol aceso à noite e limpadores de para-brisa na chuva. No painel: velocímetro, visor com km, próxima estação e distância, e o botão vermelho de **APITO**.
+
+Diário: "Vagão panorâmico", "Gato clandestino", "Cabine do maquinista" e "Apito do maquinista".
 
 ## Destino
 
@@ -97,7 +105,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 83 figurinhas para completar — as 13 estações das duas linhas, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 87 figurinhas para completar — as 13 estações das duas linhas, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -148,7 +156,13 @@ No celular a vista vem primeiro: o painel fica guardado atrás do botão ☰ e a
 
 ```
 src/
-  main.js       loop principal e ordem de desenho
+  main.js       loop principal, cliques e sons
+  render.js     ordem de desenho de cada vagão
+  cars.js       vagões e a janela de cada um
+  panoramaView.js teto de vidro do vagão panorâmico
+  baggageView.js vagão de bagagem e o gato
+  cabView.js    vista da cabine do maquinista (perspectiva)
+  cabDash.js    painel da cabine (velocímetro, visor, apito)
   journey.js    simulação (estado imutável: distância, velocidade, hora, chuva)
   sky.js        céu, sol, lua, estrelas, nuvens e iluminação ambiente
   biomes.js     paletas e parâmetros dos biomas

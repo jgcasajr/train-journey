@@ -1,47 +1,28 @@
-import { drawAisle } from './aisle.js';
 import { createAudio } from './audio.js';
-import { aisleEventAt, beatAt, coffeeHot, cupWithPassenger } from './cabin.js';
 import { companionLine } from './companion.js';
-import { biomeAt, biomeName, lineKm, num } from './biomes.js';
-import { drawCompanion } from './companionView.js';
+import { biomeName, lineKm } from './biomes.js';
 import { createArrival } from './arrival.js';
-import { drawDiningRoom, drawDiningTable } from './diningView.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
-import { LOOK_FAR } from './frame.js';
-import { drawDrops, drawGlass } from './glass.js';
 import { hitTest } from './interactions.js';
-import { drawFloats, drawSpeech, drawThought } from './interactionsView.js';
-import {
-  drawCord, drawCurtains, drawRadio, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
-} from './interior.js';
 import { createJournal } from './journal.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
-import { drawLandscape } from './landscape.js';
 import { createModes } from './modes.js';
 import { moonPhase } from './moon.js';
 import { currentLang } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
 import { createTransfer } from './transfer.js';
-import { drawPlatformScene } from './platformScene.js';
-import { cabinTheme } from './cabinThemes.js';
 import { createRadio } from './radio.js';
-import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
-import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
-import { passerbyAt, passerbyCues } from './passersby.js';
-import { drawPasserby } from './passersbyView.js';
+import { passDuration } from './passingTrain.js';
+import { passerbyCues } from './passersby.js';
 import { createPointer } from './pointer.js';
-import { thoughtAt } from './thoughts.js';
+import { render } from './render.js';
 import { crossingNear } from './roads.js';
 import { SEASON_NAMES, dominantSeason } from './seasons.js';
-import { burstsExploded, drawFireworks, drawShootingStar } from './rareSky.js';
-import { drawSky, environment } from './sky.js';
-import { drawSkyLife } from './skylife.js';
-import { tunnelCoverage } from './tunnel.js';
+import { burstsExploded } from './rareSky.js';
+import { environment } from './sky.js';
 import { flashLevel, thunderDelay, weatherTargets } from './weather.js';
-import { clamp } from './utils.js';
-import { drawLightning, drawRainbow, precipitationKind } from './weatherView.js';
 
 const WEATHER_NAMES = { clear: 'Limpo', rain: 'Chuva', storm: 'Tempestade' };
 
@@ -77,87 +58,6 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
   seasonPhase: state.seasonPhase,
   moonPhase: moonPhase(state.dayCount, state.dayTime),
 });
-
-function render(ctx, layout, state, { fog, dt, station, intention, platform }) {
-  const env = sceneEnvironment(state);
-  if (platform) {
-    drawPlatformScene(ctx, layout, env, platform);
-    return;
-  }
-  const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
-  const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains, theme: cabinTheme(state.distance) });
-  const bob = trainBob(state, layout.u);
-  const { win, u, lookX, lookY } = layout;
-  const falling = precipitationKind(env, num(biomeAt(state.distance), 'snow'));
-
-  const dining = state.car === 'dining';
-  if (dining) drawDiningRoom(ctx, layout, L);
-  else drawWall(ctx, layout, L);
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.roundRect(win.x, win.y, win.w, win.h, win.r);
-  ctx.clip();
-  ctx.save();
-  ctx.translate(lookX * u * LOOK_FAR, bob + lookY * u * 3);
-  drawSky(ctx, layout, state, env);
-  drawRainbow(ctx, layout, env);
-  drawLightning(ctx, layout, state.lightning);
-  drawSkyLife(ctx, layout, state, env);
-  drawShootingStar(ctx, layout, state, env);
-  drawFireworks(ctx, layout, state, env);
-  drawLandscape(ctx, layout, state, env);
-  drawPassingTrain(ctx, layout, state, env);
-  drawFloats(ctx, layout, state);
-  ctx.restore();
-  if (env.flash > 0.01) {
-    ctx.fillStyle = `rgba(235,240,255,${env.flash * 0.35 * (1 - blocked)})`;
-    ctx.fillRect(win.x, win.y, win.w, win.h);
-  }
-  drawReflection(ctx, layout, state, L);
-  drawGlass(ctx, layout, L);
-  fog.draw(ctx, layout, state.fog, dt);
-  drawDrops(ctx, layout, state, falling === 'rain' ? state.rain : 0);
-  ctx.restore();
-
-  drawFrame(ctx, layout, L);
-  drawCurtains(ctx, layout, L, Math.sin(state.time * 0.9) * u * 0.4 + bob * 0.5, state.curtains);
-  drawCord(ctx, layout, L, state.time < state.brakeUntil ? clamp((state.brakeUntil - state.time - 5) / 2) : 0);
-  drawLedge(ctx, layout, L, state.time, bob, {
-    x: passengerOrigin(layout).x + u * 22,
-    level: state.coffee,
-    hot: coffeeHot(state),
-    inHand: state.pose.sip > 0.3 || cupWithPassenger(aisleEventAt(state.time, state.dayTime)),
-  }, { apple: state.time < state.appleUntil });
-  if (dining) drawDiningTable(ctx, layout, L, state);
-  else drawRadio(ctx, layout, L, station, state.time);
-  drawLamp(ctx, layout, L);
-  ctx.save();
-  ctx.translate(-lookX * u * 4, -lookY * u * 2);
-  drawPassenger(ctx, layout, state, L, env, bob);
-  drawCompanion(ctx, layout, state, L);
-  ctx.restore();
-  ctx.save();
-  ctx.translate(-lookX * u * 7, -lookY * u * 3);
-  drawAisle(ctx, layout, state, L);
-  drawPasserby(ctx, layout, state, L);
-  ctx.restore();
-  drawSpeech(ctx, layout, state);
-  const thought = thoughtAt(state, env, isBusy(state), intention);
-  if (thought) drawThought(ctx, layout, thought);
-  drawVignette(ctx, layout);
-  if (env.flash > 0.01) {
-    ctx.fillStyle = `rgba(225,232,255,${env.flash * 0.12 * (1 - blocked)})`;
-    ctx.fillRect(0, 0, layout.W, layout.H);
-  }
-}
-
-/** Something is already going on around her, so she won't drift into her own thoughts. */
-function isBusy(state) {
-  return Boolean(state.speech || state.holding || state.pose.sleep > 0.5
-    || companionLine(state, null) || beatAt(aisleEventAt(state.time, state.dayTime))
-    || passerbyAt(state.time, state.dayTime));
-}
 
 function playSounds(audio, state) {
   if (state.crossedJoint) audio.clack(state.speed);
@@ -198,6 +98,7 @@ function createClicks({ canvas, audio, radio, controls, getScene }) {
         controls.togglePanel();
         return;
       }
+      if (event.type === 'horn') audio.whistle();
       if (event.type === 'radio') {
         radio.next();
         return;
@@ -331,7 +232,7 @@ function start() {
     if (layout.W > 0 && layout.H > 0) {
       if (state.fog > 0.1 && strokes.length > 0) fog.wipe(strokes, layout);
       const view = { ...layout, lookX: look.x, lookY: look.y };
-      render(ctx, view, state, { fog, dt, station: radio.station, intention: intention.current(), platform: transfer.sceneAt(now) });
+      render(ctx, view, state, sceneEnvironment(state), { fog, dt, station: radio.station, intention: intention.current(), platform: transfer.sceneAt(now) });
       scene = { view, state };
       const env = sceneEnvironment(state);
       journal.observe(state, env, view);

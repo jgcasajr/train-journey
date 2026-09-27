@@ -18,6 +18,8 @@ export const DISHES = [
 /** Dish of the day for waiter visit k. */
 export const dishFor = (k) => DISHES[Math.floor(hash(k, 2601) * DISHES.length)];
 
+import { validCar } from './cars.js';
+
 export const initialDining = () => ({ car: 'passenger', meal: null, servedVisit: null });
 
 /** The waiter hands the plate over at the same moment the snack cart would hand over the coffee. */
@@ -36,7 +38,7 @@ export function biting(state) {
 
 /** Pure dining step: follows the car chosen in the panel, serves plates and eats them bit by bit. */
 export function updateDining(state, dt, input) {
-  const car = input.car === 'dining' ? 'dining' : 'passenger';
+  const car = validCar(input.car);
   if (car !== 'dining') return { car, meal: state.meal };
   const served = servedNow(state);
   if (served) {

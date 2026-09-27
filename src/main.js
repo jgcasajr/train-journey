@@ -22,6 +22,7 @@ import { createModes } from './modes.js';
 import { moonPhase } from './moon.js';
 import { currentLang } from './i18n.js';
 import { showSplash } from './brand.js';
+import { createIntention } from './intention.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
@@ -74,7 +75,7 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
   moonPhase: moonPhase(state.dayCount, state.dayTime),
 });
 
-function render(ctx, layout, state, { fog, dt, station }) {
+function render(ctx, layout, state, { fog, dt, station, intention }) {
   const env = sceneEnvironment(state);
   const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
   const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains });
@@ -135,7 +136,7 @@ function render(ctx, layout, state, { fog, dt, station }) {
   drawPasserby(ctx, layout, state, L);
   ctx.restore();
   drawSpeech(ctx, layout, state);
-  const thought = thoughtAt(state, env, isBusy(state));
+  const thought = thoughtAt(state, env, isBusy(state), intention);
   if (thought) drawThought(ctx, layout, thought);
   drawVignette(ctx, layout);
   if (env.flash > 0.01) {
@@ -200,7 +201,7 @@ function createClicks({ canvas, audio, radio, controls, getScene }) {
     onHover: (p) => { canvas.style.cursor = targetAt(p) ? 'pointer' : ''; },
   });
   document.addEventListener('keydown', (e) => {
-    if (e.code !== 'Space' || e.repeat || e.target.closest?.('input, select, button')) return;
+    if (e.code !== 'Space' || e.repeat || e.target.closest?.('input, textarea, select, button')) return;
     e.preventDefault();
     audio.whistle();
   });
@@ -267,6 +268,12 @@ function start() {
     describe: () => postcardInfo(state),
     onPostcard: () => journal.award('postcard'),
   });
+  const intention = createIntention(document, {
+    panel: document.getElementById('panel'),
+    onWrite: () => journal.award('intentionWritten'),
+    onReturn: () => { journal.award('intentionReturned'); audio.sfx('chime'); },
+    makePostcard: (extra) => modes.postcard(extra),
+  });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
   const day = Number(params.get('dia'));
@@ -293,6 +300,7 @@ function start() {
     const input = controls.read();
     state = step(state, dt, { ...input, destination: arrival.destination(), events: clicks.takeEvents() });
     arrival.update(state);
+    intention.update(state);
     playSounds(audio, state);
     passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue));
     const baby = companionLine(state, null);
@@ -311,7 +319,7 @@ function start() {
     if (layout.W > 0 && layout.H > 0) {
       if (state.fog > 0.1 && strokes.length > 0) fog.wipe(strokes, layout);
       const view = { ...layout, lookX: look.x, lookY: look.y };
-      render(ctx, view, state, { fog, dt, station: radio.station });
+      render(ctx, view, state, { fog, dt, station: radio.station, intention: intention.current() });
       scene = { view, state };
       const env = sceneEnvironment(state);
       journal.observe(state, env, view);

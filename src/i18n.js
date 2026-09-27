@@ -2,7 +2,7 @@ import { EN, EN_PATTERNS } from './lang/en.js';
 
 const STORAGE_KEY = 'train-journey:lang';
 const LANGS = ['pt', 'en'];
-const ATTRS = ['title', 'aria-label'];
+const ATTRS = ['title', 'aria-label', 'placeholder'];
 
 function initialLang() {
   const param = new URLSearchParams(window.location.search).get('lang');

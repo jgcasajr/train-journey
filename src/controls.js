@@ -65,6 +65,7 @@ export function createControls(doc) {
     timeOut.textContent = formatClock(Number(time.value));
   });
   doc.addEventListener('keydown', (e) => {
+    if (e.target.closest?.('input, textarea, select')) return;
     if (e.key.toLowerCase() === 'h' && !e.repeat) togglePanel();
   });
   timeOut.textContent = formatClock(Number(time.value));

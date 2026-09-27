@@ -85,7 +85,8 @@
       <button id="pomodoro" type="button" aria-pressed="false" title="Timer de foco 25 min / pausa 5 min">Pomodoro</button>
       <button id="map-btn" type="button" aria-pressed="false">Mapa</button>
       <button id="photo" type="button">Foto</button>
-      <button id="postcard" type="button" class="wide" title="Salva a vista como cartão-postal, com selo e carimbo">Cartão-postal</button>
+      <button id="postcard" type="button" title="Salva a vista como cartão-postal, com selo e carimbo">Cartão-postal</button>
+      <button id="intention-btn" type="button" title="Escreva uma intenção para a viagem; ela volta na estação Nexus ou no destino">Intenção</button>
     </div>
     <p class="hint hint-mouse">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
     <p class="hint hint-touch">Arraste o dedo ou incline o celular para olhar ao redor. Toque nas coisas da cena para interagir. O botão ☰ abre e fecha o painel.</p>
@@ -118,6 +119,28 @@
     <div class="arrival-actions">
       <button id="arrival-continue" type="button">Continuar viajando</button>
       <button id="arrival-choose" type="button">Escolher outro destino</button>
+    </div>
+  </section>
+
+  <section id="intention" class="intention hidden" role="dialog" aria-labelledby="intention-title">
+    <p class="arrival-kicker">Diário de intenções</p>
+    <h2 id="intention-title">Qual é a sua intenção para esta viagem?</h2>
+    <p class="intention-help">Escreva uma frase. Ela viaja lacrada com você e volta quando o trem chegar à estação Nexus ou ao seu destino.</p>
+    <textarea id="intention-text" maxlength="160" rows="3" placeholder="Ex.: Começar esta fase com leveza."></textarea>
+    <div class="arrival-actions">
+      <button id="intention-save" type="button">Lacrar intenção</button>
+      <button id="intention-cancel" type="button">Agora não</button>
+    </div>
+  </section>
+
+  <section id="intention-back" class="intention hidden" aria-live="polite">
+    <p class="arrival-kicker">Sua intenção voltou</p>
+    <blockquote id="intention-quote" data-i18n-skip></blockquote>
+    <p id="intention-meta" data-i18n-skip></p>
+    <div class="arrival-actions">
+      <button id="intention-postcard" type="button">Guardar como cartão-postal</button>
+      <button id="intention-new" type="button">Escrever outra</button>
+      <button id="intention-close" type="button">Fechar</button>
     </div>
   </section>
 

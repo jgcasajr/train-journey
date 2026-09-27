@@ -89,6 +89,8 @@ export const DISCOVERIES = [
   { id: 'hour3', category: 'Conquistas', icon: '🧘', title: 'Três horas a bordo', hint: 'Viajante de longa data.', test: (f) => f.minutes >= 180 },
   { id: 'day1', category: 'Conquistas', icon: '🌅', title: 'Um dia inteiro no trem', hint: 'Veja o sol nascer de novo.', test: (f) => f.days >= 1 },
   { id: 'lunar', category: 'Conquistas', icon: '🌙', title: 'Um ciclo da lua', hint: 'Viaje por 8 dias.', test: (f) => f.days >= 8 },
+  { id: 'intentionWritten', category: 'Conquistas', icon: '🕯️', title: 'Intenção lacrada', hint: 'Escreva uma intenção para a viagem.', test: (f) => f.awarded?.has('intentionWritten') },
+  { id: 'intentionReturned', category: 'Conquistas', icon: '📬', title: 'A intenção voltou', hint: 'Leve sua intenção até a estação Nexus ou ao destino.', test: (f) => f.awarded?.has('intentionReturned') },
   { id: 'postcard', category: 'Conquistas', icon: '💌', title: 'Primeiro cartão-postal', hint: 'Mande notícias da viagem.', test: (f) => f.awarded?.has('postcard') },
   { id: 'km50', category: 'Marcos', icon: '🏅', title: '50 km de viagem', hint: 'Uma longa jornada.', test: (f) => f.traveled >= 50000 },
 ];

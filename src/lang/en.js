@@ -494,6 +494,23 @@ export const EN = {
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
   'apresenta': 'presents',
+  'Intenção': 'Intention',
+  'Escreva uma intenção para a viagem; ela volta na estação Nexus ou no destino': 'Write an intention for the trip; it comes back at Nexus station or at your destination',
+  'Diário de intenções': 'Intention journal',
+  'Qual é a sua intenção para esta viagem?': 'What is your intention for this trip?',
+  'Escreva uma frase. Ela viaja lacrada com você e volta quando o trem chegar à estação Nexus ou ao seu destino.': 'Write one sentence. It travels sealed with you and comes back when the train reaches Nexus station or your destination.',
+  'Ex.: Começar esta fase com leveza.': 'E.g.: Begin this phase lightly.',
+  'Lacrar intenção': 'Seal intention',
+  'Agora não': 'Not now',
+  'Sua intenção voltou': 'Your intention came back',
+  'Guardar como cartão-postal': 'Save as a postcard',
+  'Escrever outra': 'Write another',
+  'Fechar': 'Close',
+  'Minha intenção': 'My intention',
+  'Intenção lacrada': 'Intention sealed',
+  'Escreva uma intenção para a viagem.': 'Write an intention for the trip.',
+  'A intenção voltou': 'The intention came back',
+  'Leve sua intenção até a estação Nexus ou ao destino.': 'Carry your intention to Nexus station or your destination.',
   'Uma nova fase começa na próxima estação.': 'A new phase begins at the next station.',
   'Uma parada no bosque de outono.': 'A stop in the autumn woods.',
   'Nexus... é aqui que tudo muda.': 'Nexus... this is where everything changes.',
@@ -573,6 +590,8 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^Minha intenção: “(.+)”$/s, (tr, text) => `My intention: “${text}”`],
+  [/^Escrita em (.+) · voltou em (.+)$/, (tr, date, place) => `Written on ${date} · came back at ${place}`],
   // Waiter, snack cart and conductor (aisle.js)
   [new RegExp(`^${GREETING}! O prato do dia é (.+)\\. Aceita\\?$`), (tr, g, dish) => `${tr(g)}! The dish of the day is ${tr(dish)}. Would you like some?`],
   [new RegExp(`^${GREETING}! Café\\? Pão de queijo\\?$`), (tr, g) => `${tr(g)}! Coffee? Cheese bread?`],

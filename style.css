@@ -379,3 +379,38 @@ button, select, .check { touch-action: manipulation; }
 @keyframes splash-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes splash-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .splash canvas { animation: none; } }
+
+/* ---------- Intention journal ---------- */
+.intention {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  width: min(460px, calc(100vw - 32px));
+  padding: 20px 22px;
+  text-align: center;
+  background: #f3ead8;
+  color: #3a2c20;
+  border: 2px solid #c9b4f0;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+.intention.hidden { display: none; }
+.intention h2 { margin: 4px 0 8px; font: 600 22px/1.25 Georgia, "Times New Roman", serif; }
+.intention-help { margin: 0 0 12px; color: #6a5440; font-size: 13px; }
+.intention textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  font: 18px/1.4 "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  color: #3a2c20;
+  background: #fffaf0;
+  border: 1px solid #e0c48a;
+  border-radius: 10px;
+  resize: none;
+}
+.intention blockquote { margin: 8px 0 6px; font: 22px/1.4 "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; color: #3b2a6e; }
+.intention p#intention-meta { margin: 0 0 14px; color: #7a6650; font-size: 12px; }
+.intention .arrival-actions button { color: #3a2c20; background: #fffaf0; border-color: #e0c48a; }
+.intention .arrival-actions button:first-child { background: #5b43a8; border-color: #3b2a6e; color: #fff; }

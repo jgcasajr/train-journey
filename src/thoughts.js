@@ -37,6 +37,8 @@ const BIOME = {
   Litoral: ['Cheiro de maresia!'],
 };
 
+const shorten = (text) => (text.length > 60 ? `${text.slice(0, 57).trimEnd()}…` : text);
+
 function pool(state, env) {
   if (isNight(state.dayTime) && meteorNight(state.dayCount ?? 0) && env.rain < 0.2) return METEORS;
   if (isNight(state.dayTime)) return [...NIGHT, ...GENERIC];
@@ -57,7 +59,7 @@ function nexusThought(state) {
  * A thought she has on her own now and then (shown as a thought bubble), or null.
  * `busy` = something else is happening (a conversation, a visitor, she's asleep...).
  */
-export function thoughtAt(state, env, busy) {
+export function thoughtAt(state, env, busy, intention = null) {
   if (busy) return null;
   const nexus = nexusThought(state);
   if (nexus) return nexus;
@@ -65,6 +67,8 @@ export function thoughtAt(state, env, busy) {
   if (k < 1 || hash(k, 2501) > 0.6) return null;
   const start = k * SLOT + 10 + hash(k, 2502) * (SLOT - SECONDS - 20);
   if (state.time < start || state.time > start + SECONDS) return null;
+  // Now and then she remembers the intention sealed for this trip.
+  if (intention && hash(k, 2504) < 0.25) return `Minha intenção: “${shorten(intention)}”`;
   const lines = pool(state, env);
   return lines[Math.floor(hash(k, 2503) * lines.length)];
 }

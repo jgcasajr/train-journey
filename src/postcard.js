@@ -163,7 +163,8 @@ export function makePostcard(doc, scene, info) {
   if (!ctx) throw new Error('Postcard: 2D context unavailable');
   ctx.fillStyle = '#f3ead8';
   ctx.fillRect(0, 0, W, H);
-  const { title, message } = postcardText(info);
+  // The traveler's own words (an intention) are never translated.
+  const { title, message } = info.message ? { title: info.title, message: info.message } : postcardText(info);
   drawPhoto(ctx, scene, title);
   ctx.strokeStyle = 'rgba(58, 44, 32, 0.25)';
   ctx.lineWidth = 3;

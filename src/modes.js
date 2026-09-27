@@ -90,18 +90,20 @@ export function createModes(doc, { canvas, panel, params, chime, radio, describe
     stop(e);
     saveCanvas(canvas, `train-journey-km${distanceKm.toFixed(1)}.png`, ui.flash);
   });
-  ui.postcard.addEventListener('click', (e) => {
-    stop(e);
+  /** Saves the view as a postcard; `extra` can replace its title and message. */
+  function postcard(extra = {}) {
     try {
-      const card = makePostcard(doc, canvas, { ...describe(), km: distanceKm });
+      const card = makePostcard(doc, canvas, { ...describe(), km: distanceKm, ...extra });
       saveCanvas(card, `cartao-postal-km${distanceKm.toFixed(1)}.png`, ui.flash);
       onPostcard();
     } catch (err) {
       console.error('Postcard failed:', err);
     }
-  });
+  }
+  ui.postcard.addEventListener('click', (e) => { stop(e); postcard(); });
 
   return {
+    postcard,
     /** Called every frame with the simulation distance (meters). */
     tick(distance, destination) {
       distanceKm = distance / 1000;

@@ -8,9 +8,6 @@ const SKIN = hex('#d8a07c');
 const HAIR = hex('#2e1d14');
 const SWEATER = hex('#c07a36');
 const PANTS = hex('#2c3750');
-const SEAT = hex('#6e1f2c');
-const SEAT_BASE = hex('#4a121b');
-const COVER = hex('#e9e2d2');
 const WHITE = hex('#ffffff');
 const BOOK = hex('#2f4f6f');
 const PAGE = hex('#f3ecd8');
@@ -47,15 +44,15 @@ export function passengerHead(layout) {
 // All shapes below are in passenger units (1 unit = layout.u), origin at the hip on the seat.
 
 function drawSeat(ctx, L) {
-  ctx.fillStyle = rgba(lit(SEAT, L));
+  ctx.fillStyle = rgba(lit(L.theme.seat, L));
   ctx.beginPath();
   ctx.roundRect(-15, -52, 9, 56, 3);
   ctx.roundRect(-16, -60, 11, 11, 3);
   ctx.roundRect(-15, 0, 32, 8, 2.5);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(SEAT_BASE, L));
+  ctx.fillStyle = rgba(lit(L.theme.seatBase, L));
   ctx.fillRect(-15, 6, 32, 60);
-  ctx.fillStyle = rgba(lit(COVER, L));
+  ctx.fillStyle = rgba(lit(L.theme.cover, L));
   ctx.beginPath();
   ctx.roundRect(-15.5, -59, 10, 6, 2);
   ctx.fill();

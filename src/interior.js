@@ -2,16 +2,6 @@ import { hex, mix, radialGlow, rgba, scale } from './utils.js';
 
 const LAMP_TINT = hex('#ffcf8a');
 const LAMP_GLOW = hex('#ffd28c');
-const WALL = hex('#d6c4a0');
-const WOOD = hex('#5a3524');
-const WOOD_DARK = hex('#3a2218');
-const FRAME = hex('#4a2c1e');
-const FRAME_EDGE = hex('#8a5a3c');
-const CURTAIN = hex('#7a2331');
-const CURTAIN_DARK = hex('#4a1119');
-const BRASS = hex('#b08d57');
-const LEDGE = hex('#6b3f28');
-const LEDGE_TOP = hex('#8f5a3a');
 const CHINA = hex('#efe8dc');
 const COFFEE = hex('#3b2416');
 const WHITE = hex('#ffffff');
@@ -22,7 +12,7 @@ const autoLamp = (env, tunnel) => (env.light < 0.4 || tunnel > 0.15 ? 1 : 0);
  * Interior light: daylight through the window (less when the curtains are drawn), plus the cabin
  * lamp — automatic at night or in tunnels, unless the viewer switched it on or off (`lampMode`).
  */
-export function interiorLighting(env, tunnel, { lampMode = 'auto', curtains = 0 } = {}) {
+export function interiorLighting(env, tunnel, { lampMode = 'auto', curtains = 0, theme } = {}) {
   const daylight = env.light * (1 - tunnel) * (1 - curtains * 0.65);
   const lamp = lampMode === 'auto' ? autoLamp(env, tunnel) : Number(lampMode === 'on');
   return {
@@ -30,6 +20,7 @@ export function interiorLighting(env, tunnel, { lampMode = 'auto', curtains = 0 
     lamp,
     level: Math.max(0.16 + daylight * 0.8, lamp * 0.6),
     spill: mix(env.bottom, WHITE, 0.2),
+    theme, // cabin palette of the current line (see cabinThemes.js)
   };
 }
 
@@ -39,12 +30,12 @@ export const lampPosition = ({ win, u }) => ({ x: win.x + win.w * 0.5, y: Math.m
 
 export function drawWall(ctx, layout, L) {
   const { W, H, win, u } = layout;
-  ctx.fillStyle = rgba(lit(WALL, L));
+  ctx.fillStyle = rgba(lit(L.theme.wall, L));
   ctx.fillRect(0, 0, W, H);
   const woodTop = win.y + win.h + u * 4;
-  ctx.fillStyle = rgba(lit(WOOD, L));
+  ctx.fillStyle = rgba(lit(L.theme.wood, L));
   ctx.fillRect(0, woodTop, W, H - woodTop);
-  ctx.fillStyle = rgba(lit(WOOD_DARK, L));
+  ctx.fillStyle = rgba(lit(L.theme.woodDark, L));
   ctx.fillRect(0, woodTop, W, u * 0.5);
   const ceiling = ctx.createLinearGradient(0, 0, 0, win.y);
   ceiling.addColorStop(0, 'rgba(0,0,0,0.35)');
@@ -63,12 +54,12 @@ export function drawWall(ctx, layout, L) {
 export function drawFrame(ctx, layout, L) {
   const { win, u } = layout;
   ctx.lineWidth = u * 2.2;
-  ctx.strokeStyle = rgba(lit(FRAME, L));
+  ctx.strokeStyle = rgba(lit(L.theme.frame, L));
   ctx.beginPath();
   ctx.roundRect(win.x - u * 1.1, win.y - u * 1.1, win.w + u * 2.2, win.h + u * 2.2, win.r + u * 1.1);
   ctx.stroke();
   ctx.lineWidth = Math.max(1, u * 0.25);
-  ctx.strokeStyle = rgba(lit(FRAME_EDGE, L));
+  ctx.strokeStyle = rgba(lit(L.theme.frameEdge, L));
   ctx.beginPath();
   ctx.roundRect(win.x - u * 2.2, win.y - u * 2.2, win.w + u * 4.4, win.h + u * 4.4, win.r + u * 2.2);
   ctx.stroke();
@@ -83,7 +74,7 @@ function drawCurtain(ctx, { win, u }, L, sway, close) {
   const tieX = x0 + width * (0.45 + close * 0.5) + sway;
   const bottom = win.y + win.h + u;
   const folds = ctx.createLinearGradient(x0, 0, x0 + width, 0);
-  for (let i = 0; i <= 6; i++) folds.addColorStop(i / 6, rgba(lit(i % 2 ? CURTAIN_DARK : CURTAIN, L)));
+  for (let i = 0; i <= 6; i++) folds.addColorStop(i / 6, rgba(lit(i % 2 ? L.theme.curtainDark : L.theme.curtain, L)));
   ctx.fillStyle = folds;
   ctx.beginPath();
   ctx.moveTo(x0, top);
@@ -94,7 +85,7 @@ function drawCurtain(ctx, { win, u }, L, sway, close) {
   ctx.closePath();
   ctx.fill();
   if (close > 0.5) return;
-  ctx.fillStyle = rgba(lit(BRASS, L));
+  ctx.fillStyle = rgba(lit(L.theme.brass, L));
   ctx.fillRect(x0, tieY - u * 0.6, tieX - x0 + u * 0.6, u * 1.2);
 }
 
@@ -117,7 +108,7 @@ export function drawCurtains(ctx, layout, L, sway, close = 0) {
   ctx.scale(-1, 1);
   drawCurtain(ctx, layout, L, -sway, close);
   ctx.restore();
-  ctx.fillStyle = rgba(lit(BRASS, L));
+  ctx.fillStyle = rgba(lit(L.theme.brass, L));
   ctx.fillRect(win.x - u * 5, win.y - u * 3.9, win.w + u * 10, u * 0.7);
 }
 
@@ -288,9 +279,9 @@ function drawApple(ctx, x, y, u, L) {
 export function drawLedge(ctx, layout, L, time, bob, cup, { apple = false } = {}) {
   const { win, u } = layout;
   const y = win.y + win.h + u * 1.2;
-  ctx.fillStyle = rgba(lit(LEDGE, L));
+  ctx.fillStyle = rgba(lit(L.theme.ledge, L));
   ctx.fillRect(win.x - u * 4, y, win.w + u * 8, u * 2.4);
-  ctx.fillStyle = rgba(lit(LEDGE_TOP, L));
+  ctx.fillStyle = rgba(lit(L.theme.ledgeTop, L));
   ctx.fillRect(win.x - u * 4, y, win.w + u * 8, u * 0.5);
   drawCup(ctx, y + u * 0.2, u, L, time, bob, cup);
   if (apple) drawApple(ctx, cup.x - u * 6, y + u * 0.2, u, L);
@@ -300,7 +291,7 @@ export function drawLamp(ctx, layout, L) {
   const { u } = layout;
   const { x, y } = lampPosition(layout);
   if (L.lamp) radialGlow(ctx, x, y + u, u * 14, LAMP_GLOW, 0.45);
-  ctx.fillStyle = rgba(lit(BRASS, L));
+  ctx.fillStyle = rgba(lit(L.theme.brass, L));
   ctx.fillRect(x - u * 0.25, y - u * 2, u * 0.5, u * 1.4);
   ctx.beginPath();
   ctx.ellipse(x, y - u * 0.4, u * 2.4, u * 1.6, 0, Math.PI, 0);

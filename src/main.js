@@ -25,6 +25,7 @@ import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
 import { createTransfer } from './transfer.js';
 import { drawPlatformScene } from './platformScene.js';
+import { cabinTheme } from './cabinThemes.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
@@ -84,7 +85,7 @@ function render(ctx, layout, state, { fog, dt, station, intention, platform }) {
     return;
   }
   const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
-  const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains });
+  const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains, theme: cabinTheme(state.distance) });
   const bob = trainBob(state, layout.u);
   const { win, u, lookX, lookY } = layout;
   const falling = precipitationKind(env, num(biomeAt(state.distance), 'snow'));

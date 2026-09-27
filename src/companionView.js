@@ -7,9 +7,6 @@ import { passengerHead, passengerOrigin } from './passenger.js';
 import { nextStation } from './stations.js';
 import { circle, clamp, hex, lerp, mix, rgba } from './utils.js';
 
-const SEAT = hex('#6e1f2c');
-const SEAT_BASE = hex('#4a121b');
-const COVER = hex('#e9e2d2');
 const TROUSERS = hex('#2b2f38');
 const BAG = hex('#7a5230');
 
@@ -29,15 +26,15 @@ export function companionBox(layout) {
 // Drawing below is in person units (1 = layout.u), facing right, origin at the hip.
 
 function drawSeat(ctx, L) {
-  ctx.fillStyle = rgba(lit(SEAT, L));
+  ctx.fillStyle = rgba(lit(L.theme.seat, L));
   ctx.beginPath();
   ctx.roundRect(-15, -52, 9, 56, 3);
   ctx.roundRect(-16, -60, 11, 11, 3);
   ctx.roundRect(-15, 0, 32, 8, 2.5);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(SEAT_BASE, L));
+  ctx.fillStyle = rgba(lit(L.theme.seatBase, L));
   ctx.fillRect(-15, 6, 32, 60);
-  ctx.fillStyle = rgba(lit(COVER, L));
+  ctx.fillStyle = rgba(lit(L.theme.cover, L));
   ctx.beginPath();
   ctx.roundRect(-15.5, -59, 10, 6, 2);
   ctx.fill();

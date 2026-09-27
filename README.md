@@ -58,7 +58,7 @@ São duas linhas que se cruzam na **estação Nexus**:
 | **Aurora** | Campo Belo, Três Porteiras, Pedra Alta, Nexus, Vila Serena, Estação Central, Porto Azul |
 | **Horizonte** | Maré Mansa, Bosque Velho, Serra Clara, Nexus, Vale Novo, Horizonte, Jardim do Sol |
 
-A Horizonte tem outra ordem de paisagens (começa no litoral) e cenário próprio: casas, árvores, rios, túneis e passagens de nível são outros. Parado na Nexus, aparece o botão **Fazer baldeação**: a tela escurece e a câmera vai para a plataforma da Nexus, sob a cobertura em arco de ferro e vidro — o trem vinho da Aurora de um lado, o azul-petróleo da Horizonte do outro. Ela desce com a mala de rodinhas, atravessa sob a placa da Nexus enquanto o alto-falante anuncia "Atenção: trem da Linha Horizonte na plataforma 2. Boa viagem!", embarca, as portas fecham e a vista volta para a cabine do trem novo. À noite as luminárias da plataforma acendem. Escolhendo um destino da outra linha, o letreiro avisa "baldeação em Nexus", o trem para lá (mesmo com as paradas desligadas) e ela troca de trem sozinha; o resumo da chegada soma os km das duas linhas. O mapa e o km do letreiro são sempre da linha atual. Diário: 6 estações novas, "Baldeação na Nexus" e "Linha Horizonte".
+A Horizonte tem outra ordem de paisagens (começa no litoral) e cenário próprio: casas, árvores, rios, túneis e passagens de nível são outros. Parado na Nexus, aparece o botão **Fazer baldeação**: a tela escurece e a câmera vai para a plataforma da Nexus, sob a cobertura em arco de ferro e vidro — o trem vinho da Aurora de um lado, o azul-petróleo da Horizonte do outro. Ela desce com a mala de rodinhas, atravessa sob a placa da Nexus enquanto o alto-falante anuncia "Atenção: trem da Linha Horizonte na plataforma 2. Boa viagem!", embarca, as portas fecham e a vista volta para a cabine do trem novo. À noite as luminárias da plataforma acendem. Escolhendo um destino da outra linha, o letreiro avisa "baldeação em Nexus", o trem para lá (mesmo com as paradas desligadas) e ela troca de trem sozinha; o resumo da chegada soma os km das duas linhas. Cada linha tem o seu vagão: a **Aurora** é o clássico (madeira, latão e veludo vinho) e a **Horizonte** é o moderno (painéis claros, metal escovado e tecido azul-petróleo) — cortinas, moldura da janela, parapeito e bancos mudam junto. O mapa e o km do letreiro são sempre da linha atual. Diário: 6 estações novas, "Baldeação na Nexus" e "Linha Horizonte".
 
 ## Diário de intenções
 
@@ -182,6 +182,7 @@ src/
   lineChange.js baldeação na Nexus (regra pura)
   transfer.js   botão de baldeação e transição
   platformScene.js cena da plataforma (ela troca de trem)
+  cabinThemes.js estilo do vagão de cada linha
   intention.js  diário de intenções (escrever, lacrar, receber de volta)
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN

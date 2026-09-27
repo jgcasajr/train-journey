@@ -169,6 +169,7 @@ No celular a vista vem primeiro: o painel fica guardado atrás do botão ☰ e a
 | Parar nas estações | Liga/desliga as paradas (desligado, o trem passa direto) |
 | Idioma | Português ou English — troca na hora, sem reiniciar a viagem (lembrado no navegador; `?lang=en` na URL também funciona) |
 | Som | Ativa o áudio (navegadores exigem um clique) |
+| Fones de ouvido | Som espacial: o "tum-tum" dos trilhos vem do truque da frente (direita) e depois do de trás (esquerda), o trem que cruza passa da direita para a esquerda, o sino da passagem de nível vem da frente, o trovão cai de um lado, os sons do corredor acompanham o personagem, cada clique soa do lado em que você clicou e a chuva bate no vidro de um lado. Sem fones, a separação fica suave para caixas de som |
 | Mover o mouse | Olhar ao redor |
 | Arrastar na janela | Desenhar no vidro embaçado |
 | `H` ou clique/toque na cena | Oculta o painel |

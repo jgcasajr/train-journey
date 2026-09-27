@@ -18,7 +18,7 @@ import { createBreathing } from './breathing.js';
 import { createTransfer } from './transfer.js';
 import { createRadio } from './radio.js';
 import { passDuration } from './passingTrain.js';
-import { passerbyCues } from './passersby.js';
+import { passerbyAt, passerbyCues } from './passersby.js';
 import { createPointer } from './pointer.js';
 import { render } from './render.js';
 import { crossingNear } from './roads.js';
@@ -61,6 +61,15 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
   seasonPhase: state.seasonPhase,
   moonPhase: moonPhase(state.dayCount, state.dayTime),
 });
+
+/** Where the aisle character is, left (-1) to right (1), for their sounds. */
+function aislePan(state) {
+  const ev = passerbyAt(state.time, state.dayTime);
+  if (!ev) return 0;
+  if (ev.phase === 'stop') return -0.2;
+  const p = ev.phase === 'in' ? ev.p * 0.5 : ev.phase === 'out' ? 0.5 + ev.p * 0.5 : ev.p;
+  return ev.dir * (p * 2 - 1);
+}
 
 function playSounds(audio, state) {
   if (state.crossedJoint) audio.clack(state.speed);
@@ -106,7 +115,7 @@ function createClicks({ canvas, audio, radio, controls, getScene }) {
         radio.next();
         return;
       }
-      audio.sfx(event.sound);
+      audio.sfx(event.sound, (p.x / Math.max(1, canvas.clientWidth)) * 2 - 1);
       pending = [...pending, event];
     },
     onHover: (p) => { canvas.style.cursor = targetAt(p) ? 'pointer' : ''; },
@@ -205,6 +214,8 @@ function start() {
   let lastBabyLine = null;
 
   window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx); });
+  const headphones = document.getElementById('headphones');
+  headphones.addEventListener('change', () => audio.setHeadphones(headphones.checked));
   controls.onSoundClick(async (e) => {
     e.stopPropagation();
     try {
@@ -226,7 +237,7 @@ function start() {
     breathing.update(dt, state.speed);
     transfer.update(state);
     playSounds(audio, state);
-    passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue));
+    passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue, aislePan(state)));
     const baby = companionLine(state, null);
     const babyLine = baby?.who === 'b' ? baby.text : null;
     if (babyLine && babyLine !== lastBabyLine) audio.sfx(babyLine.startsWith('Uá') ? 'cry' : 'babble');

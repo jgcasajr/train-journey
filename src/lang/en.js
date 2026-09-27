@@ -494,6 +494,7 @@ export const EN = {
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
   'apresenta': 'presents',
+  'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
   'Pensei: “{x}”': 'I thought: “{x}”',
   'Caderno da passageira': "The traveler's notebook",

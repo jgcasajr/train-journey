@@ -1,5 +1,7 @@
 const BOGIE_AXLE_GAP = 2.6; // meters between axles on one bogie
 const BOGIE_GAP = 17; // meters between the front and rear bogie of the car
+const SPEAKER_WIDTH = 0.35; // stereo spread on speakers; headphones get the full width
+const FRONT = 0.55; // the car's front bogie is to the right (the scenery flows right to left)
 
 function noiseBuffer(ac, seconds) {
   const buffer = ac.createBuffer(1, ac.sampleRate * seconds, ac.sampleRate);
@@ -28,13 +30,29 @@ function buildGraph() {
   const master = ac.createGain();
   master.gain.value = 0.9;
   master.connect(ac.destination);
+  const rainSide = ac.createStereoPanner(); // rain drums on the window glass, off to one side
+  rainSide.pan.value = 0.3 * SPEAKER_WIDTH;
+  rainSide.connect(master);
   return {
+    rainSide,
+    width: SPEAKER_WIDTH,
     ac,
     noise,
     master,
     rumble: loopedNoise(ac, noise, 'lowpass', 160, master),
-    rain: loopedNoise(ac, noise, 'highpass', 2500, master),
+    rain: loopedNoise(ac, noise, 'highpass', 2500, rainSide),
   };
+}
+
+/**
+ * The same graph, but routed through a stereo panner: -1 far left .. 1 far right,
+ * scaled by the current stereo width (speakers vs headphones).
+ */
+function at(g, pan) {
+  const panner = g.ac.createStereoPanner();
+  panner.pan.value = Math.max(-1, Math.min(1, pan * g.width));
+  panner.connect(g.master);
+  return { ...g, out: panner };
 }
 
 function envelope(param, when, peak, decay) {
@@ -53,7 +71,7 @@ function wheelClick(g, when, strength) {
   band.Q.value = 1.2;
   const clickGain = g.ac.createGain();
   envelope(clickGain.gain, when, 0.5 * strength, 0.09);
-  src.connect(band).connect(clickGain).connect(g.master);
+  src.connect(band).connect(clickGain).connect(g.out ?? g.master);
   src.start(when, Math.random() * 1.5, 0.12);
 
   const osc = g.ac.createOscillator();
@@ -61,7 +79,7 @@ function wheelClick(g, when, strength) {
   osc.frequency.exponentialRampToValueAtTime(50, when + 0.08);
   const thumpGain = g.ac.createGain();
   envelope(thumpGain.gain, when, 0.35 * strength, 0.1);
-  osc.connect(thumpGain).connect(g.master);
+  osc.connect(thumpGain).connect(g.out ?? g.master);
   osc.start(when);
   osc.stop(when + 0.12);
 }
@@ -84,7 +102,7 @@ function tone(g, { type, freq, when, duration, peak, vibrato = 0 }) {
     lfo.start(when);
     lfo.stop(when + duration);
   }
-  osc.connect(gain).connect(g.master);
+  osc.connect(gain).connect(g.out ?? g.master);
   osc.start(when);
   osc.stop(when + duration + 0.05);
 }
@@ -105,7 +123,7 @@ function voiceCall(g, t, { pitches, duration, vibrato, rate, formant, peak }) {
   band.Q.value = 1.5;
   const gain = g.ac.createGain();
   envelope(gain.gain, t, peak, duration);
-  osc.connect(band).connect(gain).connect(g.master);
+  osc.connect(band).connect(gain).connect(g.out ?? g.master);
   [osc, lfo].forEach((n) => { n.start(t); n.stop(t + duration + 0.05); });
 }
 
@@ -118,7 +136,7 @@ function noiseBurst(g, t, { freq, q = 1, duration, peak, type = 'bandpass' }) {
   filter.Q.value = q;
   const gain = g.ac.createGain();
   envelope(gain.gain, t, peak, duration);
-  src.connect(filter).connect(gain).connect(g.master);
+  src.connect(filter).connect(gain).connect(g.out ?? g.master);
   src.start(t, Math.random(), duration + 0.05);
 }
 
@@ -171,8 +189,9 @@ export function createAudio() {
       const now = graph.ac.currentTime;
       if (bell && now - lastBell > 0.5) {
         lastBell = now;
-        tone(graph, { type: 'triangle', freq: 1320, when: now + 0.02, duration: 0.3, peak: 0.08 });
-        tone(graph, { type: 'sine', freq: 2640, when: now + 0.02, duration: 0.2, peak: 0.03 });
+        const ahead = at(graph, 0.7);
+        tone(ahead, { type: 'triangle', freq: 1320, when: now + 0.02, duration: 0.3, peak: 0.08 });
+        tone(ahead, { type: 'sine', freq: 2640, when: now + 0.02, duration: 0.2, peak: 0.03 });
       }
       graph.rumble.gain.gain.setTargetAtTime(Math.min(1, speed / 60) * 0.35, now, 0.3);
       graph.rumble.filter.frequency.setTargetAtTime(120 + speed * 4, now, 0.3);
@@ -195,14 +214,20 @@ export function createAudio() {
       gain.gain.setValueAtTime(0.0001, t);
       gain.gain.exponentialRampToValueAtTime(0.35 + closeness * 0.45, t + 0.08 + (1 - closeness) * 0.4);
       gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-      src.connect(low).connect(gain).connect(graph.master);
+      src.connect(low).connect(gain).connect(at(graph, (Math.random() * 2 - 1) * 0.8).out);
       src.start(t);
       src.stop(t + duration + 0.1);
     },
-    /** Short sound effect for a click interaction (see SFX). */
-    sfx(name) {
+    /** Short sound effect (see SFX), placed at `pan` (-1 left .. 1 right) where it happens. */
+    sfx(name, pan = 0) {
       if (!enabled || !SFX[name]) return;
-      SFX[name](graph, graph.ac.currentTime + 0.02);
+      SFX[name](at(graph, pan), graph.ac.currentTime + 0.02);
+    },
+    /** Headphones spread sounds fully left/right; speakers keep them close to the center. */
+    setHeadphones(on) {
+      graph = graph ?? buildGraph();
+      graph = { ...graph, width: on ? 1 : SPEAKER_WIDTH };
+      graph.rainSide.pan.value = 0.3 * graph.width;
     },
     /** Station arrival: two-note "ding-dong" chime. */
     chime() {
@@ -235,7 +260,11 @@ export function createAudio() {
       gain.gain.exponentialRampToValueAtTime(0.55, t + 0.15);
       gain.gain.setValueAtTime(0.45, t + Math.max(0.2, duration - 0.4));
       gain.gain.exponentialRampToValueAtTime(0.0001, t + duration + 0.3);
-      src.connect(band).connect(gain).connect(graph.master);
+      const sweep = ac.createStereoPanner();
+      sweep.pan.setValueAtTime(graph.width, t);
+      sweep.pan.linearRampToValueAtTime(-graph.width, t + duration);
+      sweep.connect(graph.master);
+      src.connect(band).connect(gain).connect(sweep);
       src.start(t);
       src.stop(t + duration + 0.4);
     },
@@ -245,9 +274,11 @@ export function createAudio() {
       const strength = Math.min(1, speed / 30);
       const t0 = graph.ac.currentTime + 0.01;
       const offsets = [0, BOGIE_AXLE_GAP, BOGIE_GAP, BOGIE_GAP + BOGIE_AXLE_GAP].map((m) => m / speed);
+      const front = at(graph, FRONT);
+      const rear = at(graph, -FRONT);
       offsets
         .filter((dt) => dt < 1.5)
-        .forEach((dt, i) => wheelClick(graph, t0 + dt, strength * (i % 2 ? 0.85 : 1)));
+        .forEach((dt, i) => wheelClick(i < 2 ? front : rear, t0 + dt, strength * (i % 2 ? 0.85 : 1)));
     },
   };
 }

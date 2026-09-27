@@ -12,6 +12,7 @@ import { moonPhase } from './moon.js';
 import { currentLang } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
+import { createBreathing } from './breathing.js';
 import { createTransfer } from './transfer.js';
 import { createRadio } from './radio.js';
 import { passDuration } from './passingTrain.js';
@@ -186,6 +187,10 @@ function start() {
     onTransfer: () => clicks.queue({ type: 'transfer' }),
     onAnnounce: () => audio.chime(),
   });
+  const breathing = createBreathing(document, {
+    panel: document.getElementById('panel'),
+    onComplete: () => { journal.award('breathing'); audio.chime(); },
+  });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
   const day = Number(params.get('dia'));
@@ -213,6 +218,7 @@ function start() {
     state = step(state, dt, { ...input, destination: arrival.destination(), events: clicks.takeEvents() });
     arrival.update(state);
     intention.update(state);
+    breathing.update(dt, state.speed);
     transfer.update(state);
     playSounds(audio, state);
     passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue));

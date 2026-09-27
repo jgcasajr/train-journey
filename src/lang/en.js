@@ -494,6 +494,12 @@ export const EN = {
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
   'apresenta': 'presents',
+  'Compartilhar': 'Share',
+  'Copia um link que abre esta mesma vista: lugar, hora, clima e vagão': 'Copies a link that opens this very view: place, time, weather and car',
+  'Link copiado! Cole onde quiser.': 'Link copied! Paste it anywhere.',
+  'Não deu para copiar. O link está no endereço da página.': 'Could not copy. The link is in the page address.',
+  'Vista compartilhada': 'View shared',
+  'Mande a sua vista para alguém.': 'Send your view to someone.',
   'Instalar app': 'Install app',
   'Trem no bolso': 'A train in your pocket',
   'Instale o app pelo painel.': 'Install the app from the panel.',
@@ -710,6 +716,7 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^Estou viajando de trem \((.+)\)\. Vem ver a mesma vista:$/, (tr, where) => `I'm on a train journey (${where}). Come see the same view:`],
   [/^Atenção: trem da (.+) na plataforma 2\. Boa viagem!$/, (tr, line) => `Attention: the ${tr(line)} train is at platform 2. Have a good trip!`],
   [/^Fazer baldeação: (.+)$/, (tr, line) => `Change trains: ${tr(line)}`],
   [/^Destino: (.+) · baldeação em (.+) · ([\d.]+) km$/, (tr, dest, via, km) => `Destination: ${dest} · change at ${via} · ${km} km`],

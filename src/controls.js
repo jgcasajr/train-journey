@@ -31,7 +31,7 @@ export function createControls(doc) {
   translateDom(doc.body);
   const carSelect = el('car');
   const carFade = el('car-fade');
-  let car = 'passenger';
+  let car = carSelect.value; // a shared link may have picked the car already
   let soundOn = false;
   const showSoundLabel = () => { sound.textContent = t(soundOn ? 'Desligar som' : 'Ativar som'); };
   onLangChange(showSoundLabel);

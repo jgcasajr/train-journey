@@ -13,6 +13,7 @@ import { currentLang } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
+import { applySharedView, createShare } from './share.js';
 import { createNotebook } from './notebook.js';
 import { createTravelers } from './travelers.js';
 import { createBreathing } from './breathing.js';
@@ -163,6 +164,7 @@ function postcardInfo(state) {
 function start() {
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
+  applySharedView(document, new URLSearchParams(window.location.search));
   const controls = createControls(document);
   const audio = createAudio();
   const fog = createFog();
@@ -171,6 +173,7 @@ function start() {
   const clicks = createClicks({ canvas, audio, radio, controls, getScene: () => scene });
   const { pointer } = clicks;
   setupInstall(document, { onInstalled: () => journal.award('installed') });
+  createShare(document, { getView: () => ({ state, input: controls.read() }), onShared: () => journal.award('shared') });
   const notebook = createNotebook(document);
   const journal = createJournal(document, { onDiscover: (fresh, s) => { audio.sfx('discover'); notebook.note(fresh, s); } });
   const travelers = createTravelers({ onRecall: (text) => clicks.queue({ type: 'recall', text }) });

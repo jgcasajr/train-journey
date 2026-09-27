@@ -119,6 +119,7 @@ export const DISCOVERIES = [
   { id: 'intentionReturned', category: 'Conquistas', icon: '📬', title: 'A intenção voltou', hint: 'Leve sua intenção até a estação Nexus ou ao destino.', test: (f) => f.awarded?.has('intentionReturned') },
   { id: 'breathing', category: 'Conquistas', icon: '🫁', title: 'Respiração no ritmo do trem', hint: 'Use o botão Respirar até o fim.', test: (f) => f.awarded?.has('breathing') },
   { id: 'installed', category: 'Conquistas', icon: '📲', title: 'Trem no bolso', hint: 'Instale o app pelo painel.', test: (f) => f.awarded?.has('installed') },
+  { id: 'shared', category: 'Conquistas', icon: '🔗', title: 'Vista compartilhada', hint: 'Mande a sua vista para alguém.', test: (f) => f.awarded?.has('shared') },
   { id: 'postcard', category: 'Conquistas', icon: '💌', title: 'Primeiro cartão-postal', hint: 'Mande notícias da viagem.', test: (f) => f.awarded?.has('postcard') },
   { id: 'km50', category: 'Marcos', icon: '🏅', title: '50 km de viagem', hint: 'Uma longa jornada.', test: (f) => f.traveled >= 50000 },
 ];

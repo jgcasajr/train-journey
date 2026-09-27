@@ -131,7 +131,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 105 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 106 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -153,6 +153,10 @@ O cursor vira mãozinha sobre o que é clicável.
 | Farol | Dá um clarão |
 | Barra de espaço | Apito do trem |
 | Espaço vazio | Mostra/oculta o painel |
+
+## Compartilhar a vista
+
+Botão **Compartilhar**: gera um link que abre **exatamente a mesma vista** — mesmo ponto do trajeto e linha, dia (fase da lua), hora, clima, estação do ano e vagão — com uma frase pronta ("Estou viajando de trem (Linha Aurora, km 12.3, Montanhas). Vem ver a mesma vista:"). No celular abre o compartilhamento do sistema; no computador, copia para a área de transferência. O link usa os parâmetros `km`, `dia`, `hora` (HH:MM), `clima` (clear/rain/storm/auto), `estacao` (spring/summer/autumn/winter/auto) e `vagao` (passenger/dining/panorama/sleeper/baggage/cab). Nada pessoal vai no link. Figurinha: "Vista compartilhada".
 
 ## Instalar e usar offline
 
@@ -236,6 +240,7 @@ src/
   notebook.js   caderno da passageira
   travelers.js  viajantes que voltam (capítulos das histórias)
   install.js    service worker e botão de instalar o app
+  share.js      link para compartilhar a vista atual
   intention.js  diário de intenções (escrever, lacrar, receber de volta)
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN

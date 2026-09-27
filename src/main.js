@@ -12,6 +12,8 @@ import { moonPhase } from './moon.js';
 import { currentLang } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
+import { createNotebook } from './notebook.js';
+import { createTravelers } from './travelers.js';
 import { createBreathing } from './breathing.js';
 import { createTransfer } from './transfer.js';
 import { createRadio } from './radio.js';
@@ -158,7 +160,9 @@ function start() {
   const radio = createRadioControls(document);
   const clicks = createClicks({ canvas, audio, radio, controls, getScene: () => scene });
   const { pointer } = clicks;
-  const journal = createJournal(document, { onDiscover: () => audio.sfx('discover') });
+  const notebook = createNotebook(document);
+  const journal = createJournal(document, { onDiscover: (fresh, s) => { audio.sfx('discover'); notebook.note(fresh, s); } });
+  const travelers = createTravelers({ onRecall: (text) => clicks.queue({ type: 'recall', text }) });
   const arrival = createArrival(document, {
     panel: document.getElementById('panel'),
     onContinue: () => clicks.queue({ type: 'continue' }),
@@ -218,6 +222,7 @@ function start() {
     state = step(state, dt, { ...input, destination: arrival.destination(), events: clicks.takeEvents() });
     arrival.update(state);
     intention.update(state);
+    travelers.observe(state);
     breathing.update(dt, state.speed);
     transfer.update(state);
     playSounds(audio, state);
@@ -242,6 +247,7 @@ function start() {
       scene = { view, state };
       const env = sceneEnvironment(state);
       journal.observe(state, env, view);
+      notebook.observe(state, env);
       const booms = burstsExploded(state.time - dt, state, env, view);
       if (booms > 0) audio.sfx('boom');
     }

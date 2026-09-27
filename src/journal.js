@@ -168,7 +168,7 @@ export function createJournal(doc, { onDiscover }) {
       render();
       toasts = [...toasts, ...fresh];
       showNextToast();
-      onDiscover(fresh);
+      onDiscover(fresh, state);
     },
   };
 }

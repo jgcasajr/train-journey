@@ -2,7 +2,7 @@ import { biomeName } from './biomes.js';
 import { isNight } from './clock.js';
 import { companionClicked } from './companion.js';
 import { transferState } from './lineChange.js';
-import { passerbyClicked } from './passersby.js';
+import { passerbyAt, passerbyClicked } from './passersby.js';
 import { approach, hash } from './utils.js';
 
 const SPEECH_SECONDS = 3.4;
@@ -83,6 +83,10 @@ function reduce(state, event) {
       return transferState(state);
     case 'sleeper':
       return say(state, isNight(state.dayTime) ? 'Zzz... só mais cinco minutinhos.' : 'Que cama gostosa! Dá até vontade de cochilar.');
+    case 'recall': {
+      const ev = passerbyAt(state.time, state.dayTime);
+      return ev ? { passerbySpeech: { text: event.text, until: state.time + 3.4, k: ev.k }, recalls: (state.recalls ?? 0) + 1 } : {};
+    }
     case 'cat':
       return { catPetAt: state.time, catPets: (state.catPets ?? 0) + 1 };
     case 'horn':

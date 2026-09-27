@@ -64,6 +64,14 @@ A Horizonte tem outra ordem de paisagens (começa no litoral) e cenário própri
 
 Botão **Respirar**: um círculo suave cresce enquanto você inspira e diminui enquanto solta — **4 tempos para dentro, 4 para fora**, com a contagem na tela. O tempo segue o "tum" das juntas dos trilhos (uma a cada 25 m): a 90 km/h, um tempo por segundo; mais devagar, a respiração fica mais lenta (e parado na estação, um por segundo). São 6 ciclos; no fim, "Que bom. Siga viagem com calma." e uma figurinha no diário. **Parar** ou Esc interrompe.
 
+## Caderno da passageira
+
+Botão **Caderno**: ela vai escrevendo a viagem num caderno de papel pautado, com letra de mão — uma linha para cada descoberta do diário ("Parei em Nexus. Gente chegando, gente partindo.", "Vi algo raro: Aurora boreal! Nem acredito."), com data, hora e km, e metade dos pensamentos que passam pela cabeça dela ("Pensei: …"). A primeira página: "Comecei este caderno hoje. Nova fase, página em branco." Fica salvo no navegador, aparece no idioma escolhido e pode ser baixado em **.txt**.
+
+## Viajantes que voltam
+
+Quem passa pelo corredor lembra de você. A cada nova visita ao trem, cada personagem que você já conheceu conta o **próximo capítulo** da história dele: o violinista ensaia, fica nervoso e toca com o teatro lotado; o executivo desliga o celular e acaba abrindo uma padaria; o casal fica noivo, marca a data e casa; o Rex aprende a sentar e ganha uma irmã gatinha... (3 capítulos para cada um dos 10). Se alguém passar de novo na mesma visita: "De novo por aqui? Que coincidência!". Figurinha: "Velho conhecido".
+
 ## Diário de intenções
 
 Botão **Intenção** no painel (e um convite gentil na primeira visita): escreva uma frase para a viagem — "Começar esta fase com leveza". Ela viaja **lacrada** com você: de vez em quando a passageira se lembra dela num pensamento. Quando o trem para na **estação Nexus** ou chega ao seu **destino** (depois de pelo menos 1 km), a intenção volta num cartão — com a data em que foi escrita e onde voltou — e pode ser guardada como **cartão-postal** com as suas palavras, ou renovada. Fica salva no navegador; as suas palavras nunca são traduzidas.
@@ -123,7 +131,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 103 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 104 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -220,6 +228,8 @@ src/
   platformScene.js cena da plataforma (ela troca de trem)
   cabinThemes.js estilo do vagão de cada linha
   breathing.js  modo respiração no ritmo dos trilhos
+  notebook.js   caderno da passageira
+  travelers.js  viajantes que voltam (capítulos das histórias)
   intention.js  diário de intenções (escrever, lacrar, receber de volta)
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN

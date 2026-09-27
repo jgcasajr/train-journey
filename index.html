@@ -79,6 +79,7 @@
     </div>
     <button id="sound" data-i18n-skip type="button" aria-pressed="false">Ativar som</button>
     <button id="journal-btn" data-i18n-skip type="button" class="journal-btn">Diário</button>
+    <button id="notebook-btn" type="button" class="journal-btn">Caderno</button>
     <label class="field">
       <span>Vagão</span>
       <select id="car">
@@ -121,6 +122,15 @@
     </header>
     <div id="journal-grid" class="journal-grid" data-i18n-skip></div>
     <footer><button id="journal-reset" data-i18n-skip type="button" class="journal-reset">Recomeçar diário</button></footer>
+  </section>
+
+  <section id="notebook" class="notebook hidden" aria-label="Caderno da passageira">
+    <header>
+      <h2>Caderno da passageira</h2>
+      <button id="notebook-close" type="button" aria-label="Fechar caderno">✕</button>
+    </header>
+    <ol id="notebook-list" class="notebook-list" data-i18n-skip></ol>
+    <footer><button id="notebook-save" type="button">Baixar caderno (.txt)</button></footer>
   </section>
 
   <section id="arrival" class="arrival hidden" aria-live="polite">

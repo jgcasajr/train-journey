@@ -468,3 +468,37 @@ button, select, .check { touch-action: manipulation; }
 .breath-hint { margin: 0; position: absolute; bottom: 22vh; font-size: 13px; opacity: 0.8; }
 .breath-stop { pointer-events: auto; position: absolute; bottom: calc(12vh + env(safe-area-inset-bottom)); background: rgba(20, 16, 36, 0.6); }
 @media (prefers-reduced-motion: reduce) { .breath-circle { transition: none; } }
+
+/* ---------- Her notebook (lined paper) ---------- */
+.notebook {
+  position: fixed;
+  left: 50%;
+  top: 5vh;
+  transform: translateX(-50%);
+  z-index: 12;
+  width: min(620px, calc(100vw - 24px));
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: #fbf7ec;
+  color: #2f3a5a;
+  border-radius: 6px 14px 14px 6px;
+  border-left: 10px solid #5b43a8;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.notebook.hidden { display: none; }
+.notebook header, .notebook footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; }
+.notebook h2 { margin: 0; font: 600 20px Georgia, "Times New Roman", serif; color: #3b2a6e; }
+.notebook header button, .notebook footer button { color: #3b2a6e; background: rgba(91, 67, 168, 0.08); border-color: rgba(91, 67, 168, 0.3); }
+.notebook-list {
+  margin: 0;
+  padding: 0 22px 0 44px;
+  overflow-y: auto;
+  list-style: none;
+  font: 17px/32px "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  background: repeating-linear-gradient(#fbf7ec 0 31px, #c9d6ea 31px 32px);
+  border-left: 1px solid #e8a0a0;
+}
+.notebook-list li { min-height: 32px; }
+.notebook-list:empty::after { content: "…"; }

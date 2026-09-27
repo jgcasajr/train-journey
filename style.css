@@ -502,3 +502,6 @@ button, select, .check { touch-action: manipulation; }
 }
 .notebook-list li { min-height: 32px; }
 .notebook-list:empty::after { content: "…"; }
+
+#install-btn.hidden { display: none; }
+#install-btn { border-color: rgba(185, 155, 255, 0.6); }

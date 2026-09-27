@@ -494,6 +494,9 @@ export const EN = {
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
   'apresenta': 'presents',
+  'Instalar app': 'Install app',
+  'Trem no bolso': 'A train in your pocket',
+  'Instale o app pelo painel.': 'Install the app from the panel.',
   'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
   'Pensei: “{x}”': 'I thought: “{x}”',

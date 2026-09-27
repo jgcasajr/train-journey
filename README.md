@@ -131,7 +131,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 104 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 105 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -153,6 +153,10 @@ O cursor vira mãozinha sobre o que é clicável.
 | Farol | Dá um clarão |
 | Barra de espaço | Apito do trem |
 | Espaço vazio | Mostra/oculta o painel |
+
+## Instalar e usar offline
+
+O Train Journey é um app instalável (PWA): no Chrome/Edge aparece o botão **Instalar app** no painel (ou o ícone de instalar na barra de endereço); no iPhone, Compartilhar → **Adicionar à Tela de Início**. Instalado, abre em tela cheia com ícone próprio (uma janela de trem ao pôr do sol). Depois de uma visita com internet, **funciona offline**: o service worker busca sempre a versão mais nova quando há conexão e usa a cópia guardada quando não há. Figurinha: "Trem no bolso". Os ícones são gerados por `node tools/make-icons.mjs` (sem dependências).
 
 ## No celular
 
@@ -231,6 +235,7 @@ src/
   breathing.js  modo respiração no ritmo dos trilhos
   notebook.js   caderno da passageira
   travelers.js  viajantes que voltam (capítulos das histórias)
+  install.js    service worker e botão de instalar o app
   intention.js  diário de intenções (escrever, lacrar, receber de volta)
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN

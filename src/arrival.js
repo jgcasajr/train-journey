@@ -1,5 +1,6 @@
 import { eta } from './destination.js';
-import { STATION_NAMES } from './stations.js';
+import { LINES } from './biomes.js';
+import { LINE_STATIONS } from './stations.js';
 import { t } from './i18n.js';
 
 const CARD_DELAY = 2.5; // seconds after arriving (after her wave) before the summary card shows
@@ -25,7 +26,13 @@ export function createArrival(doc, { panel, onContinue, foundCount }) {
     cont: element(doc, 'arrival-continue'),
     choose: element(doc, 'arrival-choose'),
   };
-  ui.select.append(...STATION_NAMES.map((name) => new Option(name, name)));
+  const groups = LINES.map((line, i) => {
+    const group = doc.createElement('optgroup');
+    group.label = t(line.name);
+    group.append(...LINE_STATIONS[i].filter((name) => i === 0 || !LINE_STATIONS[0].includes(name)).map((name) => new Option(name, name)));
+    return group;
+  });
+  ui.select.append(...groups);
   let foundAtStart = foundCount();
   let shownFor = null; // arrival shown (by time), so the card is filled once
 
@@ -49,7 +56,9 @@ export function createArrival(doc, { panel, onContinue, foundCount }) {
     boardText(state, targetKmh) {
       if (state.holding && state.arrivedAt) return t(`Chegamos: ${state.arrivedAt.name}`);
       const e = eta(state, targetKmh);
-      return e ? t(`Destino: ${e.name} · ${e.km.toFixed(1)} km · ~${e.minutes} min`) : null;
+      if (!e) return null;
+      if (e.via) return t(`Destino: ${e.name} · baldeação em ${e.via} · ${e.km.toFixed(1)} km`);
+      return t(`Destino: ${e.name} · ${e.km.toFixed(1)} km · ~${e.minutes} min`);
     },
 
     update(state) {

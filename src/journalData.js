@@ -1,4 +1,4 @@
-import { BIOMES, biomeAt, biomeName, num } from './biomes.js';
+import { BIOMES, LINES, biomeAt, biomeName, lineAt, lineBiomes, num } from './biomes.js';
 import { aisleEventAt, beatAt, cupWithPassenger } from './cabin.js';
 import { LIGHTHOUSE_DEPTH, lighthousesInView } from './coast.js';
 import { layerFrame } from './frame.js';
@@ -20,7 +20,7 @@ const BIOME_ICONS = {
 };
 const STATION_WHERE = {
   Campos: 'nos campos', Fazenda: 'na fazenda', Montanhas: 'nas montanhas',
-  Outono: 'no bosque de outono', Subúrbio: 'no subúrbio', Cidade: 'na cidade', Litoral: 'no litoral',
+  Floresta: 'na floresta', Outono: 'no bosque de outono', Subúrbio: 'no subúrbio', Cidade: 'na cidade', Litoral: 'no litoral',
 };
 const SEASONS = [
   { id: 'spring', title: 'Primavera', icon: '🌸', hint: 'Quando as árvores florescem.' },
@@ -29,6 +29,12 @@ const SEASONS = [
   { id: 'winter', title: 'Inverno', icon: '⛄', hint: 'Tudo fica branquinho.' },
 ];
 
+/** Every station of every line once, with the biome it sits in. */
+function uniqueStations() {
+  const all = LINES.flatMap((_, i) => lineBiomes(i).filter((b) => b.station));
+  return all.filter((b, i) => all.findIndex((o) => o.station === b.station) === i);
+}
+
 export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu e clima', 'Pelo caminho', 'Momentos', 'Personagens', 'Raridades', 'Marcos', 'Conquistas'];
 
 /**
@@ -36,10 +42,12 @@ export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu
  * `hint` is shown on the card until it is found.
  */
 export const DISCOVERIES = [
-  ...BIOMES.filter((b) => b.station).map((b) => ({
+  ...uniqueStations().map((b) => ({
     id: `station:${b.station}`, category: 'Estações', icon: b.station === 'Nexus' ? '💠' : '🚉', title: b.station,
     hint: `Uma parada ${STATION_WHERE[b.name] ?? 'pelo caminho'}.`, test: (f) => f.station === b.station,
   })),
+  { id: 'transfer', category: 'Momentos', icon: '🔁', title: 'Baldeação na Nexus', hint: 'Troque de trem na estação Nexus.', test: (f) => f.transfers > 0 },
+  { id: 'line:horizonte', category: 'Marcos', icon: '🌅', title: 'Linha Horizonte', hint: 'Existe outra linha além da Nexus...', test: (f) => f.line === 1 },
   ...BIOMES.map((b) => ({
     id: `biome:${b.name}`, category: 'Paisagens', icon: BIOME_ICONS[b.name] ?? '🗺️', title: b.name,
     hint: 'Continue viajando...', test: (f) => f.biome === b.name,
@@ -143,5 +151,7 @@ export function factsFrom({ state, env, view, traveled }) {
     passerby: passerbySeen(state),
     companionPersona: state.companion?.status === 'seated' ? companionPersona(state.companion.seed).id : null,
     traveled,
+    transfers: state.transfers ?? 0,
+    line: lineAt(state.distance),
   };
 }

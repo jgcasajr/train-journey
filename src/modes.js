@@ -1,3 +1,4 @@
+import { lineKm } from './biomes.js';
 import { createLineMap } from './lineMap.js';
 import { makePostcard } from './postcard.js';
 import { onLangChange, t } from './i18n.js';
@@ -106,7 +107,7 @@ export function createModes(doc, { canvas, panel, params, chime, radio, describe
     postcard,
     /** Called every frame with the simulation distance (meters). */
     tick(distance, destination) {
-      distanceKm = distance / 1000;
+      distanceKm = lineKm(distance);
       if (!ui.lineMap.classList.contains('hidden')) lineMap.update(distance, destination);
       if (!pomodoro) return;
       const now = Date.now();

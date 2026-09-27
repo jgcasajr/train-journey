@@ -1,6 +1,7 @@
 import { biomeName } from './biomes.js';
 import { isNight } from './clock.js';
 import { companionClicked } from './companion.js';
+import { transferState } from './lineChange.js';
 import { passerbyClicked } from './passersby.js';
 import { approach, hash } from './utils.js';
 
@@ -75,6 +76,8 @@ function reduce(state, event) {
       return companionClicked(state);
     case 'continue':
       return { holding: false, arrivedAt: null, dwell: Math.min(state.dwell, 2) };
+    case 'transfer':
+      return transferState(state);
     case 'scatter':
       return { scatterAt: state.time };
     case 'float':

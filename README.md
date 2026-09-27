@@ -49,6 +49,17 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 
 Este trem é o emblema da nova fase do **Fractal Nexus**, da **NexionAI Systems**. Ao abrir, uma tela de abertura curta com o emblema fractal ("Fractal Nexus · NexionAI Systems apresenta") — uma vez por sessão; toque ou tecla pula, `?nosplash` desliga. No bosque de outono fica a **estação Nexus**: fachada lilás, placa violeta com o emblema e um brilho próprio. Parada ali, a passageira sempre pensa algo sobre recomeço, e o cartão-postal ganha um recado especial. Todo cartão-postal leva o selo Fractal Nexus · NexionAI Systems.
 
+## Duas linhas e a baldeação
+
+São duas linhas que se cruzam na **estação Nexus**:
+
+| Linha | Estações |
+| --- | --- |
+| **Aurora** | Campo Belo, Três Porteiras, Pedra Alta, Nexus, Vila Serena, Estação Central, Porto Azul |
+| **Horizonte** | Maré Mansa, Bosque Velho, Serra Clara, Nexus, Vale Novo, Horizonte, Jardim do Sol |
+
+A Horizonte tem outra ordem de paisagens (começa no litoral) e cenário próprio: casas, árvores, rios, túneis e passagens de nível são outros. Parado na Nexus, aparece o botão **Fazer baldeação** — ela desce e embarca no trem da outra linha. Escolhendo um destino da outra linha, o letreiro avisa "baldeação em Nexus", o trem para lá (mesmo com as paradas desligadas) e ela troca de trem sozinha; o resumo da chegada soma os km das duas linhas. O mapa e o km do letreiro são sempre da linha atual. Diário: 6 estações novas, "Baldeação na Nexus" e "Linha Horizonte".
+
 ## Diário de intenções
 
 Botão **Intenção** no painel (e um convite gentil na primeira visita): escreva uma frase para a viagem — "Começar esta fase com leveza". Ela viaja **lacrada** com você: de vez em quando a passageira se lembra dela num pensamento. Quando o trem para na **estação Nexus** ou chega ao seu **destino** (depois de pelo menos 1 km), a intenção volta num cartão — com a data em que foi escrita e onde voltou — e pode ser guardada como **cartão-postal** com as suas palavras, ou renovada. Fica salva no navegador; as suas palavras nunca são traduzidas.
@@ -86,7 +97,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 75 figurinhas para completar — as 7 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 83 figurinhas para completar — as 13 estações das duas linhas, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -168,6 +179,8 @@ src/
   cabin.js      atividades dela, café e visitas do corredor (simulação)
   modes.js      modos relaxar, Pomodoro, mapa, foto e cartão-postal
   brand.js      marca: emblema fractal, tela de abertura
+  lineChange.js baldeação na Nexus (regra pura)
+  transfer.js   botão de baldeação e transição
   intention.js  diário de intenções (escrever, lacrar, receber de volta)
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN

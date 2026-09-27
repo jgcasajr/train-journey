@@ -6,6 +6,7 @@ import { initialDining, updateDining } from './dining.js';
 import { initialCompanion, updateCompanion } from './companion.js';
 import { EMERGENCY_DECEL, applyEvents, initialInteraction, updateInteraction } from './events.js';
 import { createDrops, updateDrops } from './glass.js';
+import { TRANSFER_STATION, needsChange } from './lineChange.js';
 import { initialPassersby, updatePassersby } from './passersby.js';
 import { initialPassing, updatePassing } from './passingTrain.js';
 import { seasonWeights } from './seasons.js';
@@ -48,6 +49,7 @@ export function initialState(input, startKm) {
     tripStart: null,
     holding: false,
     arrivedAt: null,
+    transfers: 0,
   };
 }
 
@@ -86,7 +88,9 @@ function nextJolt(state, dt, crossedJoint, speed, passStarted) {
 
 function standing(state, dt, input) {
   // At the destination the train waits (holding) until the viewer decides what to do next.
-  const dwell = state.holding ? state.dwell : (input.stops ? Math.max(0, state.dwell - dt) : 0);
+  // Changing trains at Nexus needs the stop even when stations are skipped.
+  const stops = input.stops || (state.served?.name === TRANSFER_STATION && needsChange(state));
+  const dwell = state.holding ? state.dwell : (stops ? Math.max(0, state.dwell - dt) : 0);
   const amb = ambient(state, dt, input);
   return {
     ...state,

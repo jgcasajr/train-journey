@@ -1,5 +1,4 @@
-import { BIOMES, SEGMENT } from './biomes.js';
-import { mod } from './utils.js';
+import { BIOMES, LINES, LOOP, SEGMENT, lineBiomes, lineStart, segmentBiome } from './biomes.js';
 
 export const PLATFORM_LENGTH = 170; // meters
 export const DWELL = 14; // seconds stopped at a station
@@ -8,7 +7,7 @@ const STOP_OFFSET = 50; // meters from platform start where the window stops
 
 /** One station per biome segment whose biome has a station name. */
 function stationIn(k) {
-  const biome = BIOMES[mod(k, BIOMES.length)];
+  const biome = segmentBiome(k);
   if (!biome.station) return null;
   const start = k * SEGMENT + SEGMENT * STATION_POSITION;
   return {
@@ -39,8 +38,23 @@ export function nextStationNamed(distance, name, servedId) {
   return null;
 }
 
-/** All station names in line order (for the destination picker). */
-export const STATION_NAMES = BIOMES.filter((b) => b.station).map((b) => b.station);
+/** Station names of each line, in line order. */
+export const LINE_STATIONS = LINES.map((_, i) => lineBiomes(i).filter((b) => b.station).map((b) => b.station));
+/** Every station name once (for the destination picker and the journal). */
+export const STATION_NAMES = [...new Set(LINE_STATIONS.flat())];
+
+/** Lines a station belongs to (Nexus is on both). */
+export const linesOf = (name) => LINE_STATIONS.flatMap((names, i) => (names.includes(name) ? [i] : []));
+
+/** A station on the first lap of a line, or null. */
+export function stationOnLine(line, name) {
+  const first = Math.floor(lineStart(line) / SEGMENT);
+  for (let k = first; k < first + LOOP / SEGMENT; k++) {
+    const s = stationIn(k);
+    if (s && s.name === name) return s;
+  }
+  return null;
+}
 
 /** Next station whose stop point is still ahead, skipping the one just served. */
 export function nextStation(distance, servedId) {

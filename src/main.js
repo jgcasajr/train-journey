@@ -2,7 +2,7 @@ import { drawAisle } from './aisle.js';
 import { createAudio } from './audio.js';
 import { aisleEventAt, beatAt, coffeeHot, cupWithPassenger } from './cabin.js';
 import { companionLine } from './companion.js';
-import { biomeAt, biomeName, num } from './biomes.js';
+import { biomeAt, biomeName, lineKm, num } from './biomes.js';
 import { drawCompanion } from './companionView.js';
 import { createArrival } from './arrival.js';
 import { drawDiningRoom, drawDiningTable } from './diningView.js';
@@ -23,6 +23,7 @@ import { moonPhase } from './moon.js';
 import { currentLang } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
+import { createTransfer } from './transfer.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
@@ -163,7 +164,7 @@ function playSounds(audio, state) {
 
 function updatePanel(controls, state, input, destinationText) {
   controls.showHud({
-    km: state.distance / 1000,
+    km: lineKm(state.distance),
     biome: biomeName(state.distance),
     kmh: state.speed * 3.6,
     station: destinationText ?? stationInfo(state, input.stops),
@@ -274,6 +275,7 @@ function start() {
     onReturn: () => { journal.award('intentionReturned'); audio.sfx('chime'); },
     makePostcard: (extra) => modes.postcard(extra),
   });
+  const transfer = createTransfer(document, { onTransfer: () => { clicks.queue({ type: 'transfer' }); audio.sfx('chime'); } });
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
   const day = Number(params.get('dia'));
@@ -301,6 +303,7 @@ function start() {
     state = step(state, dt, { ...input, destination: arrival.destination(), events: clicks.takeEvents() });
     arrival.update(state);
     intention.update(state);
+    transfer.update(state);
     playSounds(audio, state);
     passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue));
     const baby = companionLine(state, null);

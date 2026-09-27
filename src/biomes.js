@@ -1,4 +1,4 @@
-import { hex, lerp, mix, mod, smoothstep } from './utils.js';
+import { clamp, hex, lerp, mix, mod, smoothstep } from './utils.js';
 
 /** Meters of track per biome; the last BLEND fraction cross-fades into the next one. */
 export const SEGMENT = 3500;
@@ -47,12 +47,53 @@ export const BIOMES = RAW.map((b) => ({
   ...Object.fromEntries(COLOR_KEYS.map((k) => [k, hex(b[k])])),
 }));
 
+/** Meters per lap of a line (every biome once). */
+export const LOOP = SEGMENT * BIOMES.length;
+/** Each line owns its own stretch of distance, so scenery generated from distance differs per line. */
+export const LINE_SPAN = LOOP * 400;
+
+/**
+ * The railway lines. Both pass through the Nexus station, where travelers change trains.
+ * `order` lists the biomes of one lap; `stations` overrides the station name per biome.
+ */
+export const LINES = [
+  { id: 'aurora', name: 'Linha Aurora', order: BIOMES.map((b) => b.name), stations: {} },
+  {
+    id: 'horizonte',
+    name: 'Linha Horizonte',
+    order: ['Litoral', 'Floresta', 'Montanhas', 'Outono', 'Fazenda', 'Campos', 'Cidade', 'Subúrbio'],
+    stations: {
+      Litoral: 'Maré Mansa', Floresta: 'Bosque Velho', Montanhas: 'Serra Clara', Outono: 'Nexus',
+      Fazenda: 'Vale Novo', Campos: null, Cidade: 'Horizonte', Subúrbio: 'Jardim do Sol',
+    },
+  },
+];
+
+const LINE_BIOMES = LINES.map((line) => line.order.map((name) => {
+  const biome = BIOMES.find((b) => b.name === name);
+  if (!biome) throw new Error(`Line ${line.id}: unknown biome ${name}`);
+  return { ...biome, station: name in line.stations ? line.stations[name] : biome.station };
+}));
+
+/** Index of the line a distance belongs to. */
+export const lineAt = (meters) => clamp(Math.floor(meters / LINE_SPAN), 0, LINES.length - 1);
+export const lineStart = (line) => line * LINE_SPAN;
+/** Kilometers along the current line (what the board and postcards show). */
+export const lineKm = (meters) => (meters - lineStart(lineAt(meters))) / 1000;
+/** The biomes of one lap of a line, in order. */
+export const lineBiomes = (line) => LINE_BIOMES[line];
+
+/** Biome of track segment k (segments count from 0 across all lines). */
+export function segmentBiome(k) {
+  return LINE_BIOMES[lineAt(k * SEGMENT)][mod(k, BIOMES.length)];
+}
+
 export function biomeAt(meters) {
   const k = Math.floor(meters / SEGMENT);
   const local = meters - k * SEGMENT;
   return {
-    a: BIOMES[mod(k, BIOMES.length)],
-    b: BIOMES[mod(k + 1, BIOMES.length)],
+    a: segmentBiome(k),
+    b: segmentBiome(k + 1),
     t: smoothstep(SEGMENT * (1 - BLEND), SEGMENT, local),
   };
 }

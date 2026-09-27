@@ -1,3 +1,4 @@
+import { lineKm } from './biomes.js';
 import { CATEGORIES, DISCOVERIES, factsFrom } from './journalData.js';
 import { onLangChange, t } from './i18n.js';
 
@@ -152,7 +153,7 @@ export function createJournal(doc, { onDiscover }) {
       const days = progress.days + (newDay ? 1 : 0);
       const facts = { ...factsFrom({ state, env, view, traveled }), minutes: seconds / 60, days, awarded };
       const fresh = DISCOVERIES.filter((d) => !progress.found[d.id] && d.test(facts));
-      const record = { km: state.distance / 1000, clock: clockOf(state.dayTime) };
+      const record = { km: lineKm(state.distance), clock: clockOf(state.dayTime) };
       progress = {
         traveled,
         seconds,

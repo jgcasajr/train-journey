@@ -414,3 +414,23 @@ button, select, .check { touch-action: manipulation; }
 .intention p#intention-meta { margin: 0 0 14px; color: #7a6650; font-size: 12px; }
 .intention .arrival-actions button { color: #3a2c20; background: #fffaf0; border-color: #e0c48a; }
 .intention .arrival-actions button:first-child { background: #5b43a8; border-color: #3b2a6e; color: #fff; }
+
+/* ---------- Change trains at Nexus ---------- */
+.transfer-btn {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 6;
+  padding: 12px 20px;
+  font-weight: 600;
+  color: #fff;
+  background: #5b43a8;
+  border: 2px solid #b99bff;
+  border-radius: 999px;
+  box-shadow: 0 8px 30px rgba(91, 67, 168, 0.55);
+  animation: transfer-glow 1.8s ease-in-out infinite;
+}
+.transfer-btn:hover { background: #6b52bd; }
+.transfer-btn.hidden { display: none; }
+@keyframes transfer-glow { 50% { box-shadow: 0 8px 40px rgba(185, 155, 255, 0.85); } }

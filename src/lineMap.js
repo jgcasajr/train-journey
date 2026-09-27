@@ -1,4 +1,4 @@
-import { BIOMES, SEGMENT } from './biomes.js';
+import { LINES, LOOP, SEGMENT, lineAt, lineBiomes, lineStart } from './biomes.js';
 import { riversBetween } from './rivers.js';
 import { crossingsBetween } from './roads.js';
 import { stationsBetween } from './stations.js';
@@ -6,7 +6,6 @@ import { tunnelsBetween } from './tunnel.js';
 import { rgba } from './utils.js';
 import { t } from './i18n.js';
 
-export const LOOP = SEGMENT * BIOMES.length; // meters per lap
 const NS = 'http://www.w3.org/2000/svg';
 const VIEW_W = 1000;
 const LINE_Y = 62;
@@ -19,8 +18,8 @@ function svgEl(tag, attrs, text) {
 }
 
 /** Everything the map shows for one lap, in lap-relative meters. */
-function lapFeatures(lap) {
-  const m0 = lap * LOOP;
+function lapFeatures(line, lap) {
+  const m0 = lineStart(line) + lap * LOOP;
   const m1 = m0 + LOOP;
   const rel = (m) => m - m0;
   return {
@@ -31,14 +30,15 @@ function lapFeatures(lap) {
   };
 }
 
-function buildLap(svg, lap, destination) {
+function buildLap(svg, line, lap, destination) {
   const x = (m) => (m / LOOP) * VIEW_W;
-  const f = lapFeatures(lap);
+  const f = lapFeatures(line, lap);
+  const biomes = lineBiomes(line);
   const nodes = [
-    ...BIOMES.map((b, i) => svgEl('rect', {
+    ...biomes.map((b, i) => svgEl('rect', {
       x: x(i * SEGMENT), y: LINE_Y + 10, width: x(SEGMENT) - 1, height: 8, rx: 2, fill: rgba(b.field, 0.9),
     })),
-    ...BIOMES.map((b, i) => svgEl('text', { x: x(i * SEGMENT + SEGMENT / 2), y: LINE_Y + 32, class: 'biome' }, t(b.name))),
+    ...biomes.map((b, i) => svgEl('text', { x: x(i * SEGMENT + SEGMENT / 2), y: LINE_Y + 32, class: 'biome' }, t(b.name))),
     svgEl('line', { x1: 0, y1: LINE_Y, x2: VIEW_W, y2: LINE_Y, class: 'track' }),
     ...f.tunnels.map((t) => svgEl('rect', { x: x(t.from), y: LINE_Y - 4, width: Math.max(3, x(t.to - t.from)), height: 8, class: 'tunnel' })),
     ...f.bridges.map((m) => svgEl('path', { d: `M${x(m) - 5} ${LINE_Y + 6} Q${x(m)} ${LINE_Y - 2} ${x(m) + 5} ${LINE_Y + 6}`, class: 'bridge' })),
@@ -60,18 +60,22 @@ export function createLineMap(svg, lapLabel) {
   let lap = null;
   let marker = null;
   let shownDestination = null;
+  let shownLine = null;
   return {
     /** Forces a rebuild on the next update (e.g. after a language switch). */
     invalidate() { lap = null; },
     update(distance, destination = null) {
-      const current = Math.floor(distance / LOOP);
-      if (current !== lap || destination !== shownDestination) {
+      const line = lineAt(distance);
+      const along = distance - lineStart(line);
+      const current = Math.floor(along / LOOP);
+      if (current !== lap || line !== shownLine || destination !== shownDestination) {
         lap = current;
+        shownLine = line;
         shownDestination = destination;
-        marker = buildLap(svg, lap, destination);
-        lapLabel.textContent = t(`Volta ${lap + 1} · ${(LOOP / 1000).toFixed(0)} km`);
+        marker = buildLap(svg, line, lap, destination);
+        lapLabel.textContent = `${t(LINES[line].name)} · ${t(`Volta ${lap + 1} · ${(LOOP / 1000).toFixed(0)} km`)}`;
       }
-      const x = ((distance - lap * LOOP) / LOOP) * VIEW_W;
+      const x = ((along - lap * LOOP) / LOOP) * VIEW_W;
       marker.setAttribute('transform', `translate(${x.toFixed(1)} 0)`);
     },
   };

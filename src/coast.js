@@ -1,7 +1,7 @@
-import { BIOMES, SEGMENT, biomeAt, num } from './biomes.js';
+import { SEGMENT, biomeAt, num, segmentBiome } from './biomes.js';
 import { forEachSlot } from './layers.js';
 import { shade } from './sky.js';
-import { hash, hex, mod, radialGlow, rgba, smoothstep } from './utils.js';
+import { hash, hex, radialGlow, rgba, smoothstep } from './utils.js';
 
 const HULLS = ['#7a2e2e', '#2e4a7a', '#f4f1ea', '#3d5a3a'].map(hex);
 const SAIL = hex('#f7f3e8');
@@ -10,7 +10,6 @@ const TOWER = hex('#f2eee6');
 const BAND = hex('#c0392b');
 const ROCK = hex('#6b6560');
 const LANTERN = hex('#fff0b3');
-const COAST_INDEX = BIOMES.findIndex((b) => b.water > 0.5);
 const LIGHTHOUSE_POSITION = 0.72; // fraction into the coast segment
 
 function drawSailboat(ctx, x, y, s, hull, env) {
@@ -71,7 +70,7 @@ function lighthousesBetween(m0, m1) {
   const first = Math.floor(m0 / SEGMENT);
   const count = Math.floor(m1 / SEGMENT) - first + 1;
   return Array.from({ length: count }, (_, i) => first + i)
-    .filter((k) => mod(k, BIOMES.length) === COAST_INDEX)
+    .filter((k) => segmentBiome(k).water > 0.5)
     .map((k) => k * SEGMENT + SEGMENT * LIGHTHOUSE_POSITION)
     .filter((at) => at > m0 && at < m1);
 }

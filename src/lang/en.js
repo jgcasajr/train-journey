@@ -494,6 +494,12 @@ export const EN = {
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
   'apresenta': 'presents',
+  'Linha Aurora': 'Aurora Line',
+  'Linha Horizonte': 'Horizon Line',
+  'Baldeação na Nexus': 'Change at Nexus',
+  'Troque de trem na estação Nexus.': 'Change trains at Nexus station.',
+  'Existe outra linha além da Nexus...': 'There is another line beyond Nexus...',
+  'Uma parada na floresta.': 'A stop in the forest.',
   'Intenção': 'Intention',
   'Escreva uma intenção para a viagem; ela volta na estação Nexus ou no destino': 'Write an intention for the trip; it comes back at Nexus station or at your destination',
   'Diário de intenções': 'Intention journal',
@@ -590,6 +596,8 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^Fazer baldeação: (.+)$/, (tr, line) => `Change trains: ${tr(line)}`],
+  [/^Destino: (.+) · baldeação em (.+) · ([\d.]+) km$/, (tr, dest, via, km) => `Destination: ${dest} · change at ${via} · ${km} km`],
   [/^Minha intenção: “(.+)”$/s, (tr, text) => `My intention: “${text}”`],
   [/^Escrita em (.+) · voltou em (.+)$/, (tr, date, place) => `Written on ${date} · came back at ${place}`],
   // Waiter, snack cart and conductor (aisle.js)

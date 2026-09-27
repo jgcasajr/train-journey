@@ -1,3 +1,4 @@
+import { TRANSFER_STATION } from './lineChange.js';
 import { nextStationNamed } from './stations.js';
 
 const WAVE_SECONDS = 6;
@@ -17,9 +18,14 @@ export function updateDestination(state, input) {
   };
 }
 
-/** The station the train is heading to, or null on a free trip. */
+/**
+ * The station the train is heading to, or null on a free trip. A destination on the other
+ * line means heading to Nexus first, to change trains there.
+ */
 export function destinationStation(state) {
-  return state.destination ? nextStationNamed(state.distance, state.destination, state.served?.id) : null;
+  if (!state.destination) return null;
+  return nextStationNamed(state.distance, state.destination, state.served?.id)
+    ?? nextStationNamed(state.distance, TRANSFER_STATION, state.served?.id);
 }
 
 /** Remaining distance and a time estimate at the chosen cruising speed. */
@@ -28,7 +34,8 @@ export function eta(state, targetKmh) {
   if (!station) return null;
   const meters = Math.max(0, station.stopAt - state.distance);
   const speed = Math.max(5, Math.min(targetKmh / 3.6, 60));
-  return { name: station.name, km: meters / 1000, minutes: Math.ceil(meters / speed / 60) };
+  const via = station.name === state.destination ? null : station.name;
+  return { name: state.destination, via, km: meters / 1000, minutes: Math.ceil(meters / speed / 60) };
 }
 
 /** Called on a station arrival: at the destination the train holds and she celebrates. */

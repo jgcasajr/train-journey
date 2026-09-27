@@ -11,6 +11,7 @@ import { companionPersona } from './companion.js';
 import { CAST, passerbyAt } from './passersby.js';
 import { PERSONAS } from './personas.js';
 import { moonFullness } from './moon.js';
+import { auroraStrength } from './nightView.js';
 import { fireworkBursts, meteorsAt, shootingStarAt } from './rareSky.js';
 import { precipitationKind, rainbowStrength } from './weatherView.js';
 import { deerInView, whaleAt } from './wildlife.js';
@@ -47,6 +48,7 @@ export const DISCOVERIES = [
     hint: `Uma parada ${STATION_WHERE[b.name] ?? 'pelo caminho'}.`, test: (f) => f.station === b.station,
   })),
   { id: 'car:panorama', category: 'Momentos', icon: '🔭', title: 'Vagão panorâmico', hint: 'Um vagão com teto de vidro...', test: (f) => f.car === 'panorama' },
+  { id: 'car:sleeper', category: 'Momentos', icon: '🛏️', title: 'Noite no vagão-leito', hint: 'Durma embalada pelos trilhos.', test: (f) => f.car === 'sleeper' && f.night },
   { id: 'cat', category: 'Personagens', icon: '🐈', title: 'Gato clandestino', hint: 'Alguém dorme no vagão de bagagem.', test: (f) => f.catPets > 0 },
   { id: 'car:cab', category: 'Momentos', icon: '🚂', title: 'Cabine do maquinista', hint: 'Veja os trilhos lá da frente.', test: (f) => f.car === 'cab' },
   { id: 'horn', category: 'Momentos', icon: '📯', title: 'Apito do maquinista', hint: 'Na cabine, aperte o botão vermelho.', test: (f) => f.horns > 0 },
@@ -89,6 +91,7 @@ export const DISCOVERIES = [
   })),
   { id: 'shootingStar', category: 'Raridades', icon: '🌠', title: 'Estrela cadente', hint: 'Olhe o céu numa noite limpa.', test: (f) => f.shootingStar },
   { id: 'meteorShower', category: 'Raridades', icon: '☄️', title: 'Chuva de meteoros', hint: 'Algumas noites limpas são especiais.', test: (f) => f.meteorShower },
+  { id: 'aurora', category: 'Raridades', icon: '🌌', title: 'Aurora boreal', hint: 'Noites limpas nas montanhas nevadas...', test: (f) => f.aurora },
   { id: 'deer', category: 'Raridades', icon: '🦌', title: 'Cervo', hint: 'Bem no meio da floresta.', test: (f) => f.deer },
   { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
@@ -158,6 +161,8 @@ export function factsFrom({ state, env, view, traveled }) {
     traveled,
     transfers: state.transfers ?? 0,
     car: state.car,
+    night: env.sunElev < -0.1,
+    aurora: auroraStrength(state, env) > 0.3,
     catPets: state.catPets ?? 0,
     horns: state.horns ?? 0,
     line: lineAt(state.distance),

@@ -78,6 +78,8 @@ function reduce(state, event) {
       return { holding: false, arrivedAt: null, dwell: Math.min(state.dwell, 2) };
     case 'transfer':
       return transferState(state);
+    case 'sleeper':
+      return say(state, isNight(state.dayTime) ? 'Zzz... só mais cinco minutinhos.' : 'Que cama gostosa! Dá até vontade de cochilar.');
     case 'cat':
       return { catPetAt: state.time, catPets: (state.catPets ?? 0) + 1 };
     case 'horn':

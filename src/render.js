@@ -17,7 +17,10 @@ import {
 } from './interior.js';
 import { trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
+import { drawAurora } from './nightView.js';
 import { drawPanoramaFrame } from './panoramaView.js';
+import { drawSleeper } from './sleeperView.js';
+import { isNight } from './clock.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passingCoverage } from './passingTrain.js';
 import { passerbyAt } from './passersby.js';
@@ -49,6 +52,7 @@ function drawOutside(ctx, view, state, env, { L, blocked, bob, fog, dt, alone = 
   ctx.save();
   ctx.translate(lookX * u * LOOK_FAR, bob + lookY * u * 3);
   drawSky(ctx, view, state, env);
+  drawAurora(ctx, view, state, env);
   drawRainbow(ctx, view, env);
   drawLightning(ctx, view, state.lightning);
   drawSkyLife(ctx, view, state, env);
@@ -128,6 +132,17 @@ function renderPanorama(ctx, layout, state, env, ctxOpts) {
   if (thought) drawThought(ctx, layout, thought);
 }
 
+/** Sleeper car: the window above the lower berth where she lies under the quilt. */
+function renderSleeper(ctx, layout, state, env, ctxOpts) {
+  const { L, bob } = ctxOpts;
+  drawWall(ctx, layout, L);
+  drawOutside(ctx, layout, state, env, { ...ctxOpts, alone: true });
+  drawFrame(ctx, layout, L);
+  drawCurtains(ctx, layout, L, bob * 0.5, Math.max(state.curtains, 0.25));
+  drawSleeper(ctx, layout, L, state, !isNight(state.dayTime));
+  drawSpeech(ctx, layout, state);
+}
+
 /** Baggage car: crates and suitcases, the world through the half-open sliding door, a cat. */
 function renderBaggage(ctx, layout, state, env, ctxOpts) {
   const view = carLayout(layout, 'baggage');
@@ -153,6 +168,7 @@ export function render(ctx, layout, state, env, { fog, dt, station, intention, p
   const opts = { L, blocked, bob: trainBob(state, layout.u), fog, dt, station, intention };
   if (state.car === 'panorama') renderPanorama(ctx, layout, state, env, opts);
   else if (state.car === 'baggage') renderBaggage(ctx, layout, state, env, opts);
+  else if (state.car === 'sleeper') renderSleeper(ctx, layout, state, env, opts);
   else renderSeated(ctx, layout, state, env, opts);
   drawVignette(ctx, layout);
   if (env.flash > 0.01) {

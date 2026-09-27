@@ -1,5 +1,5 @@
 /** The cars she can walk to, from the panel. */
-export const CARS = ['passenger', 'dining', 'panorama', 'baggage', 'cab'];
+export const CARS = ['passenger', 'dining', 'panorama', 'sleeper', 'baggage', 'cab'];
 
 export const validCar = (car) => (CARS.includes(car) ? car : 'passenger');
 

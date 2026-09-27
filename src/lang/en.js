@@ -494,6 +494,13 @@ export const EN = {
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
   'apresenta': 'presents',
+  'Vagão-leito': 'Sleeper car',
+  'Noite no vagão-leito': 'A night in the sleeper',
+  'Durma embalada pelos trilhos.': 'Fall asleep to the rhythm of the rails.',
+  'Aurora boreal': 'Northern lights',
+  'Noites limpas nas montanhas nevadas...': 'Clear nights over the snowy mountains...',
+  'Zzz... só mais cinco minutinhos.': 'Zzz... just five more minutes.',
+  'Que cama gostosa! Dá até vontade de cochilar.': 'What a cosy bed! I could take a nap.',
   'Respirar': 'Breathe',
   'Respire no ritmo dos trilhos: inspire por 4 juntas, solte por 4': 'Breathe with the rails: in for 4 joints, out for 4',
   'Inspire...': 'Breathe in...',

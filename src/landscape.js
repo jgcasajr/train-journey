@@ -1,4 +1,5 @@
 import { biomeAt, num, pick } from './biomes.js';
+import { drawDistantLights } from './nightView.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
 import { drawBoats, drawLighthouses } from './coast.js';
@@ -267,7 +268,9 @@ function drawRush(ctx, layout, state, env) {
 }
 
 export function drawLandscape(ctx, layout, state, env) {
-  MOUNTAINS.forEach((cfg) => drawMountains(ctx, layout, state, env, cfg));
+  drawMountains(ctx, layout, state, env, MOUNTAINS[0]);
+  drawDistantLights(ctx, layout, state, env);
+  drawMountains(ctx, layout, state, env, MOUNTAINS[1]);
   drawBalloons(ctx, layout, state, env);
   drawSkyline(ctx, layout, state, env);
   drawWater(ctx, layout, state, env);

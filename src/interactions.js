@@ -8,6 +8,7 @@ import { FIELDS_DEPTH, farmPropsInView } from './landscape.js';
 import { passengerOrigin } from './passenger.js';
 import { passerbyBox } from './passersbyView.js';
 import { catBox } from './baggageView.js';
+import { sleeperHeadBox } from './sleeperView.js';
 import { hornBox } from './cabDash.js';
 import { carLayout, seatedCar } from './cars.js';
 import { balloonsInView, flockBirds } from './skylife.js';
@@ -76,6 +77,7 @@ function outsideTarget(view, state, env, q) {
 export function hitTest(layout, state, env, bob, p) {
   if (state.car === 'cab') return inBox(p, hornBox(layout)) ? { type: 'horn' } : null;
   if (state.car === 'baggage' && inBox(p, catBox(layout))) return { type: 'cat', sound: 'meow' };
+  if (state.car === 'sleeper' && inBox(p, sleeperHeadBox(layout))) return { type: 'sleeper' };
   const view = carLayout(layout, state.car);
   const cabin = seatedCar(state.car) ? cabinTarget(view, state, p) : panoramaTarget(view, state, p);
   if (cabin) return cabin;

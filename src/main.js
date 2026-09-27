@@ -21,6 +21,7 @@ import { drawLandscape } from './landscape.js';
 import { createModes } from './modes.js';
 import { moonPhase } from './moon.js';
 import { currentLang } from './i18n.js';
+import { showSplash } from './brand.js';
 import { createRadio } from './radio.js';
 import { drawPassenger, drawReflection, passengerOrigin } from './passenger.js';
 import { drawPassingTrain, passDuration, passingCoverage } from './passingTrain.js';
@@ -256,6 +257,7 @@ function start() {
 
   let layout = resizeCanvas(canvas, ctx);
   const params = new URLSearchParams(window.location.search);
+  showSplash(document, params);
   const modes = createModes(document, {
     canvas,
     panel: document.getElementById('panel'),

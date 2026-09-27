@@ -18,6 +18,7 @@ function stationIn(k) {
     end: start + PLATFORM_LENGTH,
     stopAt: start + STOP_OFFSET,
     grand: biome.city > 0.5,
+    nexus: biome.station === 'Nexus', // the station of the new phase (Fractal Nexus)
   };
 }
 

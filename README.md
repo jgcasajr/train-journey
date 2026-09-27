@@ -20,7 +20,7 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
   Campos → Fazenda → Floresta → Montanhas (com neve) → Outono → Subúrbio → Cidade → Litoral (ciclo de 28 km).
   - **Fazenda**: lavouras em retalhos com sulcos, celeiros com silo, fardos de feno, vacas, cata-vento girando e cerca de madeira.
   - **Subúrbio/Cidade**: skyline no horizonte que cresce conforme o trem se aproxima, prédios com janelas que acendem à noite, antenas piscando, fábricas soltando fumaça, muro e postes de luz.
-- **Estações** (Campo Belo, Três Porteiras, Pedra Alta, Vila Serena, Estação Central, Porto Azul): o trem freia suavemente, para ~14 s e parte de novo. Plataforma, cobertura com colunas de ferro, placas com o nome, prédio com relógio que marca a hora do jogo, bancos, passageiros esperando e luminárias acesas à noite. Sino na chegada e apito na partida (com som ligado).
+- **Estações** (Campo Belo, Três Porteiras, Pedra Alta, **Nexus**, Vila Serena, Estação Central, Porto Azul): o trem freia suavemente, para ~14 s e parte de novo. Plataforma, cobertura com colunas de ferro, placas com o nome, prédio com relógio que marca a hora do jogo, bancos, passageiros esperando e luminárias acesas à noite. Sino na chegada e apito na partida (com som ligado).
 - **Rios e pontes**: ~8 rios por volta cortando a paisagem em todas as camadas; na travessia, uma ponte treliçada de aço passa rente à janela com a água correndo embaixo.
 - **Clima**: limpo, chuva ou tempestade (ou automático, mudando a cada 2 min). Na tempestade o céu fecha, caem raios com clarão que ilumina até a cabine e o trovão chega depois, com atraso conforme a distância. Quando a chuva para com sol, aparece um **arco-íris**.
 - **Neblina da manhã** nos vales ao amanhecer, que se dissipa até o meio da manhã (mais densa depois de chuva e no outono/inverno).
@@ -45,6 +45,10 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 - **Som** (opcional): ronco do trem e o "tá-dum tá-dum" das juntas dos trilhos a cada 25 m, sincronizado com a velocidade.
 - Balanço do vagão, cafezinho com vapor, cortinas e a passageira respirando.
 
+## Fractal Nexus · NexionAI Systems
+
+Este trem é o emblema da nova fase do **Fractal Nexus**, da **NexionAI Systems**. Ao abrir, uma tela de abertura curta com o emblema fractal ("Fractal Nexus · NexionAI Systems apresenta") — uma vez por sessão; toque ou tecla pula, `?nosplash` desliga. No bosque de outono fica a **estação Nexus**: fachada lilás, placa violeta com o emblema e um brilho próprio. Parada ali, a passageira sempre pensa algo sobre recomeço, e o cartão-postal ganha um recado especial. Todo cartão-postal leva o selo Fractal Nexus · NexionAI Systems.
+
 ## Lua e meteoros
 
 A lua muda de fase a cada noite (um ciclo completo a cada 8 dias de viagem): nova, crescente, quarto, gibosa, cheia e de volta. A lua cheia ilumina a paisagem; na lua nova a noite fica bem escura. Algumas noites limpas trazem uma **chuva de meteoros** — riscos no céu a cada instante, e a passageira faz pedidos.
@@ -55,7 +59,7 @@ O botão **Ir ao vagão-restaurante** leva a passageira (com uma transição esc
 
 ## Destino
 
-No painel, **Destino** escolhe uma das 6 estações (ou viagem livre). O letreiro passa a mostrar a distância e o tempo estimado ("Destino: Porto Azul · 12.3 km · ~8 min") e o mapa destaca a estação. O trem para no destino mesmo com "Parar nas estações" desligado: a passageira acena ("Chegamos a Porto Azul!"), o trem espera e aparece o resumo da viagem — km, tempo e descobertas novas no diário — com as opções **Continuar viajando** ou **Escolher outro destino**.
+No painel, **Destino** escolhe uma das 7 estações (ou viagem livre). O letreiro passa a mostrar a distância e o tempo estimado ("Destino: Porto Azul · 12.3 km · ~8 min") e o mapa destaca a estação. O trem para no destino mesmo com "Parar nas estações" desligado: a passageira acena ("Chegamos a Porto Azul!"), o trem espera e aparece o resumo da viagem — km, tempo e descobertas novas no diário — com as opções **Continuar viajando** ou **Escolher outro destino**.
 
 ## Rádio do vagão
 
@@ -78,7 +82,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 72 figurinhas para completar — as 6 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 73 figurinhas para completar — as 7 estações, as 8 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -159,6 +163,7 @@ src/
   passenger.js  a passageira (poses e reflexo no vidro)
   cabin.js      atividades dela, café e visitas do corredor (simulação)
   modes.js      modos relaxar, Pomodoro, mapa, foto e cartão-postal
+  brand.js      marca: emblema fractal, tela de abertura
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN
   lang/en.js    dicionário português → inglês (frases e padrões)

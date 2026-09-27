@@ -20,7 +20,7 @@ const BIOME_ICONS = {
 };
 const STATION_WHERE = {
   Campos: 'nos campos', Fazenda: 'na fazenda', Montanhas: 'nas montanhas',
-  Subúrbio: 'no subúrbio', Cidade: 'na cidade', Litoral: 'no litoral',
+  Outono: 'no bosque de outono', Subúrbio: 'no subúrbio', Cidade: 'na cidade', Litoral: 'no litoral',
 };
 const SEASONS = [
   { id: 'spring', title: 'Primavera', icon: '🌸', hint: 'Quando as árvores florescem.' },
@@ -37,7 +37,7 @@ export const CATEGORIES = ['Estações', 'Paisagens', 'Estações do ano', 'Céu
  */
 export const DISCOVERIES = [
   ...BIOMES.filter((b) => b.station).map((b) => ({
-    id: `station:${b.station}`, category: 'Estações', icon: '🚉', title: b.station,
+    id: `station:${b.station}`, category: 'Estações', icon: b.station === 'Nexus' ? '💠' : '🚉', title: b.station,
     hint: `Uma parada ${STATION_WHERE[b.name] ?? 'pelo caminho'}.`, test: (f) => f.station === b.station,
   })),
   ...BIOMES.map((b) => ({

@@ -493,6 +493,14 @@ export const EN = {
 
   // ---- Thoughts (thoughts.js) ----
   'Nova fase, nova vida.': 'New phase, new life.',
+  'apresenta': 'presents',
+  'Uma nova fase começa na próxima estação.': 'A new phase begins at the next station.',
+  'Uma parada no bosque de outono.': 'A stop in the autumn woods.',
+  'Nexus... é aqui que tudo muda.': 'Nexus... this is where everything changes.',
+  'Estação da nova fase. Cheguei.': 'The station of the new phase. I made it.',
+  'Tudo se conecta, no fim das contas.': 'Everything connects, in the end.',
+  'O que eu deixo nesta estação? O que eu levo?': 'What do I leave at this station? What do I take with me?',
+  'Parei na estação Nexus. Dizem que é onde as linhas se cruzam e as fases mudam. Senti que era verdade.': 'I stopped at Nexus station. They say it is where the lines cross and phases change. I felt it was true.',
   'O caminho também é o destino.': 'The journey is also the destination.',
   'Cada estação é um recomeço.': 'Every station is a fresh start.',
   'Deixar pra trás o que não cabe mais.': 'Leave behind what no longer fits.',

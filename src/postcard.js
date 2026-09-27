@@ -1,3 +1,4 @@
+import { BRAND, drawNexusEmblem } from './brand.js';
 import { t } from './i18n.js';
 
 const W = 1500;
@@ -14,6 +15,7 @@ const MESSAGES = {
   Floresta: 'A floresta engole o trem por uns minutos. Cheiro de mato e silêncio bom.',
   Montanhas: 'As montanhas lembram que tudo é questão de perspectiva. Lá de cima, deve ser lindo.',
   Outono: 'Folhas caindo pela janela: o que não serve mais, a gente deixa ir.',
+  Nexus: 'Parei na estação Nexus. Dizem que é onde as linhas se cruzam e as fases mudam. Senti que era verdade.',
   Subúrbio: 'Cada casinha, uma história. Cada janela acesa, alguém recomeçando.',
   Cidade: 'A cidade corre lá fora, mas aqui dentro o tempo é meu.',
   Litoral: 'Cheiro de maresia pela janela. O mar sempre parece um começo.',
@@ -27,7 +29,7 @@ const GENERIC = 'Nova fase, nova vida. O caminho também é o destino.';
 /** Greeting and message for a postcard from where the train is now. */
 export function postcardText({ biome, station }) {
   const from = station ? `de ${station}` : FROM[biome] ?? 'da viagem';
-  return { title: t(`Lembranças ${from}`), message: t(MESSAGES[biome] ?? GENERIC) };
+  return { title: t(`Lembranças ${from}`), message: t(MESSAGES[station === BRAND.station ? 'Nexus' : biome] ?? GENERIC) };
 }
 
 function coverImage(ctx, img, x, y, w, h) {
@@ -138,6 +140,20 @@ function drawBack(ctx, { message, clock, date, km }) {
   ctx.fillText(t('Para: você, na nova fase'), x, H - 210, w);
 }
 
+/** Small NexionAI seal in the bottom-right corner of the card. */
+function drawSeal(ctx) {
+  const x = W - PAD - 16;
+  const y = H - 21;
+  drawNexusEmblem(ctx, x, y, 15, 'rgba(91, 67, 168, 0.8)', 1);
+  ctx.fillStyle = 'rgba(91, 67, 168, 0.85)';
+  ctx.font = `600 15px ${SERIF}`;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`${BRAND.project} · ${BRAND.org}`, x - 24, y);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
 /** Composes a postcard (photo with greeting + stamp, postmark and a handwritten note). */
 export function makePostcard(doc, scene, info) {
   const card = doc.createElement('canvas');
@@ -156,5 +172,6 @@ export function makePostcard(doc, scene, info) {
   ctx.lineTo(PAD + PHOTO_W + 36, H - PAD);
   ctx.stroke();
   drawBack(ctx, { message, clock: info.clock, date: info.date, km: info.km });
+  drawSeal(ctx);
   return card;
 }

@@ -1,3 +1,4 @@
+import { drawNexusEmblem } from './brand.js';
 import { trackX } from './frame.js';
 import { DWELL, stationsBetween } from './stations.js';
 import { shade } from './sky.js';
@@ -9,6 +10,8 @@ const CANOPY = hex('#2f4a3f');
 const VALANCE = hex('#e8dcc0');
 const IRON = hex('#26302c');
 const SIGN = hex('#1f3f7a');
+const NEXUS_SIGN = hex('#3b2a6e');
+const NEXUS_GLOW = hex('#b99bff');
 const WHITE = hex('#f4f1ea');
 const LAMP = hex('#ffd28c');
 const GLASS = hex('#3a4450');
@@ -18,6 +21,7 @@ const COATS = ['#3a5a8a', '#8a3a3a', '#3f6b4a', '#6b5a8a', '#b07a36', '#444444',
 const STYLE = {
   rural: { facade: hex('#e2d3b5'), trim: hex('#8a3b2e'), length: 60 },
   grand: { facade: hex('#b9b1a3'), trim: hex('#6d675d'), length: 95 },
+  nexus: { facade: hex('#d9d3e6'), trim: hex('#5b43a8'), length: 80 },
 };
 
 function geometry(layout, state, env, st) {
@@ -30,7 +34,7 @@ function geometry(layout, state, env, st) {
     c: (color) => rgba(mix(shade(color, env), mix(scale(color, 0.7), LAMP, 0.12), night * 0.65)),
     platformTop: win.y + win.h * 0.8,
     canopyBottom: win.y + win.h * 0.14,
-    style: STYLE[st.grand ? 'grand' : 'rural'],
+    style: STYLE[st.nexus ? 'nexus' : st.grand ? 'grand' : 'rural'],
   };
 }
 
@@ -236,18 +240,21 @@ function drawCanopy(ctx, g) {
 function drawSign(ctx, g, x) {
   const { u, st } = g;
   ctx.font = `600 ${u * 1.7}px system-ui, sans-serif`;
-  const w = Math.max(u * 15, ctx.measureText(st.name).width + u * 3);
+  const emblem = st.nexus ? u * 3.4 : 0;
+  const w = Math.max(u * 15, ctx.measureText(st.name).width + u * 3 + emblem);
   const h = u * 3.6;
   const top = g.canopyBottom + u * 3;
   ctx.fillStyle = g.c(IRON);
   ctx.fillRect(x - w * 0.35, g.canopyBottom, u * 0.3, u * 3);
   ctx.fillRect(x + w * 0.35, g.canopyBottom, u * 0.3, u * 3);
-  ctx.fillStyle = g.c(SIGN);
+  if (st.nexus) radialGlow(ctx, x, top + h / 2, w * 0.7, NEXUS_GLOW, 0.25 + g.night * 0.35);
+  ctx.fillStyle = g.c(st.nexus ? NEXUS_SIGN : SIGN);
   ctx.fillRect(x - w / 2, top, w, h);
   ctx.fillStyle = g.c(WHITE);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(st.name, x, top + h / 2);
+  ctx.fillText(st.name, x + emblem / 2, top + h / 2);
+  if (st.nexus) drawNexusEmblem(ctx, x - w / 2 + u * 2.3, top + h / 2, h * 0.36, g.c(NEXUS_GLOW), 1);
 }
 
 function drawLamps(ctx, g) {

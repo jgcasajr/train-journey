@@ -24,7 +24,7 @@ const RAW = [
     far: '#8a9bbf', mid: '#6d7d99', hills: '#6f8a5c', field: '#7d8f55', near: '#56703f', ground: '#6b6a55', leaf: '#3a5a3a',
   },
   {
-    name: 'Outono', tree: 'round', mtn: 0.8, hillAmp: 1.1, trees: 0.65, houses: 0.2, farm: 0.3,
+    name: 'Outono', station: 'Nexus', tree: 'round', mtn: 0.8, hillAmp: 1.1, trees: 0.65, houses: 0.2, farm: 0.3,
     far: '#8c8fb0', mid: '#8a7a6a', hills: '#b07a3a', field: '#c9983f', near: '#9a5a2a', ground: '#7a5a30', leaf: '#c4622d',
   },
   {

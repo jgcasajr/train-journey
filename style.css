@@ -351,3 +351,31 @@ button, select, .check { touch-action: manipulation; }
 @media (pointer: coarse) and (max-height: 560px) and (orientation: landscape) {
   .panel { left: auto; width: min(320px, 50vw); top: calc(8px + env(safe-area-inset-top)); bottom: calc(8px + env(safe-area-inset-bottom)); right: calc(68px + env(safe-area-inset-right)); max-height: none; }
 }
+
+/* ---------- Opening card (Fractal Nexus · NexionAI Systems) ---------- */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 42%, #1c1638 0%, #0a0814 70%);
+  color: #e9e4ff;
+  cursor: pointer;
+  animation: splash-in 0.9s ease-out;
+  transition: opacity 0.9s ease;
+}
+.splash.leaving { opacity: 0; pointer-events: none; }
+.splash canvas { margin-bottom: 14px; animation: splash-spin 24s linear infinite; }
+.splash-kicker { margin: 0; font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase; color: #b9a8ff; }
+.splash-presents { margin: 0; font-size: 13px; color: #8f86b8; font-style: italic; }
+.splash-title { margin: 6px 0 4px; font: 600 clamp(30px, 7vw, 48px)/1.1 Georgia, "Times New Roman", serif; letter-spacing: 0.02em; }
+.splash-tagline { margin: 0; color: #c9c0ec; font-size: 15px; }
+@keyframes splash-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes splash-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .splash canvas { animation: none; } }

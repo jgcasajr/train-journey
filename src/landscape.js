@@ -1,6 +1,7 @@
 import { biomeAt, num, pick } from './biomes.js';
 import { drawDistantLights } from './nightView.js';
 import { drawViaduct } from './viaduct.js';
+import { drawCircus } from './rareEvents.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
 import { drawBoats, drawLighthouses } from './coast.js';
@@ -176,7 +177,7 @@ function drawHills(ctx, layout, state, env) {
 }
 
 export const FIELDS_DEPTH = 0.3;
-const fieldsHeight = ({ win, horizon }) => (wx, bm) =>
+export const fieldsHeight = ({ win, horizon }) => (wx, bm) =>
   horizon + win.h * (0.2 + num(bm, 'water') * 0.08) - fbm(wx * 0.006, 51, 2) * win.h * 0.05;
 
 /** What stands in a fields-layer slot: shared by the drawing and by click hit-testing. */
@@ -225,6 +226,7 @@ function drawFields(ctx, layout, state, env) {
     else drawHouse(ctx, x, y, s * 0.7, houseStyle(i + 7000, env, haze));
   });
   drawVines(ctx, layout, lf, heightAt, env, state.seasonPhase);
+  drawCircus(ctx, layout, state, env, FIELDS_DEPTH, heightAt);
   drawWildlife(ctx, layout, state, env, heightAt);
   drawMist(ctx, layout, state, env, horizon + win.h * 0.2, win.h * 0.07, 1611);
 }

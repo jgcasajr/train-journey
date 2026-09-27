@@ -14,7 +14,10 @@ import { moonFullness } from './moon.js';
 import { onViaduct } from './viaduct.js';
 import { auroraStrength } from './nightView.js';
 import { fireworkBursts, meteorsAt, shootingStarAt } from './rareSky.js';
-import { precipitationKind, rainbowStrength } from './weatherView.js';
+import { doubleRainbow, precipitationKind, rainbowStrength } from './weatherView.js';
+import { circusInView, festaAt, skywriterAt } from './rareEvents.js';
+import { stationsBetween } from './stations.js';
+import { FIELDS_DEPTH } from './landscape.js';
 import { deerInView, whaleAt } from './wildlife.js';
 
 const BIOME_ICONS = {
@@ -95,6 +98,10 @@ export const DISCOVERIES = [
   { id: 'shootingStar', category: 'Raridades', icon: '🌠', title: 'Estrela cadente', hint: 'Olhe o céu numa noite limpa.', test: (f) => f.shootingStar },
   { id: 'meteorShower', category: 'Raridades', icon: '☄️', title: 'Chuva de meteoros', hint: 'Algumas noites limpas são especiais.', test: (f) => f.meteorShower },
   { id: 'aurora', category: 'Raridades', icon: '🌌', title: 'Aurora boreal', hint: 'Noites limpas nas montanhas nevadas...', test: (f) => f.aurora },
+  { id: 'doubleRainbow', category: 'Raridades', icon: '🌈', title: 'Arco-íris duplo', hint: 'Às vezes, depois da chuva, são dois...', test: (f) => f.doubleRainbow },
+  { id: 'skywriter', category: 'Raridades', icon: '💘', title: 'Coração no céu', hint: 'Um aviãozinho escreve no céu limpo.', test: (f) => f.skywriter },
+  { id: 'festa', category: 'Raridades', icon: '🎉', title: 'Festa junina na estação', hint: 'Bandeirinhas numa estação do interior.', test: (f) => f.festa },
+  { id: 'circus', category: 'Raridades', icon: '🎪', title: 'O circo chegou', hint: 'Uma lona listrada nos campos...', test: (f) => f.circus },
   { id: 'deer', category: 'Raridades', icon: '🦌', title: 'Cervo', hint: 'Bem no meio da floresta.', test: (f) => f.deer },
   { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
@@ -164,6 +171,10 @@ export function factsFrom({ state, env, view, traveled }) {
     traveled,
     transfers: state.transfers ?? 0,
     car: state.car,
+    doubleRainbow: rainbowStrength(env) > 0.3 && doubleRainbow(state),
+    skywriter: (skywriterAt(state, env)?.t ?? 0) > 0.6,
+    festa: state.dwell > 0 && stationsBetween(state.distance - 1, state.distance + 1).some((st) => st.id === state.served?.id && festaAt(state, st)),
+    circus: circusInView(view, state, FIELDS_DEPTH) !== null,
     viaduct: onViaduct(state.distance),
     night: env.sunElev < -0.1,
     aurora: auroraStrength(state, env) > 0.3,

@@ -32,7 +32,8 @@ import { drawSky } from './sky.js';
 import { drawSkyLife } from './skylife.js';
 import { tunnelCoverage } from './tunnel.js';
 import { clamp } from './utils.js';
-import { drawLightning, drawRainbow, precipitationKind } from './weatherView.js';
+import { doubleRainbow, drawLightning, drawRainbow, precipitationKind } from './weatherView.js';
+import { drawSkywriter } from './rareEvents.js';
 
 /** Something is already going on around her, so she won't drift into her own thoughts. */
 function isBusy(state) {
@@ -53,9 +54,10 @@ function drawOutside(ctx, view, state, env, { L, blocked, bob, fog, dt, alone = 
   ctx.translate(lookX * u * LOOK_FAR, bob + lookY * u * 3);
   drawSky(ctx, view, state, env);
   drawAurora(ctx, view, state, env);
-  drawRainbow(ctx, view, env);
+  drawRainbow(ctx, view, env, doubleRainbow(state));
   drawLightning(ctx, view, state.lightning);
   drawSkyLife(ctx, view, state, env);
+  drawSkywriter(ctx, view, state, env);
   drawShootingStar(ctx, view, state, env);
   drawFireworks(ctx, view, state, env);
   drawLandscape(ctx, view, state, env);

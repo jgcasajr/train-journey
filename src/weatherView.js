@@ -10,7 +10,10 @@ const LEAVES = ['#c8642d', '#e0a030', '#a8401f', '#d98a2b'].map(hex);
 export const rainbowStrength = (env) => env.wetness * (1 - smoothstep(0.1, 0.5, env.rain))
   * smoothstep(0.02, 0.2, env.sunElev) * (1 - env.storm);
 
-export function drawRainbow(ctx, layout, env) {
+/** Some rainbow days show a second, fainter bow with the colors reversed. */
+export const doubleRainbow = (state) => hash(state.dayCount ?? 0, 3701) < 0.5;
+
+export function drawRainbow(ctx, layout, env, double = false) {
   const strength = rainbowStrength(env);
   if (strength < 0.02) return;
   const { win, horizon, u } = layout;
@@ -24,6 +27,14 @@ export function drawRainbow(ctx, layout, env) {
     ctx.strokeStyle = rgba(c, 0.3 * strength);
     ctx.beginPath();
     ctx.arc(cx, cy, r0 - k * band, Math.PI, 0);
+    ctx.stroke();
+  });
+  if (!double || strength < 0.3) return;
+  const r1 = r0 + band * (RAINBOW.length + 5);
+  RAINBOW.forEach((c, k) => {
+    ctx.strokeStyle = rgba(c, 0.13 * strength);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r1 + k * band, Math.PI, 0);
     ctx.stroke();
   });
 }

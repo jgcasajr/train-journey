@@ -68,6 +68,15 @@ Botão **Respirar**: um círculo suave cresce enquanto você inspira e diminui e
 
 Botão **Intenção** no painel (e um convite gentil na primeira visita): escreva uma frase para a viagem — "Começar esta fase com leveza". Ela viaja **lacrada** com você: de vez em quando a passageira se lembra dela num pensamento. Quando o trem para na **estação Nexus** ou chega ao seu **destino** (depois de pelo menos 1 km), a intenção volta num cartão — com a data em que foi escrita e onde voltou — e pode ser guardada como **cartão-postal** com as suas palavras, ou renovada. Fica salva no navegador; as suas palavras nunca são traduzidas.
 
+## Eventos raros
+
+- **Festa junina**: em alguns dias, estações do interior (não a Central nem a Nexus) aparecem enfeitadas com bandeirinhas coloridas balançando sob a cobertura e uma fogueira crepitando na plataforma — mais bonita à noite.
+- **O circo chegou**: de vez em quando, uma lona listrada de vermelho e branco, com bandeirinha no mastro, montada nos campos ou na fazenda (a primeira fica por volta do km 41, na segunda volta).
+- **Arco-íris duplo**: em alguns dias de arco-íris forte, surge um segundo arco por fora, mais fraco e com as cores invertidas.
+- **Coração no céu**: em dias limpos, um aviãozinho desenha um coração de fumaça, que fica um tempo no céu e vai se desmanchando.
+
+Cada um tem a sua figurinha em Raridades.
+
 ## Noite
 
 À noite, **luzes de vilas distantes** piscam ao pé das montanhas do fundo. Nas noites limpas das montanhas nevadas aparece a **aurora boreal** — cortinas verdes com barra violeta ondulando no céu — e, em algumas noites especiais, ela aparece em qualquer paisagem (figurinha "Aurora boreal").
@@ -114,7 +123,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 99 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 103 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -172,6 +181,7 @@ src/
   baggageView.js vagão de bagagem e o gato
   cabView.js    vista da cabine do maquinista (perspectiva)
   viaduct.js    viaduto sobre o vale (vinhedos)
+  rareEvents.js festa junina, circo e avião escrevendo no céu
   sleeperView.js vagão-leito (beliche, colcha, ela dormindo)
   nightView.js  aurora boreal e luzes distantes
   cabDash.js    painel da cabine (velocímetro, visor, apito)

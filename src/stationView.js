@@ -1,5 +1,6 @@
 import { drawNexusEmblem } from './brand.js';
 import { trackX } from './frame.js';
+import { drawFesta, festaAt } from './rareEvents.js';
 import { DWELL, stationsBetween } from './stations.js';
 import { shade } from './sky.js';
 import { circle, hash, hex, mix, radialGlow, rgba, scale, smoothstep } from './utils.js';
@@ -281,6 +282,7 @@ function drawStation(ctx, layout, state, env, st) {
   drawPlatform(ctx, g);
   drawPeople(ctx, g, state);
   drawCanopy(ctx, g);
+  if (festaAt(state, st)) drawFesta(ctx, g, st, state.time);
   [st.stopAt + 18, st.stopAt + 80].forEach((m) => drawSign(ctx, g, g.toX(m)));
   drawLamps(ctx, g);
 }

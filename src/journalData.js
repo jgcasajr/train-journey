@@ -16,7 +16,8 @@ import { auroraStrength } from './nightView.js';
 import { fireworkBursts, meteorsAt, shootingStarAt } from './rareSky.js';
 import { doubleRainbow, precipitationKind, rainbowStrength } from './weatherView.js';
 import { circusInView, festaAt, skywriterAt } from './rareEvents.js';
-import { stationsBetween } from './stations.js';
+import { DWELL, stationsBetween } from './stations.js';
+import { reunionAt, runnerAt, stopElapsed, vendorAt } from './stationPeople.js';
 import { FIELDS_DEPTH } from './landscape.js';
 import { deerInView, whaleAt } from './wildlife.js';
 
@@ -56,6 +57,9 @@ export const DISCOVERIES = [
   { id: 'car:sleeper', category: 'Momentos', icon: '🛏️', title: 'Noite no vagão-leito', hint: 'Durma embalada pelos trilhos.', test: (f) => f.car === 'sleeper' && f.night },
   { id: 'recall', category: 'Personagens', icon: '🤝', title: 'Velho conhecido', hint: 'Reencontre alguém do corredor.', test: (f) => f.recalls > 0 },
   { id: 'scarf', category: 'Momentos', icon: '🧶', title: 'Cachecol de tricô', hint: 'Ela tricota nas horas vagas...', test: (f) => f.knitted >= 150 },
+  { id: 'hug', category: 'Momentos', icon: '🫂', title: 'Abraço na plataforma', hint: 'Às vezes alguém desce e é recebido com um abraço.', test: (f) => f.hug },
+  { id: 'runner', category: 'Momentos', icon: '🏃', title: 'Correu e conseguiu!', hint: 'Alguém atrasado corre para não perder o trem.', test: (f) => f.runner },
+  { id: 'cheeseBread', category: 'Momentos', icon: '🧀', title: 'Pão de queijo quentinho', hint: 'Tem vendedor em algumas plataformas.', test: (f) => f.cheeseBread },
   { id: 'cat', category: 'Personagens', icon: '🐈', title: 'Gato clandestino', hint: 'Alguém dorme no vagão de bagagem.', test: (f) => f.catPets > 0 },
   { id: 'car:cab', category: 'Momentos', icon: '🚂', title: 'Cabine do maquinista', hint: 'Veja os trilhos lá da frente.', test: (f) => f.car === 'cab' },
   { id: 'horn', category: 'Momentos', icon: '📯', title: 'Apito do maquinista', hint: 'Na cabine, aperte o botão vermelho.', test: (f) => f.horns > 0 },
@@ -132,6 +136,15 @@ function passerbySeen(state) {
   return ev.phase === 'stop' || (ev.phase === 'cross' && ev.p > 0.3 && ev.p < 0.7) ? ev.ch.id : null;
 }
 
+/** What is happening on the platform where the train is standing (reunion, runner, vendor). */
+function platformFacts(state) {
+  if (!(state.dwell > 0)) return {};
+  const st = stationsBetween(state.distance - 1, state.distance + 1).find((s) => s.id === state.served?.id);
+  if (!st) return {};
+  const elapsed = stopElapsed(state, st);
+  return { hug: reunionAt(st) && elapsed > 6, runner: runnerAt(st) && elapsed > DWELL - 2.5, cheeseBread: vendorAt(st) };
+}
+
 /** Facts about the current frame that discoveries are tested against. */
 export function factsFrom({ state, env, view, traveled }) {
   const ev = aisleEventAt(state.time, state.dayTime);
@@ -175,6 +188,7 @@ export function factsFrom({ state, env, view, traveled }) {
     traveled,
     transfers: state.transfers ?? 0,
     car: state.car,
+    ...platformFacts(state),
     knitted: state.knitted ?? 0,
     recalls: state.recalls ?? 0,
     doubleRainbow: rainbowStrength(env) > 0.3 && doubleRainbow(state),

@@ -1,7 +1,8 @@
 import { drawNexusEmblem } from './brand.js';
 import { trackX } from './frame.js';
 import { drawFesta, festaAt } from './rareEvents.js';
-import { DWELL, stationsBetween } from './stations.js';
+import { drawPlatformLife } from './stationPeople.js';
+import { stationsBetween } from './stations.js';
 import { shade } from './sky.js';
 import { circle, hash, hex, mix, radialGlow, rgba, scale, smoothstep } from './utils.js';
 
@@ -17,8 +18,6 @@ const WHITE = hex('#f4f1ea');
 const LAMP = hex('#ffd28c');
 const GLASS = hex('#3a4450');
 const WOOD = hex('#6b4a33');
-const SKIN = ['#e0b18f', '#b9835f', '#8a5a3c', '#f1c9a5'].map(hex);
-const COATS = ['#3a5a8a', '#8a3a3a', '#3f6b4a', '#6b5a8a', '#b07a36', '#444444', '#c9c1b0'].map(hex);
 const STYLE = {
   rural: { facade: hex('#e2d3b5'), trim: hex('#8a3b2e'), length: 60 },
   grand: { facade: hex('#b9b1a3'), trim: hex('#6d675d'), length: 95 },
@@ -127,88 +126,11 @@ function drawBench(ctx, g, x, y) {
   ctx.fillRect(x - u * 3.2, y - u * 3.6, u * 6.4, u * 0.9);
 }
 
-function drawPerson(ctx, g, x, feet, h, id) {
-  const { u } = g;
-  const coat = g.c(COATS[Math.floor(hash(id, 821) * COATS.length)]);
-  const w = h * 0.26;
-  ctx.fillStyle = g.c(scale(COATS[Math.floor(hash(id, 822) * COATS.length)], 0.5));
-  ctx.fillRect(x - w * 0.35, feet - h * 0.42, w * 0.28, h * 0.42);
-  ctx.fillRect(x + w * 0.07, feet - h * 0.42, w * 0.28, h * 0.42);
-  ctx.fillStyle = coat;
-  ctx.beginPath();
-  ctx.roundRect(x - w / 2, feet - h * 0.84, w, h * 0.5, w * 0.3);
-  ctx.fill();
-  ctx.fillStyle = g.c(SKIN[Math.floor(hash(id, 823) * SKIN.length)]);
-  ctx.beginPath();
-  circle(ctx, x, feet - h * 0.92, h * 0.085);
-  ctx.fill();
-  if (hash(id, 824) < 0.35) {
-    ctx.fillStyle = g.c(scale(COATS[Math.floor(hash(id, 828) * COATS.length)], 0.8));
-    ctx.fillRect(x + w * 0.6, feet - h * 0.28, u * 2.2, h * 0.28);
-  }
-}
-
-/**
- * Seconds into this station's stop: 0 while the train approaches, then the dwell time elapsed,
- * and "long ago" once it has left (so boarding and alighting stay finished).
- */
-function stopElapsed(state, st) {
-  if (state.served?.id !== st.id) return 0;
-  return state.dwell > 0 ? DWELL - state.dwell : Infinity;
-}
-
-const doorY = (g) => g.platformTop + g.win.h * 0.17; // where people meet the train doors
-
-/** People waiting on the platform; some walk to the train and board during the stop. */
-function waitingPeople(g, elapsed) {
-  const { st, toX, win } = g;
-  return Array.from({ length: 9 }, (_, k) => {
-    const id = st.id * 17 + k;
-    const x = toX(st.start + 10 + hash(id, 825) * (st.end - st.start - 20));
-    const feet = g.platformTop + win.h * (0.05 + hash(id, 826) * 0.08);
-    const h = win.h * (0.2 + hash(id, 827) * 0.05);
-    if (hash(id, 828) > 0.45) return { id, x, feet, h, alpha: 1 };
-    const start = 2 + hash(id, 829) * 3;
-    const walk = smoothstep(start, start + 4, elapsed);
-    const vanish = smoothstep(start + 4, start + 4.6, elapsed);
-    return { id, x, feet: feet + (doorY(g) - feet) * walk, h: h * (1 + walk * 0.12), alpha: 1 - vanish };
-  });
-}
-
-/** Passengers stepping off the train and heading for the station building. */
-function alightingPeople(g, elapsed) {
-  const { st, toX, win } = g;
-  const count = 1 + Math.floor(hash(st.id, 831) * 3);
-  return Array.from({ length: count }, (_, k) => {
-    const id = st.id * 17 + 20 + k;
-    const start = 1 + k * 1.3;
-    const walk = smoothstep(start + 0.5, start + 7, elapsed);
-    const x0 = toX(st.stopAt + 12 + k * 22);
-    const x1 = toX(st.start + 52 + k * 9); // toward the doors of the building
-    const h = win.h * (0.21 + hash(id, 827) * 0.04);
-    return {
-      id,
-      x: x0 + (x1 - x0) * walk,
-      feet: doorY(g) + (g.platformTop + win.h * 0.04 - doorY(g)) * walk,
-      h: h * (1.12 - walk * 0.12),
-      alpha: smoothstep(start, start + 0.6, elapsed),
-    };
-  });
-}
-
 function drawPeople(ctx, g, state) {
   const { st, toX, win } = g;
   const benches = Array.from({ length: 6 }, (_, k) => st.start + 18 + k * 26);
   benches.forEach((m) => drawBench(ctx, g, toX(m), g.platformTop + win.h * 0.04));
-  const elapsed = stopElapsed(state, st);
-  [...waitingPeople(g, elapsed), ...alightingPeople(g, elapsed)]
-    .filter((p) => p.alpha > 0.01)
-    .sort((a, b) => a.feet - b.feet)
-    .forEach((p) => {
-      ctx.globalAlpha = p.alpha;
-      drawPerson(ctx, g, p.x, p.feet, p.h, p.id);
-      ctx.globalAlpha = 1;
-    });
+  drawPlatformLife(ctx, g, state);
 }
 
 function drawCanopy(ctx, g) {

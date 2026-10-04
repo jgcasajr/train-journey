@@ -15,6 +15,7 @@ import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
 import { restoreSettings } from './settings.js';
+import { createAnnouncer } from './announcer.js';
 import { createNotebook } from './notebook.js';
 import { createSchedule } from './schedule.js';
 import { createFocus } from './focus.js';
@@ -237,6 +238,7 @@ function start() {
   let lastBabyLine = null;
 
   window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx); });
+  const announcer = createAnnouncer(document, { radio });
   const headphones = document.getElementById('headphones');
   headphones.addEventListener('change', () => audio.setHeadphones(headphones.checked));
   controls.onSoundClick(async (e) => {
@@ -289,6 +291,7 @@ function start() {
       journal.observe(state, env, view);
       if (env.hail && env.rain > 0.3 && Math.random() < dt * 14) audio.sfx('click', Math.random() * 2 - 1); // hail ticking on the roof
       notebook.observe(state, env);
+      announcer.observe(state, env, weatherTargets(input, state.time).mode);
       const booms = burstsExploded(state.time - dt, state, env, view);
       if (booms > 0) audio.sfx('boom');
     }

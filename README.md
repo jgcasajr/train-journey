@@ -146,6 +146,10 @@ Um radinho antigo no parapeito da janela: clique nele para trocar de estação (
 
 Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostrador acende e as notinhas sobem.
 
+## Locutor
+
+Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio navegador, ele anuncia a próxima estação e a chegada ("Estação Nexus. Desembarque com cuidado..."), os marcos do dia (6h, meio-dia, 18h, meia-noite), mudanças de clima, noites de chuva de meteoros e, a cada ~6 minutos, lê uma **crônica da viagem** sobre a paisagem do momento ("no outono as árvores ensinam a soltar..."). A música do rádio baixa sozinha enquanto ele fala. Fala em português ou inglês, conforme o idioma escolhido. A voz depende das vozes instaladas no sistema.
+
 ## Modos de uso
 
 - **Relaxar**: tela cheia, sem painel nem letreiro, com música ambiente gerada na hora (acordes lentos e notas soltas). Esc ou o botão de novo para sair.
@@ -273,6 +277,7 @@ src/
   install.js    service worker e botão de instalar o app
   share.js      link para compartilhar a vista atual
   settings.js   configurações salvas e seções do painel
+  announcer.js  locutor do rádio (voz sintetizada, crônicas)
   focus.js      modo foco (blocos até estações, pausas nas plataformas)
   schedule.js   chegar na hora marcada (escolhe a volta e a velocidade)
   intention.js  diário de intenções (escrever, lacrar, receber de volta)

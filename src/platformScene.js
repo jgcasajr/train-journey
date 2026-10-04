@@ -10,6 +10,7 @@ const T = { stepOut: [1.1, 1.9], walk: [1.9, 6.7], stepIn: [6.7, 7.5], doors: [7
 const TRAINS = {
   aurora: { body: hex('#7a2331'), stripe: hex('#efe3c8') },
   horizonte: { body: hex('#1f6f78'), stripe: hex('#f4f1ea') },
+  estelar: { body: hex('#1d2452'), stripe: hex('#e8c96a') },
 };
 const GLASS = hex('#1d2630');
 const LAMP = hex('#ffd28c');

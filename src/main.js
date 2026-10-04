@@ -1,6 +1,6 @@
 import { createAudio } from './audio.js';
 import { companionLine } from './companion.js';
-import { biomeName, lineKm } from './biomes.js';
+import { biomeName, lineKm, nightLine } from './biomes.js';
 import { createArrival } from './arrival.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
@@ -60,7 +60,10 @@ function resizeCanvas(canvas, ctx) {
  * `layout.lookX/lookY` is the viewer's head offset: the view outside shifts with it
  * (far layers most, relative to the frame) and the passenger, nearer than the window, shifts against it.
  */
-const sceneEnvironment = (state) => environment(state.dayTime, {
+/** The Star Line keeps the sky between 22h and 1h, whatever the clock says. */
+const skyTime = (state) => (nightLine(state.distance) ? (0.92 + (state.dayTime % 1) * 0.12) % 1 : state.dayTime);
+
+const sceneEnvironment = (state) => environment(skyTime(state), {
   rain: state.rain,
   storm: state.storm,
   wetness: state.wetness,

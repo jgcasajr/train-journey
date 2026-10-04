@@ -9,8 +9,13 @@ export const canTransfer = (state) => state.dwell > 0 && state.served?.name === 
 /** Heading to a station that is only on the other line (so she must change at Nexus). */
 export const needsChange = (state) => Boolean(state.destination) && !linesOf(state.destination).includes(lineAt(state.distance));
 
-/** The line on the other side of the Nexus platform. */
-export const otherLine = (state) => (lineAt(state.distance) + 1) % LINES.length;
+/** The line to change to at the Nexus platform. */
+export function otherLine(state) {
+  const here = lineAt(state.distance);
+  // Heading somewhere on another line: change to that one; otherwise cycle through the lines.
+  const target = state.destination ? linesOf(state.destination).find((l) => l !== here) : undefined;
+  return target ?? (here + 1) % LINES.length;
+}
 
 /**
  * Changing trains at Nexus: she steps onto the other line's train, which then waits a full

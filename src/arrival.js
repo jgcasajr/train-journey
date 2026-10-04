@@ -29,7 +29,8 @@ export function createArrival(doc, { panel, onContinue, foundCount, arrivalNote 
   const groups = LINES.map((line, i) => {
     const group = doc.createElement('optgroup');
     group.label = t(line.name);
-    group.append(...LINE_STATIONS[i].filter((name) => i === 0 || !LINE_STATIONS[0].includes(name)).map((name) => new Option(name, name)));
+    const earlier = LINE_STATIONS.slice(0, i).flat(); // Nexus is listed once, under the first line
+    group.append(...LINE_STATIONS[i].filter((name) => !earlier.includes(name)).map((name) => new Option(name, name)));
     return group;
   });
   ui.select.append(...groups);

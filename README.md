@@ -56,6 +56,7 @@ São duas linhas que se cruzam na **estação Nexus**:
 | Linha | Estações |
 | --- | --- |
 | **Aurora** | Campo Belo, Três Porteiras, Pedra Alta, Nexus, Vila Serena, Estação Central, Porto Azul, Oásis, Vila Videira, Lago Sereno |
+| **Estelar** ✨ | Sirius, Polaris, Antares, Nexus, Vega, Altair, Rigel, Canopus |
 | **Horizonte** | Maré Mansa, Bosque Velho, Serra Clara, Nexus, Vale Novo, Espelho d'Água, Horizonte, Jardim do Sol, Dunas Douradas |
 
 A Horizonte tem outra ordem de paisagens (começa no litoral) e cenário próprio: casas, árvores, rios, túneis e passagens de nível são outros. Parado na Nexus, aparece o botão **Fazer baldeação**: a tela escurece e a câmera vai para a plataforma da Nexus, sob a cobertura em arco de ferro e vidro — o trem vinho da Aurora de um lado, o azul-petróleo da Horizonte do outro. Ela desce com a mala de rodinhas, atravessa sob a placa da Nexus enquanto o alto-falante anuncia "Atenção: trem da Linha Horizonte na plataforma 2. Boa viagem!", embarca, as portas fecham e a vista volta para a cabine do trem novo. À noite as luminárias da plataforma acendem. Escolhendo um destino da outra linha, o letreiro avisa "baldeação em Nexus", o trem para lá (mesmo com as paradas desligadas) e ela troca de trem sozinha; o resumo da chegada soma os km das duas linhas. Cada linha tem o seu vagão: a **Aurora** é o clássico (madeira, latão e veludo vinho) e a **Horizonte** é o moderno (painéis claros, metal escovado e tecido azul-petróleo) — cortinas, moldura da janela, parapeito e bancos mudam junto. O mapa e o km do letreiro são sempre da linha atual. Diário: 6 estações novas, "Baldeação na Nexus" e "Linha Horizonte".
@@ -79,6 +80,10 @@ Botão **Caderno**: ela vai escrevendo a viagem num caderno de papel pautado, co
 ## Viajantes que voltam
 
 Quem passa pelo corredor lembra de você. A cada nova visita ao trem, cada personagem que você já conheceu conta o **próximo capítulo** da história dele: o violinista ensaia, fica nervoso e toca com o teatro lotado; o executivo desliga o celular e acaba abrindo uma padaria; o casal fica noivo, marca a data e casa; o Rex aprende a sentar e ganha uma irmã gatinha... (3 capítulos para cada um dos 10). Se alguém passar de novo na mesma visita: "De novo por aqui? Que coincidência!". Figurinha: "Velho conhecido".
+
+## Linha Estelar
+
+A terceira linha só anda **à noite**: seja qual for o horário, o céu dela fica entre 22h e 1h. É a linha do céu — a **Via Láctea** atravessa a janela, **Vênus, Marte e Júpiter** brilham com seus nomes e as constelações aparecem ligadas e nomeadas (**Cruzeiro do Sul, Órion, Escorpião**). O vagão é azul-noite com detalhes dourados, e as estações têm nomes de estrelas. Chega-se a ela pela **baldeação na Nexus**: a baldeação agora leva à linha do seu destino (ou, em viagem livre, vai alternando Aurora → Horizonte → Estelar). Nas outras linhas, em noites limpas, o mesmo céu aparece mais discreto e sem nomes. Figurinhas: "Linha Estelar" e "Constelações".
 
 ## Diário de intenções
 
@@ -160,7 +165,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 117 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 126 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -277,6 +282,7 @@ src/
   install.js    service worker e botão de instalar o app
   share.js      link para compartilhar a vista atual
   settings.js   configurações salvas e seções do painel
+  starSky.js    céu da Linha Estelar (Via Láctea, planetas, constelações)
   announcer.js  locutor do rádio (voz sintetizada, crônicas)
   focus.js      modo foco (blocos até estações, pausas nas plataformas)
   schedule.js   chegar na hora marcada (escolhe a volta e a velocidade)

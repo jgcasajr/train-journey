@@ -1,6 +1,6 @@
 import { drawAisle } from './aisle.js';
 import { drawBaggageFront, drawBaggageRoom } from './baggageView.js';
-import { biomeAt, num } from './biomes.js';
+import { biomeAt, nightLine, num } from './biomes.js';
 import { drawCabDash } from './cabDash.js';
 import { drawCabOutside } from './cabView.js';
 import { aisleEventAt, beatAt, coffeeHot, cupWithPassenger } from './cabin.js';
@@ -18,6 +18,7 @@ import {
 import { trainBob } from './journey.js';
 import { drawLandscape } from './landscape.js';
 import { drawAurora } from './nightView.js';
+import { drawStarSky } from './starSky.js';
 import { drawPanoramaFrame } from './panoramaView.js';
 import { drawSleeper } from './sleeperView.js';
 import { isNight } from './clock.js';
@@ -53,6 +54,7 @@ function drawOutside(ctx, view, state, env, { L, blocked, bob, fog, dt, alone = 
   ctx.save();
   ctx.translate(lookX * u * LOOK_FAR, bob + lookY * u * 3);
   drawSky(ctx, view, state, env);
+  drawStarSky(ctx, view, state, env, nightLine(state.distance));
   drawAurora(ctx, view, state, env);
   drawRainbow(ctx, view, env, doubleRainbow(state));
   drawLightning(ctx, view, state.lightning);

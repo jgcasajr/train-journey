@@ -24,11 +24,12 @@ export function createTransfer(doc, { onTransfer, onAnnounce }) {
   let label = '';
   let scene = null; // { start (ms), from, to } while the platform scene plays
   let fromLine = 0;
+  let toLine = 1;
   function change() {
     if (busy) return;
     busy = true;
     fade.classList.add('on');
-    const to = (fromLine + 1) % LINES.length;
+    const to = toLine;
     setTimeout(() => {
       onTransfer();
       scene = { start: performance.now(), from: LINES[fromLine].id, to: LINES[to].id, toName: LINES[to].name };
@@ -57,7 +58,10 @@ export function createTransfer(doc, { onTransfer, onAnnounce }) {
       return null;
     },
     update(state) {
-      if (!busy) fromLine = lineAt(state.distance);
+      if (!busy) {
+        fromLine = lineAt(state.distance);
+        toLine = otherLine(state); // same choice the transfer itself makes
+      }
       const show = canTransfer(state) && !busy;
       button.classList.toggle('hidden', !show);
       if (!show) return;

@@ -1,4 +1,4 @@
-import { BIOMES, LINES, biomeAt, biomeName, lineAt, lineBiomes, num } from './biomes.js';
+import { BIOMES, LINES, biomeAt, biomeName, lineAt, lineBiomes, num, nightLine } from './biomes.js';
 import { aisleEventAt, beatAt, cupWithPassenger } from './cabin.js';
 import { LIGHTHOUSE_DEPTH, lighthousesInView } from './coast.js';
 import { layerFrame } from './frame.js';
@@ -11,6 +11,7 @@ import { companionPersona } from './companion.js';
 import { CAST, passerbyAt } from './passersby.js';
 import { PERSONAS } from './personas.js';
 import { moonFullness } from './moon.js';
+import { constellationsVisible } from './starSky.js';
 import { mirageStrength } from './weatherFx.js';
 import { onViaduct } from './viaduct.js';
 import { auroraStrength } from './nightView.js';
@@ -66,6 +67,8 @@ export const DISCOVERIES = [
   { id: 'horn', category: 'Momentos', icon: '📯', title: 'Apito do maquinista', hint: 'Na cabine, aperte o botão vermelho.', test: (f) => f.horns > 0 },
   { id: 'viaduct', category: 'Pelo caminho', icon: '🌉', title: 'Viaduto sobre o vale', hint: 'Entre as parreiras, o chão some lá embaixo...', test: (f) => f.viaduct },
   { id: 'transfer', category: 'Momentos', icon: '🔁', title: 'Baldeação na Nexus', hint: 'Troque de trem na estação Nexus.', test: (f) => f.transfers > 0 },
+  { id: 'line:estelar', category: 'Marcos', icon: '✨', title: 'Linha Estelar', hint: 'Uma linha que só anda à noite...', test: (f) => f.line === 2 },
+  { id: 'constellations', category: 'Céu e clima', icon: '🌌', title: 'Constelações', hint: 'Na Linha Estelar, o céu tem nomes.', test: (f) => f.constellations },
   { id: 'line:horizonte', category: 'Marcos', icon: '🌅', title: 'Linha Horizonte', hint: 'Existe outra linha além da Nexus...', test: (f) => f.line === 1 },
   ...BIOMES.map((b) => ({
     id: `biome:${b.name}`, category: 'Paisagens', icon: BIOME_ICONS[b.name] ?? '🗺️', title: b.name,
@@ -196,6 +199,7 @@ export function factsFrom({ state, env, view, traveled }) {
     traveled,
     transfers: state.transfers ?? 0,
     car: state.car,
+    constellations: constellationsVisible(env, nightLine(state.distance)),
     precip: precipitationKind(env, num(biomeAt(state.distance), 'snow')),
     mirage: mirageStrength(state, env) > 0.5,
     wind: env.wind ?? 0,

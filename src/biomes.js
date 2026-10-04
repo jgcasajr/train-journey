@@ -80,7 +80,20 @@ export const LINES = [
       Subúrbio: 'Jardim do Sol', Deserto: 'Dunas Douradas',
     },
   },
+  {
+    id: 'estelar',
+    name: 'Linha Estelar',
+    night: true, // the Star Line only runs at night
+    order: ['Lago', 'Montanhas', 'Deserto', 'Outono', 'Litoral', 'Campos', 'Floresta', 'Vinhedos', 'Fazenda', 'Subúrbio', 'Cidade'],
+    stations: {
+      Lago: 'Sirius', Montanhas: 'Polaris', Deserto: 'Antares', Outono: 'Nexus', Litoral: 'Vega',
+      Campos: null, Floresta: 'Altair', Vinhedos: null, Fazenda: 'Rigel', Subúrbio: null, Cidade: 'Canopus',
+    },
+  },
 ];
+
+/** True on lines that always run at night (the Star Line). */
+export const nightLine = (meters) => Boolean(LINES[lineAt(meters)].night);
 
 const LINE_BIOMES = LINES.map((line) => line.order.map((name) => {
   const biome = BIOMES.find((b) => b.name === name);

@@ -14,6 +14,7 @@ import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
+import { restoreSettings } from './settings.js';
 import { createNotebook } from './notebook.js';
 import { createSchedule } from './schedule.js';
 import { createFocus } from './focus.js';
@@ -152,6 +153,11 @@ function createRadioControls(doc) {
   const report = (err) => console.error('Radio unavailable:', err);
   select.addEventListener('change', () => radio.tune(select.value).catch(report));
   volume.addEventListener('input', () => radio.setVolume(Number(volume.value)));
+  radio.setVolume(Number(volume.value));
+  // A station remembered from last time starts with the first tap (browsers need a gesture for audio).
+  if (select.value !== 'off') {
+    doc.addEventListener('pointerdown', () => radio.tune(select.value).catch(report), { once: true });
+  }
   return { ...radio, get station() { return radio.station; }, next: () => radio.next().catch(report) };
 }
 
@@ -169,6 +175,7 @@ function postcardInfo(state) {
 function start() {
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
+  restoreSettings(document); // saved panel settings first; a shared link (below) overrides them
   applySharedView(document, new URLSearchParams(window.location.search));
   const controls = createControls(document);
   const audio = createAudio();
@@ -236,6 +243,7 @@ function start() {
     e.stopPropagation();
     try {
       controls.showSound(await audio.toggle());
+      audio.setHeadphones(headphones.checked);
     } catch (err) {
       console.error('Audio unavailable:', err);
       controls.showSound(false);

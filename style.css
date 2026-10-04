@@ -520,3 +520,19 @@ input[type="time"] {
   border-radius: 6px;
   color-scheme: dark;
 }
+
+/* ---------- Panel sections ---------- */
+.section { border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 8px; display: grid; gap: 10px; }
+.section > summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary::after { content: "▸"; color: var(--muted); transition: transform 0.2s; }
+.section[open] > summary::after { transform: rotate(90deg); }
+.section[open] > summary { margin-bottom: 2px; }

@@ -27,94 +27,117 @@
 
   <aside id="panel" class="panel">
     <h1>Train Journey</h1>
-    <label class="field">
-      <span>Velocidade <output id="speed-out" data-i18n-skip>90 km/h</output></span>
-      <input type="range" id="speed" min="0" max="220" value="90">
-    </label>
-    <label class="field">
-      <span>Hora do dia <output id="time-out" data-i18n-skip>07:40</output></span>
-      <input type="range" id="time" min="0" max="0.999" step="0.001" value="0.32">
-    </label>
-    <label class="check"><input type="checkbox" id="auto-day" checked> Ciclo automático do dia</label>
-    <label class="field">
-      <span>Clima <output id="weather-out" data-i18n-skip></output></span>
-      <select id="weather">
-        <option value="auto">Automático</option>
-        <option value="clear" selected>Limpo</option>
-        <option value="rain">Chuva</option>
-        <option value="storm">Tempestade</option>
-      </select>
-    </label>
-    <label class="field">
-      <span>Estação do ano <output id="season-out" data-i18n-skip></output></span>
-      <select id="season">
-        <option value="auto">Automática</option>
-        <option value="spring">Primavera</option>
-        <option value="summer" selected>Verão</option>
-        <option value="autumn">Outono</option>
-        <option value="winter">Inverno</option>
-      </select>
-    </label>
-    <label class="field">
-      <span>Destino</span>
-      <select id="destination"><option value="" selected>Viagem livre</option></select>
-    </label>
-    <label class="field">
-      <span>Chegar às</span>
-      <input type="time" id="arrive-at" title="Com um destino escolhido, o trem ajusta a velocidade para chegar nesse horário">
-    </label>
-    <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
-    <label class="field">
-      <span>Idioma</span>
-      <select id="lang">
-        <option value="pt">Português</option>
-        <option value="en">English</option>
-      </select>
-    </label>
-    <div class="radio-row">
-      <label class="field">
-        <span>Rádio</span>
-        <select id="radio-station">
-          <option value="off" selected>Desligado</option>
-          <option value="ambient">Ambiente</option>
-          <option value="lofi">Lo-fi</option>
-          <option value="classical">Clássica</option>
-          <option value="bossa">Bossa nova</option>
-        </select>
-      </label>
-      <label class="field">
-        <span>Volume</span>
-        <input type="range" id="radio-volume" min="0" max="1" step="0.05" value="0.8">
-      </label>
-    </div>
-    <button id="sound" data-i18n-skip type="button" aria-pressed="false">Ativar som</button>
-    <button id="install-btn" type="button" class="hidden">Instalar app</button>
-    <label class="check"><input type="checkbox" id="headphones"> Fones de ouvido (som espacial)</label>
-    <button id="journal-btn" data-i18n-skip type="button" class="journal-btn">Diário</button>
-    <button id="notebook-btn" type="button" class="journal-btn">Caderno</button>
-    <label class="field">
-      <span>Vagão</span>
-      <select id="car">
-        <option value="passenger" selected>Passageiros</option>
-        <option value="dining">Restaurante</option>
-        <option value="panorama">Panorâmico</option>
-        <option value="sleeper">Vagão-leito</option>
-        <option value="baggage">Bagagem</option>
-        <option value="cab">Cabine do maquinista</option>
-      </select>
-    </label>
     <div class="buttons">
       <button id="relax" type="button" aria-pressed="false" title="Tela cheia, sem painel, com música ambiente">Relaxar</button>
       <button id="pomodoro" type="button" aria-pressed="false" title="Blocos de foco de 25 min até uma estação, com 5 min de pausa na plataforma">Foco</button>
+      <button id="breathe" type="button" aria-pressed="false" title="Respire no ritmo dos trilhos: inspire por 4 juntas, solte por 4">Respirar</button>
+      <button id="intention-btn" type="button" title="Escreva uma intenção para a viagem; ela volta na estação Nexus ou no destino">Intenção</button>
       <button id="map-btn" type="button" aria-pressed="false">Mapa</button>
       <button id="photo" type="button">Foto</button>
       <button id="postcard" type="button" title="Salva a vista como cartão-postal, com selo e carimbo">Cartão-postal</button>
-      <button id="intention-btn" type="button" title="Escreva uma intenção para a viagem; ela volta na estação Nexus ou no destino">Intenção</button>
-      <button id="breathe" type="button" aria-pressed="false" title="Respire no ritmo dos trilhos: inspire por 4 juntas, solte por 4">Respirar</button>
       <button id="share-btn" type="button" title="Copia um link que abre esta mesma vista: lugar, hora, clima e vagão">Compartilhar</button>
     </div>
-    <p class="hint hint-mouse">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
-    <p class="hint hint-touch">Arraste o dedo ou incline o celular para olhar ao redor. Toque nas coisas da cena para interagir. O botão ☰ abre e fecha o painel.</p>
+
+    <details class="section" data-section="trip" open>
+      <summary>🚆 Viagem</summary>
+      <label class="field">
+        <span>Vagão</span>
+        <select id="car">
+          <option value="passenger" selected>Passageiros</option>
+          <option value="dining">Restaurante</option>
+          <option value="panorama">Panorâmico</option>
+          <option value="sleeper">Vagão-leito</option>
+          <option value="baggage">Bagagem</option>
+          <option value="cab">Cabine do maquinista</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Destino</span>
+        <select id="destination"><option value="" selected>Viagem livre</option></select>
+      </label>
+      <label class="field">
+        <span>Chegar às</span>
+        <input type="time" id="arrive-at" title="Com um destino escolhido, o trem ajusta a velocidade para chegar nesse horário">
+      </label>
+      <label class="check"><input type="checkbox" id="stops" checked> Parar nas estações</label>
+      <label class="field">
+        <span>Velocidade <output id="speed-out" data-i18n-skip>90 km/h</output></span>
+        <input type="range" id="speed" min="0" max="220" value="90">
+      </label>
+    </details>
+
+    <details class="section" data-section="sky">
+      <summary>🌤️ Céu e clima</summary>
+      <label class="field">
+        <span>Hora do dia <output id="time-out" data-i18n-skip>07:40</output></span>
+        <input type="range" id="time" min="0" max="0.999" step="0.001" value="0.32">
+      </label>
+      <label class="check"><input type="checkbox" id="auto-day" checked> Ciclo automático do dia</label>
+      <label class="field">
+        <span>Clima <output id="weather-out" data-i18n-skip></output></span>
+        <select id="weather">
+          <option value="auto">Automático</option>
+          <option value="clear" selected>Limpo</option>
+          <option value="rain">Chuva</option>
+          <option value="storm">Tempestade</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Estação do ano <output id="season-out" data-i18n-skip></output></span>
+        <select id="season">
+          <option value="auto">Automática</option>
+          <option value="spring">Primavera</option>
+          <option value="summer" selected>Verão</option>
+          <option value="autumn">Outono</option>
+          <option value="winter">Inverno</option>
+        </select>
+      </label>
+    </details>
+
+    <details class="section" data-section="sound">
+      <summary>🎧 Som</summary>
+      <button id="sound" data-i18n-skip type="button" aria-pressed="false">Ativar som</button>
+      <label class="check"><input type="checkbox" id="headphones"> Fones de ouvido (som espacial)</label>
+      <div class="radio-row">
+        <label class="field">
+          <span>Rádio</span>
+          <select id="radio-station">
+            <option value="off" selected>Desligado</option>
+            <option value="ambient">Ambiente</option>
+            <option value="lofi">Lo-fi</option>
+            <option value="classical">Clássica</option>
+            <option value="bossa">Bossa nova</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Volume</span>
+          <input type="range" id="radio-volume" min="0" max="1" step="0.05" value="0.8">
+        </label>
+      </div>
+    </details>
+
+    <details class="section" data-section="journal">
+      <summary>📔 Diário e caderno</summary>
+      <div class="buttons">
+        <button id="journal-btn" data-i18n-skip type="button" class="journal-btn">Diário</button>
+        <button id="notebook-btn" type="button" class="journal-btn">Caderno</button>
+      </div>
+    </details>
+
+    <details class="section" data-section="settings">
+      <summary>⚙️ Ajustes</summary>
+      <label class="field">
+        <span>Idioma</span>
+        <select id="lang">
+          <option value="pt">Português</option>
+          <option value="en">English</option>
+        </select>
+      </label>
+      <button id="install-btn" type="button" class="hidden">Instalar app</button>
+      <button id="reset-settings" type="button">Restaurar configurações</button>
+      <p class="hint hint-mouse">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
+      <p class="hint hint-touch">Arraste o dedo ou incline o celular para olhar ao redor. Toque nas coisas da cena para interagir. O botão ☰ abre e fecha o painel.</p>
+    </details>
   </aside>
 
   <div id="pomo-pill" data-i18n-skip class="pill hidden" role="timer" aria-live="off"></div>

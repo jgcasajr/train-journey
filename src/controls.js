@@ -64,6 +64,7 @@ export function createControls(doc) {
     if (e.key.toLowerCase() === 'h' && !e.repeat) togglePanel();
   });
   timeOut.textContent = formatClock(Number(time.value));
+  speedOut.textContent = `${speed.value} km/h`; // may come from saved settings
 
   return {
     read: () => ({

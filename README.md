@@ -191,6 +191,10 @@ O Train Journey é um app instalável (PWA): no Chrome/Edge aparece o botão **I
 
 No celular a vista vem primeiro: o painel fica guardado atrás do botão ☰ e abre como uma gaveta (de lado, com o aparelho deitado). Para olhar ao redor, arraste o dedo ou incline o aparelho (no iPhone, o navegador pede permissão no primeiro toque). Botões maiores para o dedo, respeito ao notch e às bordas da tela, e o diário abre em tela cheia.
 
+## Painel e configurações
+
+O painel tem no topo os botões de momento (Relaxar, Foco, Respirar, Intenção, Mapa, Foto, Cartão-postal, Compartilhar) e, abaixo, seções que abrem e fecham: **Viagem** (vagão, destino, chegar às, paradas, velocidade), **Céu e clima**, **Som** (som, fones, rádio, volume), **Diário e caderno** e **Ajustes** (idioma, instalar o app, restaurar configurações). Ele **lembra tudo da última vez** — velocidade, hora, clima, estação do ano, paradas, vagão, rádio, volume, fones e quais seções estavam abertas. Um link compartilhado tem prioridade sobre o que estava salvo. O rádio lembrado volta a tocar no primeiro toque na tela (os navegadores só liberam áudio depois de um gesto).
+
 ## Controles
 
 | Controle | Efeito |
@@ -268,6 +272,7 @@ src/
   travelers.js  viajantes que voltam (capítulos das histórias)
   install.js    service worker e botão de instalar o app
   share.js      link para compartilhar a vista atual
+  settings.js   configurações salvas e seções do painel
   focus.js      modo foco (blocos até estações, pausas nas plataformas)
   schedule.js   chegar na hora marcada (escolhe a volta e a velocidade)
   intention.js  diário de intenções (escrever, lacrar, receber de volta)

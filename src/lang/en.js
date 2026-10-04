@@ -505,6 +505,12 @@ export const EN = {
   'Instale o app pelo painel.': 'Install the app from the panel.',
   'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
+  'Chegar às': 'Arrive at',
+  'Com um destino escolhido, o trem ajusta a velocidade para chegar nesse horário': 'With a destination chosen, the train adjusts its speed to arrive at this time',
+  'agenda': 'schedule',
+  'Chegou na hora marcada!': 'Arrived right on time!',
+  'Pontualidade britânica': 'Right on time',
+  'Marque um horário de chegada e chegue na hora.': 'Set an arrival time and arrive on time.',
   'Chuva de granizo': 'Hailstorm',
   'Algumas tempestades trazem pedrinhas de gelo.': 'Some storms bring little balls of ice.',
   'Nevasca': 'Blizzard',
@@ -734,6 +740,10 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^Destino: (.+) às (\S+) · atrasado, a toda velocidade$/, (tr, name, at) => `Destination: ${name} at ${at} · running late, full speed`],
+  [/^Destino: (.+) às (\S+) · ([\d.]+) km · (\d+) km\/h$/, (tr, name, at, km, kmh) => `Destination: ${name} at ${at} · ${km} km · ${kmh} km/h`],
+  [/^(\d+) min de atraso$/, (tr, n) => `${n} min late`],
+  [/^(\d+) min adiantado$/, (tr, n) => `${n} min early`],
   [/^Estou viajando de trem \((.+)\)\. Vem ver a mesma vista:$/, (tr, where) => `I'm on a train journey (${where}). Come see the same view:`],
   [/^Atenção: trem da (.+) na plataforma 2\. Boa viagem!$/, (tr, line) => `Attention: the ${tr(line)} train is at platform 2. Have a good trip!`],
   [/^Fazer baldeação: (.+)$/, (tr, line) => `Change trains: ${tr(line)}`],

@@ -59,6 +59,9 @@ canvas { display: block; touch-action: none; }
   border-radius: 12px;
   font-size: 13px;
   transition: opacity 0.3s, transform 0.3s;
+  max-height: calc(100vh - 32px); /* the panel grew: scroll instead of running off the top */
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .panel.hidden {
@@ -506,3 +509,14 @@ button, select, .check { touch-action: manipulation; }
 
 #install-btn.hidden { display: none; }
 #install-btn { border-color: rgba(185, 155, 255, 0.6); }
+
+input[type="time"] {
+  width: 100%;
+  padding: 5px 8px;
+  font: inherit;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color-scheme: dark;
+}

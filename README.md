@@ -127,6 +127,10 @@ Diário: "Noite no vagão-leito", "Vagão panorâmico", "Gato clandestino", "Cab
 
 No painel, **Destino** escolhe uma das 7 estações (ou viagem livre). O letreiro passa a mostrar a distância e o tempo estimado ("Destino: Porto Azul · 12.3 km · ~8 min") e o mapa destaca a estação. O trem para no destino mesmo com "Parar nas estações" desligado: a passageira acena ("Chegamos a Porto Azul!"), o trem espera e aparece o resumo da viagem — km, tempo e descobertas novas no diário — com as opções **Continuar viajando** ou **Escolher outro destino**.
 
+## Chegar na hora marcada
+
+Com um **Destino** escolhido, preencha **Chegar às** (horário do seu relógio, ex.: 18:00) e o trem passa a dirigir sozinho: escolhe em qual passagem pela estação vai chegar para manter uma velocidade confortável (perto de 80 km/h — uma meta de 2 horas não vira um trem a 5 km/h, ele dá mais voltas), desconta o tempo das paradas no caminho e recalcula a cada segundo, compensando atrasos. O letreiro mostra "Destino: Porto Azul às 18:00 · 12.3 km · 74 km/h" e a velocidade aparece como "agenda". Se não houver tempo, vai a toda velocidade e avisa. Na chegada, o resumo diz se foi na hora, adiantado ou atrasado — e chegar com até 1 min de diferença vale a figurinha "Pontualidade britânica". Bom para marcar o fim de uma sessão de trabalho.
+
 ## Rádio do vagão
 
 Um radinho antigo no parapeito da janela: clique nele para trocar de estação (ou use o seletor **Rádio** e o **Volume** no painel). As músicas são geradas na hora, sem arquivos:
@@ -148,7 +152,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 114 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 115 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -260,6 +264,7 @@ src/
   travelers.js  viajantes que voltam (capítulos das histórias)
   install.js    service worker e botão de instalar o app
   share.js      link para compartilhar a vista atual
+  schedule.js   chegar na hora marcada (escolhe a volta e a velocidade)
   intention.js  diário de intenções (escrever, lacrar, receber de volta)
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN

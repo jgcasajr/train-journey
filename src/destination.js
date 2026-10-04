@@ -1,5 +1,5 @@
 import { TRANSFER_STATION } from './lineChange.js';
-import { nextStationNamed } from './stations.js';
+import { nextStationNamed, stationsBetween } from './stations.js';
 
 const WAVE_SECONDS = 6;
 
@@ -9,10 +9,12 @@ const WAVE_SECONDS = 6;
  */
 export function updateDestination(state, input) {
   const destination = input.destination || null;
-  if (destination === state.destination) return {};
+  const destinationAt = destination ? input.destinationAt ?? null : null; // a scheduled pass of the station
+  if (destination === state.destination) return destinationAt === state.destinationAt ? {} : { destinationAt };
   const release = state.holding ? { holding: false, arrivedAt: null, dwell: Math.min(state.dwell, 2) } : {};
   return {
     destination,
+    destinationAt,
     tripStart: destination ? { distance: state.distance, time: state.time } : null,
     ...release,
   };
@@ -24,6 +26,10 @@ export function updateDestination(state, input) {
  */
 export function destinationStation(state) {
   if (!state.destination) return null;
+  if (state.destinationAt && state.destinationAt >= state.distance - 1) {
+    const scheduled = stationsBetween(state.destinationAt - 1, state.destinationAt + 1).find((s) => s.name === state.destination);
+    if (scheduled) return scheduled;
+  }
   return nextStationNamed(state.distance, state.destination, state.served?.id)
     ?? nextStationNamed(state.distance, TRANSFER_STATION, state.served?.id);
 }
@@ -41,6 +47,8 @@ export function eta(state, targetKmh) {
 /** Called on a station arrival: at the destination the train holds and she celebrates. */
 export function arrivalAtDestination(state, station) {
   if (!state.destination || station.name !== state.destination) return {};
+  // On a schedule, only the planned pass of the station counts (earlier ones are just stops).
+  if (state.destinationAt && Math.abs(station.stopAt - state.destinationAt) > 1) return {};
   const start = state.tripStart ?? { distance: state.distance, time: state.time };
   return {
     holding: true,

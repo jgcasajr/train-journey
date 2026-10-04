@@ -17,7 +17,7 @@ const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
  * Destination picker, board text and the arrival card.
  * `onContinue` resumes the trip; `foundCount()` is the journal total (to count discoveries per trip).
  */
-export function createArrival(doc, { panel, onContinue, foundCount }) {
+export function createArrival(doc, { panel, onContinue, foundCount, arrivalNote = () => '' }) {
   const ui = {
     select: element(doc, 'destination'),
     card: element(doc, 'arrival'),
@@ -70,7 +70,8 @@ export function createArrival(doc, { panel, onContinue, foundCount }) {
       const { name, km, minutes } = state.arrivedAt;
       const found = Math.max(0, foundCount() - foundAtStart);
       ui.title.textContent = t(`Você chegou a ${name}!`);
-      ui.stats.textContent = t(`${km.toFixed(1)} km em ${Math.max(1, Math.round(minutes))} min · ${plural(found, 'descoberta nova', 'descobertas novas')} no diário`);
+      const note = arrivalNote(state.arrivedAt.time);
+      ui.stats.textContent = t(`${km.toFixed(1)} km em ${Math.max(1, Math.round(minutes))} min · ${plural(found, 'descoberta nova', 'descobertas novas')} no diário`) + (note ? ` · ${note}` : '');
       foundAtStart = foundCount();
     },
   };

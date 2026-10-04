@@ -75,6 +75,12 @@ export function createControls(doc) {
       stops: stops.checked,
       car,
     }),
+    /** While a schedule drives the train, the speed control follows the planned speed. */
+    showScheduledSpeed(kmh) {
+      if (kmh === null) return;
+      speed.value = String(Math.round(kmh));
+      speedOut.textContent = `${Math.round(kmh)} km/h · ${t('agenda')}`;
+    },
     showDayTime(dayTime) {
       time.value = String(dayTime);
       timeOut.textContent = formatClock(dayTime);

@@ -1,10 +1,8 @@
 import { lineKm } from './biomes.js';
 import { createLineMap } from './lineMap.js';
 import { makePostcard } from './postcard.js';
-import { onLangChange, t } from './i18n.js';
-import { durationsFromParams, pomodoroLabel, startPomodoro, tickPomodoro } from './pomodoro.js';
+import { onLangChange } from './i18n.js';
 
-const PILL_INTERVAL = 250; // ms between pomodoro label refreshes
 
 function element(doc, id) {
   const node = doc.getElementById(id);
@@ -34,25 +32,19 @@ function saveCanvas(canvas, filename, flash) {
 }
 
 /**
- * Relax mode (fullscreen, hidden UI, ambient music), Pomodoro timer, line map and photo.
- * `chime` is played when a Pomodoro phase ends (in addition to the music bell).
+ * Relax mode (fullscreen, hidden UI, ambient music), line map, photo and postcard.
  */
-export function createModes(doc, { canvas, panel, params, chime, radio, describe, onPostcard }) {
+export function createModes(doc, { canvas, panel, radio, describe, onPostcard }) {
   const ui = {
     relax: element(doc, 'relax'),
-    pomodoro: element(doc, 'pomodoro'),
     map: element(doc, 'map-btn'),
     photo: element(doc, 'photo'),
     postcard: element(doc, 'postcard'),
-    pill: element(doc, 'pomo-pill'),
     lineMap: element(doc, 'line-map'),
     flash: element(doc, 'photo-flash'),
   };
   const lineMap = createLineMap(element(doc, 'map-svg'), element(doc, 'map-lap'));
   onLangChange(() => lineMap.invalidate());
-  const durations = durationsFromParams(params);
-  let pomodoro = null;
-  let lastPill = 0;
   let distanceKm = 0;
   let relaxTurnedRadioOn = false; // relax mode switches the radio to ambient only if it was off
 
@@ -75,12 +67,6 @@ export function createModes(doc, { canvas, panel, params, chime, radio, describe
   ui.relax.addEventListener('click', (e) => { stop(e); setRelax(!doc.body.classList.contains('relax')); });
   doc.addEventListener('fullscreenchange', () => {
     if (!doc.fullscreenElement && doc.body.classList.contains('relax')) setRelax(false);
-  });
-  ui.pomodoro.addEventListener('click', (e) => {
-    stop(e);
-    pomodoro = pomodoro ? null : startPomodoro(Date.now(), durations);
-    setPressed(ui.pomodoro, pomodoro !== null);
-    ui.pill.classList.toggle('hidden', pomodoro === null);
   });
   ui.map.addEventListener('click', (e) => {
     stop(e);
@@ -109,21 +95,6 @@ export function createModes(doc, { canvas, panel, params, chime, radio, describe
     tick(distance, destination) {
       distanceKm = lineKm(distance);
       if (!ui.lineMap.classList.contains('hidden')) lineMap.update(distance, destination);
-      if (!pomodoro) return;
-      const now = Date.now();
-      const next = tickPomodoro(pomodoro, now);
-      pomodoro = next.pomodoro;
-      if (next.switched) {
-        radio.bell();
-        chime();
-        ui.pill.classList.remove('pulse');
-        void ui.pill.offsetWidth;
-        ui.pill.classList.add('pulse');
-      }
-      if (now - lastPill < PILL_INTERVAL) return;
-      lastPill = now;
-      ui.pill.textContent = t(pomodoroLabel(pomodoro, now));
-      ui.pill.dataset.phase = pomodoro.phase;
     },
   };
 }

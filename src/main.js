@@ -16,6 +16,7 @@ import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
 import { createNotebook } from './notebook.js';
 import { createSchedule } from './schedule.js';
+import { createFocus } from './focus.js';
 import { hailAt, windAt } from './weatherFx.js';
 import { createTravelers } from './travelers.js';
 import { createBreathing } from './breathing.js';
@@ -188,6 +189,12 @@ function start() {
     arrivalNote: (time) => schedule.arrivalNote(time),
   });
   const schedule = createSchedule(document, { onPunctual: () => journal.award('punctual') });
+  const focus = createFocus(document, {
+    params: new URLSearchParams(window.location.search),
+    onChime: () => { radio.bell(); audio.chime(); },
+    onBlock: (n) => { journal.award('focus1'); if (n >= 4) journal.award('focus4'); },
+    onRelease: () => clicks.queue({ type: 'continue' }),
+  });
 
   let layout = resizeCanvas(canvas, ctx);
   const params = new URLSearchParams(window.location.search);
@@ -195,8 +202,6 @@ function start() {
   const modes = createModes(document, {
     canvas,
     panel: document.getElementById('panel'),
-    params,
-    chime: () => audio.chime(),
     radio,
     describe: () => postcardInfo(state),
     onPostcard: () => journal.award('postcard'),
@@ -241,11 +246,13 @@ function start() {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const read = controls.read();
-    const plan = schedule.update(state, arrival.destination(), read.stops);
+    const focusPlan = focus.update(state, read.stops);
+    const destination = focusPlan?.destination ?? arrival.destination();
+    const plan = schedule.update(state, destination, read.stops, focusPlan?.target ?? null);
     const input = plan ? { ...read, targetKmh: plan.kmh } : read;
     controls.showScheduledSpeed(plan ? plan.kmh : null);
-    state = step(state, dt, { ...input, destination: arrival.destination(), destinationAt: plan?.stopAt ?? null, events: clicks.takeEvents() });
-    arrival.update(state);
+    state = step(state, dt, { ...input, destination, destinationAt: plan?.stopAt ?? null, events: clicks.takeEvents() });
+    arrival.update(state, focus.active());
     intention.update(state);
     travelers.observe(state);
     breathing.update(dt, state.speed);
@@ -261,7 +268,7 @@ function start() {
     hudTimer += dt;
     if (hudTimer > HUD_INTERVAL) {
       hudTimer = 0;
-      updatePanel(controls, state, input, schedule.boardText(state, arrival.destination()) ?? arrival.boardText(state, input.targetKmh));
+      updatePanel(controls, state, input, schedule.boardText(state, destination) ?? arrival.boardText(state, input.targetKmh));
     }
     const look = pointer.updateLook(dt);
     const strokes = pointer.takeStrokes();

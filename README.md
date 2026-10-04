@@ -127,6 +127,10 @@ Diário: "Noite no vagão-leito", "Vagão panorâmico", "Gato clandestino", "Cab
 
 No painel, **Destino** escolhe uma das 7 estações (ou viagem livre). O letreiro passa a mostrar a distância e o tempo estimado ("Destino: Porto Azul · 12.3 km · ~8 min") e o mapa destaca a estação. O trem para no destino mesmo com "Parar nas estações" desligado: a passageira acena ("Chegamos a Porto Azul!"), o trem espera e aparece o resumo da viagem — km, tempo e descobertas novas no diário — com as opções **Continuar viajando** ou **Escolher outro destino**.
 
+## Modo foco
+
+O botão **Foco** (que substitui o antigo Pomodoro) transforma o trabalho em viagem: cada **bloco de foco** de 25 min é o trajeto até uma estação, escolhida para que o trem chegue lá exatamente quando o bloco termina (usando o mesmo planejador do "Chegar às"); a **pausa** de 5 min é a parada nessa plataforma; terminada a pausa, ele escolhe a próxima estação e parte. A pílula no canto mostra "Foco · rumo a Pedra Alta · 18:32 · #2" ou "Pausa em Pedra Alta · 04:10", com sino a cada troca. Ao encerrar, um relatório: "3 blocos · 75 min de foco · 3 estações · 92 km". As durações podem mudar pela URL: `?foco=50&pausa=10`. Figurinhas: "Um bloco de foco" e "Quatro blocos seguidos".
+
 ## Chegar na hora marcada
 
 Com um **Destino** escolhido, preencha **Chegar às** (horário do seu relógio, ex.: 18:00) e o trem passa a dirigir sozinho: escolhe em qual passagem pela estação vai chegar para manter uma velocidade confortável (perto de 80 km/h — uma meta de 2 horas não vira um trem a 5 km/h, ele dá mais voltas), desconta o tempo das paradas no caminho e recalcula a cada segundo, compensando atrasos. O letreiro mostra "Destino: Porto Azul às 18:00 · 12.3 km · 74 km/h" e a velocidade aparece como "agenda". Se não houver tempo, vai a toda velocidade e avisa. Na chegada, o resumo diz se foi na hora, adiantado ou atrasado — e chegar com até 1 min de diferença vale a figurinha "Pontualidade britânica". Bom para marcar o fim de uma sessão de trabalho.
@@ -145,14 +149,14 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 ## Modos de uso
 
 - **Relaxar**: tela cheia, sem painel nem letreiro, com música ambiente gerada na hora (acordes lentos e notas soltas). Esc ou o botão de novo para sair.
-- **Pomodoro**: timer de foco 25 min / pausa 5 min no canto inferior esquerdo, com sino na troca. Durações personalizáveis pela URL: `?foco=50&pausa=10`.
+- **Foco**: blocos de foco até uma estação e pausas na plataforma (veja "Modo foco").
 - **Mapa**: a linha inteira da volta atual (38,5 km) com estações, túneis, pontes, passagens de nível, biomas e a posição do trem.
 - **Foto**: salva o quadro atual como PNG (`train-journey-km12.3.png`).
 - **Cartão-postal**: transforma a vista num cartão — foto com "Lembranças do Litoral" (ou da estação), selo, carimbo com km e data e um recado escrito à mão sobre a paisagem (`cartao-postal-km12.3.png`).
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 115 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 117 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -253,7 +257,7 @@ src/
   coast.js      barcos e farol
   passenger.js  a passageira (poses e reflexo no vidro)
   cabin.js      atividades dela, café e visitas do corredor (simulação)
-  modes.js      modos relaxar, Pomodoro, mapa, foto e cartão-postal
+  modes.js      modos relaxar, mapa, foto e cartão-postal
   brand.js      marca: emblema fractal, tela de abertura
   lineChange.js baldeação na Nexus (regra pura)
   transfer.js   botão de baldeação e transição
@@ -264,6 +268,7 @@ src/
   travelers.js  viajantes que voltam (capítulos das histórias)
   install.js    service worker e botão de instalar o app
   share.js      link para compartilhar a vista atual
+  focus.js      modo foco (blocos até estações, pausas nas plataformas)
   schedule.js   chegar na hora marcada (escolhe a volta e a velocidade)
   intention.js  diário de intenções (escrever, lacrar, receber de volta)
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
@@ -280,7 +285,7 @@ src/
   diningView.js cenário do vagão-restaurante e a mesa posta
   radio.js      rádio: estações, sintonia e volume
   radioStyles.js instrumentos e arranjos (lo-fi, clássica, bossa)
-  pomodoro.js   lógica do timer
+  pomodoro.js   durações do foco (lidas da URL)
   lineMap.js    mapa da linha (SVG)
   aisle.js      condutor e carrinho de lanches
   companion.js  quem embarca, conversas e despedidas (simulação)

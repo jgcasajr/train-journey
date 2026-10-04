@@ -61,8 +61,9 @@ export function createArrival(doc, { panel, onContinue, foundCount, arrivalNote 
       return t(`Destino: ${e.name} · ${e.km.toFixed(1)} km · ~${e.minutes} min`);
     },
 
-    update(state) {
-      const arrived = state.holding && state.arrivedAt;
+    /** `quiet`: focus mode handles arrivals itself (they are breaks, not the end of a trip). */
+    update(state, quiet = false) {
+      const arrived = state.holding && state.arrivedAt && !quiet;
       const show = arrived && state.time - state.arrivedAt.time > CARD_DELAY;
       ui.card.classList.toggle('hidden', !show);
       if (!show || shownFor === state.arrivedAt.time) return;

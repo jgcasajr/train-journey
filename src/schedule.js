@@ -78,10 +78,10 @@ export function createSchedule(doc, { onPunctual }) {
   let noted = null;
 
   return {
-    /** The current plan ({ stopAt, kmh, late, at }) for this frame, or null. */
-    update(state, destination, stops) {
+    /** The current plan ({ stopAt, kmh, late, at }) for this frame, or null; `override` is a target time (ms) from focus mode. */
+    update(state, destination, stops, override = null) {
       const now = Date.now();
-      target = destination ? targetTime(input.value, now) : null;
+      target = destination ? override ?? targetTime(input.value, now) : null;
       if (!target || state.holding) {
         plan = null;
         return null;

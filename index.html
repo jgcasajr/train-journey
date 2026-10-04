@@ -105,7 +105,7 @@
     </label>
     <div class="buttons">
       <button id="relax" type="button" aria-pressed="false" title="Tela cheia, sem painel, com música ambiente">Relaxar</button>
-      <button id="pomodoro" type="button" aria-pressed="false" title="Timer de foco 25 min / pausa 5 min">Pomodoro</button>
+      <button id="pomodoro" type="button" aria-pressed="false" title="Blocos de foco de 25 min até uma estação, com 5 min de pausa na plataforma">Foco</button>
       <button id="map-btn" type="button" aria-pressed="false">Mapa</button>
       <button id="photo" type="button">Foto</button>
       <button id="postcard" type="button" title="Salva a vista como cartão-postal, com selo e carimbo">Cartão-postal</button>
@@ -144,6 +144,13 @@
     </header>
     <ol id="notebook-list" class="notebook-list" data-i18n-skip></ol>
     <footer><button id="notebook-save" type="button">Baixar caderno (.txt)</button></footer>
+  </section>
+
+  <section id="focus-report" class="arrival hidden" aria-live="polite">
+    <p class="arrival-kicker">Sessão de foco</p>
+    <h2>Bom trabalho!</h2>
+    <p id="focus-stats" data-i18n-skip></p>
+    <div class="arrival-actions"><button id="focus-close" type="button">Fechar</button></div>
   </section>
 
   <section id="arrival" class="arrival hidden" aria-live="polite">

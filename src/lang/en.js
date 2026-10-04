@@ -505,6 +505,14 @@ export const EN = {
   'Instale o app pelo painel.': 'Install the app from the panel.',
   'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
+  'Foco': 'Focus',
+  'Blocos de foco de 25 min até uma estação, com 5 min de pausa na plataforma': '25-minute focus blocks to a station, with a 5-minute break on the platform',
+  'Sessão de foco': 'Focus session',
+  'Bom trabalho!': 'Good work!',
+  'Um bloco de foco': 'One focus block',
+  'Use o modo Foco até a primeira pausa.': 'Use Focus mode until the first break.',
+  'Quatro blocos seguidos': 'Four blocks in a row',
+  'Uma sessão longa de foco no trem.': 'A long focus session on the train.',
   'Chegar às': 'Arrive at',
   'Com um destino escolhido, o trem ajusta a velocidade para chegar nesse horário': 'With a destination chosen, the train adjusts its speed to arrive at this time',
   'agenda': 'schedule',
@@ -740,6 +748,9 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^Foco · rumo a (.+) · (\S+) · #(\d+)$/, (tr, dest, left, n) => `Focus · to ${dest} · ${left} · #${n}`],
+  [/^Pausa em (.+) · (\S+)$/, (tr, dest, left) => `Break at ${dest} · ${left}`],
+  [/^(\d+) blocos? · (\d+) min de foco · (\d+) esta(?:ção|ções) · ([\d.]+) km$/, (tr, b, m, s, km) => `${b} ${b === '1' ? 'block' : 'blocks'} · ${m} min of focus · ${s} ${s === '1' ? 'station' : 'stations'} · ${km} km`],
   [/^Destino: (.+) às (\S+) · atrasado, a toda velocidade$/, (tr, name, at) => `Destination: ${name} at ${at} · running late, full speed`],
   [/^Destino: (.+) às (\S+) · ([\d.]+) km · (\d+) km\/h$/, (tr, name, at, km, kmh) => `Destination: ${name} at ${at} · ${km} km · ${kmh} km/h`],
   [/^(\d+) min de atraso$/, (tr, n) => `${n} min late`],

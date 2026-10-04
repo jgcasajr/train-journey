@@ -313,32 +313,63 @@ function drawKnitting(ctx, L, [x, y], amount, time, knitted) {
 }
 
 /** A sketch pad on her knee: the landscape line grows as the pencil moves along it. */
-function drawSketch(ctx, L, [x, y], amount, time) {
+const PAD = { x: 13.5, y: -11, angle: -0.55 }; // sketch pad resting on her knee, tilted toward her
+const SKETCH_SECONDS = 14; // one drawing, then a fresh page
+
+/** The drawing on the pad: point i (0..20) of the hills line, in pad coordinates. */
+const sketchPoint = (i) => [-7.5 + (i / 20) * 7, 3 - Math.sin(i * 0.5) * 0.9 - (i > 8 && i < 13 ? 1.2 : 0)];
+
+/** Pad coordinates → passenger units. */
+function onPad([px, py]) {
+  const c = Math.cos(PAD.angle);
+  const sn = Math.sin(PAD.angle);
+  return [PAD.x + px * c - py * sn, PAD.y + px * sn + py * c];
+}
+
+/** Where the pencil tip is now (passenger units): it travels along the line as it is drawn. */
+function pencilTip(time) {
+  const p = (time % SKETCH_SECONDS) / SKETCH_SECONDS;
+  const i = 20 * p;
+  const [ax, ay] = sketchPoint(Math.floor(i));
+  const [bx, by] = sketchPoint(Math.min(20, Math.floor(i) + 1));
+  const k = i - Math.floor(i);
+  const jitter = Math.sin(time * 23) * 0.12; // the small back-and-forth of a hand drawing
+  return onPad([ax + (bx - ax) * k, ay + (by - ay) * k + jitter]);
+}
+
+/** The pad on her knee with the line drawn so far (the hand and pencil are drawn by drawArm). */
+function drawSketch(ctx, L, amount, time) {
   ctx.save();
   ctx.globalAlpha = clamp((amount - 0.2) * 1.6);
-  ctx.translate(x - 1, y - 1);
-  ctx.rotate(-0.35);
+  ctx.translate(PAD.x, PAD.y);
+  ctx.rotate(PAD.angle);
   ctx.fillStyle = rgba(lit(hex('#5a3a2a'), L));
   ctx.fillRect(-8.3, -0.3, 8.6, 5.9);
   ctx.fillStyle = rgba(lit(PAGE, L));
   ctx.fillRect(-8, 0, 8, 5.3);
-  const p = (time % 14) / 14;
+  const p = (time % SKETCH_SECONDS) / SKETCH_SECONDS;
   ctx.strokeStyle = rgba(lit(hex('#3a3a44'), L));
-  ctx.lineWidth = 0.2;
+  ctx.lineWidth = 0.22;
   ctx.beginPath();
   for (let i = 0; i <= 20 * p; i++) {
-    const px = -7.5 + (i / 20) * 7;
-    const py = 3 - Math.sin(i * 0.5) * 0.9 - (i > 8 && i < 13 ? 1.2 : 0);
+    const [px, py] = sketchPoint(i);
     if (i === 0) ctx.moveTo(px, py);
     else ctx.lineTo(px, py);
   }
   ctx.stroke();
-  const tip = [-7.5 + p * 7, 3 - Math.sin(p * 10) * 0.9];
+  ctx.restore();
+}
+
+/** The pencil from its tip on the paper up into her hand. */
+function drawPencil(ctx, L, tip, hand, amount) {
+  ctx.save();
+  ctx.globalAlpha = clamp((amount - 0.2) * 1.6);
   ctx.strokeStyle = rgba(lit(hex('#e0a030'), L));
-  ctx.lineWidth = 0.45;
+  ctx.lineWidth = 0.5;
+  ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(tip[0], tip[1]);
-  ctx.lineTo(tip[0] + 2.2, tip[1] - 2.6);
+  ctx.lineTo(hand[0] + 0.4, hand[1] - 0.6);
   ctx.stroke();
   ctx.restore();
 }
@@ -359,25 +390,58 @@ function drawSandwich(ctx, L, [x, y], amount) {
   ctx.restore();
 }
 
+const SNACK_LAP = [11, -21]; // where the sandwich rests between bites
+const BITE_SECONDS = 3.6;
+
+/** The hand's own movement on top of the pose: waving, drawing, knitting, bites. */
+function handMotion(pose, base, time) {
+  const tip = pencilTip(time);
+  const sketchHand = [tip[0] + 1.6, tip[1] - 2.4]; // holding the pencil a little above its tip
+  const bite = 0.5 - 0.5 * Math.cos((time / BITE_SECONDS) * Math.PI * 2); // 0 lap .. 1 mouth
+  return [
+    Math.sin(time * 9) * 1.6 * pose.wave
+      + (sketchHand[0] - base[0]) * pose.sketch
+      + Math.sin(time * 7) * 0.6 * pose.knit
+      + (SNACK_LAP[0] - HANDS.snack.hand[0]) * (1 - bite) * pose.snack,
+    (sketchHand[1] - base[1]) * pose.sketch
+      + Math.cos(time * 7) * 0.4 * pose.knit
+      + (SNACK_LAP[1] - HANDS.snack.hand[1]) * (1 - bite) * pose.snack,
+  ];
+}
+
 function drawArm(ctx, L, pose, holdingNewCup, time, knitted = 0) {
   const base = armPose(pose);
-  const hand = [base.hand[0] + Math.sin(time * 9) * 1.6 * pose.wave, base.hand[1]]; // waving side to side
-  const { elbow } = base;
-  ctx.strokeStyle = rgba(mix(lit(SWEATER, L), [0, 0, 0], 0.15));
-  ctx.lineWidth = 4.4;
+  const [mx, my] = handMotion(pose, base.hand, time);
+  const hand = [base.hand[0] + mx, base.hand[1] + my];
+  const elbow = [base.elbow[0] + mx * 0.3, base.elbow[1] + my * 0.3];
+  const sleeve = mix(lit(SWEATER, L), [0, 0, 0], 0.15);
+  const path = () => {
+    ctx.beginPath();
+    ctx.moveTo(-2, -29);
+    ctx.quadraticCurveTo(-2.4, (elbow[1] - 29) / 2, elbow[0], elbow[1]);
+    ctx.quadraticCurveTo((elbow[0] + hand[0]) / 2 + 0.6, (elbow[1] + hand[1]) / 2 + 0.6, hand[0] - 1.4, hand[1] + 0.3);
+  };
+  if (pose.sketch > 0.2) drawSketch(ctx, L, pose.sketch, time);
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(-2, -29);
-  ctx.quadraticCurveTo(-1.5, (elbow[1] - 29) / 2, elbow[0], elbow[1]);
-  ctx.lineTo(hand[0] - 1.6, hand[1] + 0.4);
+  ctx.strokeStyle = rgba(mix(sleeve, [0, 0, 0], 0.35)); // outline, so the arm reads apart from the torso
+  ctx.lineWidth = 5.3;
+  path();
   ctx.stroke();
+  ctx.strokeStyle = rgba(sleeve);
+  ctx.lineWidth = 4.4;
+  path();
+  ctx.stroke();
+  ctx.fillStyle = rgba(mix(sleeve, [255, 255, 255], 0.12)); // sleeve cuff
+  ctx.beginPath();
+  ctx.arc(hand[0] - 1.3, hand[1] + 0.3, 1.5, 0, Math.PI * 2);
+  ctx.fill();
   if (pose.read > 0.2) drawBook(ctx, L, hand, pose.read, time);
   if (pose.sip > 0.3) drawHeldCup(ctx, L, hand, pose.sip);
   if (holdingNewCup) drawHeldCup(ctx, L, hand, 1);
   if (pose.eat > 0.3) drawFork(ctx, L, hand, pose.eat);
   if (pose.knit > 0.2) drawKnitting(ctx, L, hand, pose.knit, time, knitted);
-  if (pose.sketch > 0.2) drawSketch(ctx, L, hand, pose.sketch, time);
+  if (pose.sketch > 0.2) drawPencil(ctx, L, pencilTip(time), hand, pose.sketch);
   if (pose.snack > 0.3) drawSandwich(ctx, L, hand, pose.snack);
   if (pose.ticket > 0.3) drawTicket(ctx, L, hand, pose.ticket);
   ctx.fillStyle = rgba(lit(SKIN, L));

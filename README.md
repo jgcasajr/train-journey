@@ -84,6 +84,15 @@ Quem passa pelo corredor lembra de você. A cada nova visita ao trem, cada perso
 
 Botão **Intenção** no painel (e um convite gentil na primeira visita): escreva uma frase para a viagem — "Começar esta fase com leveza". Ela viaja **lacrada** com você: de vez em quando a passageira se lembra dela num pensamento. Quando o trem para na **estação Nexus** ou chega ao seu **destino** (depois de pelo menos 1 km), a intenção volta num cartão — com a data em que foi escrita e onde voltou — e pode ser guardada como **cartão-postal** com as suas palavras, ou renovada. Fica salva no navegador; as suas palavras nunca são traduzidas.
 
+## Clima mais rico
+
+- **Vento**: sopra mais no litoral e nas montanhas, em rajadas, e forte nas tempestades — as árvores se curvam e balançam (figurinha "Vendaval"). No outono, as folhas voam em maior número e mais rápido quando venta.
+- **Granizo**: algumas tempestades trazem pedrinhas de gelo caindo inclinadas pelo vento, com estalinhos no teto do vagão (som ligado).
+- **Nevasca**: neve com tempestade ou vento forte nas montanhas e no inverno vira flocos de lado e um branco que engole a paisagem.
+- **Miragem**: no deserto, perto do meio-dia, o horizonte tremula como se fosse água.
+
+Figurinhas: "Chuva de granizo", "Nevasca", "Miragem no deserto" e "Vendaval".
+
 ## Eventos raros
 
 - **Festa junina**: em alguns dias, estações do interior (não a Central nem a Nexus) aparecem enfeitadas com bandeirinhas coloridas balançando sob a cobertura e uma fogueira crepitando na plataforma — mais bonita à noite.
@@ -139,7 +148,7 @@ Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostr
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 110 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 114 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -206,6 +215,7 @@ src/
   baggageView.js vagão de bagagem e o gato
   cabView.js    vista da cabine do maquinista (perspectiva)
   viaduct.js    viaduto sobre o vale (vinhedos)
+  weatherFx.js  vento, granizo, nevasca e miragem
   stationPeople.js pessoas da plataforma (andar, abraço, corredor, vendedor, pombos)
   rareEvents.js festa junina, circo e avião escrevendo no céu
   sleeperView.js vagão-leito (beliche, colcha, ela dormindo)

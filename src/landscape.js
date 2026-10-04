@@ -1,4 +1,5 @@
 import { biomeAt, num, pick } from './biomes.js';
+import { drawMirage, leaning, treeLean } from './weatherFx.js';
 import { drawDistantLights } from './nightView.js';
 import { drawViaduct } from './viaduct.js';
 import { drawCircus } from './rareEvents.js';
@@ -166,7 +167,7 @@ function drawHills(ctx, layout, state, env) {
   forEachSlot(win, lf, s * 0.7, s, 41, (i, x, wx, bm) => {
     if (hash(i, 42) > num(bm, 'trees') * 0.7) return;
     const type = pick(bm, hash(i, 43)).tree;
-    drawTree(ctx, type, x, heightAt(wx, bm) + s * 0.25, s * (0.7 + hash(i, 44) * 0.6), treeStyle(bm, env, haze));
+    leaning(ctx, x, heightAt(wx, bm) + s * 0.25, treeLean(env, state.time, i) * 0.5, (tx, ty) => drawTree(ctx, type, tx, ty, s * (0.7 + hash(i, 44) * 0.6), treeStyle(bm, env, haze)));
   });
   forEachSlot(win, lf, s * 6, s * 2, 45, (i, x, wx, bm) => {
     if (hash(i, 46) > num(bm, 'houses')) return;
@@ -222,7 +223,7 @@ function drawFields(ctx, layout, state, env) {
   forEachFieldObject(layout, state, ({ i, x, y, s, bm, kind }) => {
     if (kind === 'city') drawCityBlock(ctx, x, y, s, env, haze, i, state.time, layout.u, num(bm, 'city'));
     else if (kind === 'farm') drawFarmProp(ctx, x, y, s, env, haze, i, state.time);
-    else if (kind === 'tree') drawTree(ctx, pick(bm, hash(i, 54)).tree, x, y, s * (0.7 + hash(i, 55) * 0.6), treeStyle(bm, env, haze));
+    else if (kind === 'tree') leaning(ctx, x, y, treeLean(env, state.time, i), (tx, ty) => drawTree(ctx, pick(bm, hash(i, 54)).tree, tx, ty, s * (0.7 + hash(i, 55) * 0.6), treeStyle(bm, env, haze)));
     else drawHouse(ctx, x, y, s * 0.7, houseStyle(i + 7000, env, haze));
   });
   drawVines(ctx, layout, lf, heightAt, env, state.seasonPhase);
@@ -251,7 +252,7 @@ function drawNear(ctx, layout, state, env) {
   forEachSlot(win, lf, win.h * 0.5, big, 70, (i, x, wx, bm) => {
     if (hash(i, 71) > (0.2 + num(bm, 'trees') * 0.4) * (1 - num(bm, 'city') * 0.7)) return;
     const type = pick(bm, hash(i, 72)).tree;
-    drawTree(ctx, type, x, heightAt(wx) + big * 0.05, big * (0.8 + hash(i, 73) * 0.5), treeStyle(bm, env, 0));
+    leaning(ctx, x, heightAt(wx) + big * 0.05, treeLean(env, state.time, i) * 1.2, (tx, ty) => drawTree(ctx, type, tx, ty, big * (0.8 + hash(i, 73) * 0.5), treeStyle(bm, env, 0)));
   });
   fillRidge(ctx, traceRidge(win, lf, heightAt), win.y + win.h + 40,
     acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, 'near', env), env, 0))));
@@ -322,6 +323,7 @@ export function drawLandscape(ctx, layout, state, env) {
   drawMountains(ctx, layout, state, env, MOUNTAINS[0]);
   drawDistantLights(ctx, layout, state, env);
   drawMountains(ctx, layout, state, env, MOUNTAINS[1]);
+  drawMirage(ctx, layout, state, env);
   drawBalloons(ctx, layout, state, env);
   drawSkyline(ctx, layout, state, env);
   drawWater(ctx, layout, state, env);

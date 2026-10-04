@@ -11,6 +11,7 @@ import { companionPersona } from './companion.js';
 import { CAST, passerbyAt } from './passersby.js';
 import { PERSONAS } from './personas.js';
 import { moonFullness } from './moon.js';
+import { mirageStrength } from './weatherFx.js';
 import { onViaduct } from './viaduct.js';
 import { auroraStrength } from './nightView.js';
 import { fireworkBursts, meteorsAt, shootingStarAt } from './rareSky.js';
@@ -108,6 +109,10 @@ export const DISCOVERIES = [
   { id: 'skywriter', category: 'Raridades', icon: '💘', title: 'Coração no céu', hint: 'Um aviãozinho escreve no céu limpo.', test: (f) => f.skywriter },
   { id: 'festa', category: 'Raridades', icon: '🎉', title: 'Festa junina na estação', hint: 'Bandeirinhas numa estação do interior.', test: (f) => f.festa },
   { id: 'circus', category: 'Raridades', icon: '🎪', title: 'O circo chegou', hint: 'Uma lona listrada nos campos...', test: (f) => f.circus },
+  { id: 'hail', category: 'Céu e clima', icon: '🧊', title: 'Chuva de granizo', hint: 'Algumas tempestades trazem pedrinhas de gelo.', test: (f) => f.precip === 'hail' },
+  { id: 'blizzard', category: 'Céu e clima', icon: '🌨️', title: 'Nevasca', hint: 'Tempestade de neve nas montanhas.', test: (f) => f.precip === 'blizzard' },
+  { id: 'mirage', category: 'Céu e clima', icon: '🏜️', title: 'Miragem no deserto', hint: 'Ao meio-dia, o horizonte do deserto parece água.', test: (f) => f.mirage },
+  { id: 'gale', category: 'Céu e clima', icon: '🌬️', title: 'Vendaval', hint: 'Veja as árvores se curvarem ao vento.', test: (f) => f.wind > 0.8 },
   { id: 'deer', category: 'Raridades', icon: '🦌', title: 'Cervo', hint: 'Bem no meio da floresta.', test: (f) => f.deer },
   { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
@@ -157,7 +162,7 @@ export function factsFrom({ state, env, view, traveled }) {
     station: state.dwell > 0 ? state.served?.name : null,
     rainbow: rainbowStrength(env) > 0.25,
     lightning: state.lightning !== null && state.lightning !== undefined,
-    snowing: precipitationKind(env, num(biomeAt(state.distance), 'snow')) === 'snow' && env.rain > 0.4,
+    snowing: ['snow', 'blizzard'].includes(precipitationKind(env, num(biomeAt(state.distance), 'snow'))) && env.rain > 0.4,
     mist: env.mist > 0.4,
     stars: env.sunElev < -0.2 && env.rain < 0.2,
     sunset: env.dayTime > 0.7 && env.dayTime < 0.8 && env.warm > 0.6,
@@ -188,6 +193,9 @@ export function factsFrom({ state, env, view, traveled }) {
     traveled,
     transfers: state.transfers ?? 0,
     car: state.car,
+    precip: precipitationKind(env, num(biomeAt(state.distance), 'snow')),
+    mirage: mirageStrength(state, env) > 0.5,
+    wind: env.wind ?? 0,
     ...platformFacts(state),
     knitted: state.knitted ?? 0,
     recalls: state.recalls ?? 0,

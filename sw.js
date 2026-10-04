@@ -1,5 +1,5 @@
 // Offline support: network first (always fresh when online), cached copy when offline.
-const CACHE = 'train-journey-v1';
+const CACHE = 'train-journey-v2';
 const SHELL = ['./', './index.html', './style.css', './src/main.js', './manifest.webmanifest', './icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {
@@ -16,12 +16,15 @@ self.addEventListener('activate', (event) => {
 
 async function networkFirst(request) {
   const cache = await caches.open(CACHE);
+  // Every page load (whatever its ?query) shares one cached page, always the latest one,
+  // so offline never mixes an old page with newer modules.
+  const key = request.mode === 'navigate' ? './index.html' : request;
   try {
     const response = await fetch(request);
-    if (response.ok) await cache.put(request, response.clone());
+    if (response.ok) await cache.put(key, response.clone());
     return response;
   } catch (err) {
-    const cached = await cache.match(request, { ignoreSearch: request.mode === 'navigate' });
+    const cached = await cache.match(key);
     if (cached) return cached;
     throw err;
   }

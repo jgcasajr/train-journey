@@ -15,6 +15,7 @@ import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
 import { createNotebook } from './notebook.js';
+import { hailAt, windAt } from './weatherFx.js';
 import { createTravelers } from './travelers.js';
 import { createBreathing } from './breathing.js';
 import { createTransfer } from './transfer.js';
@@ -62,6 +63,8 @@ const sceneEnvironment = (state) => environment(state.dayTime, {
   flash: flashLevel(state.lightning),
   seasonPhase: state.seasonPhase,
   moonPhase: moonPhase(state.dayCount, state.dayTime),
+  wind: windAt(state),
+  hail: hailAt(state),
 });
 
 /** Where the aisle character is, left (-1) to right (1), for their sounds. */
@@ -263,6 +266,7 @@ function start() {
       scene = { view, state };
       const env = sceneEnvironment(state);
       journal.observe(state, env, view);
+      if (env.hail && env.rain > 0.3 && Math.random() < dt * 14) audio.sfx('click', Math.random() * 2 - 1); // hail ticking on the roof
       notebook.observe(state, env);
       const booms = burstsExploded(state.time - dt, state, env, view);
       if (booms > 0) audio.sfx('boom');

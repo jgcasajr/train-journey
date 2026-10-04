@@ -28,7 +28,7 @@ function morningMist(dayTime, wetness, storm, season) {
  * dayTime: 0 = midnight, 0.25 = sunrise, 0.5 = noon, 0.75 = sunset.
  * weather: { rain, storm, wetness, flash, seasonPhase } — all optional.
  */
-export function environment(dayTime, { rain = 0, storm = 0, wetness = 0, flash = 0, seasonPhase = 1.2, moonPhase = 0.5 } = {}) {
+export function environment(dayTime, { rain = 0, storm = 0, wetness = 0, flash = 0, seasonPhase = 1.2, moonPhase = 0.5, wind = 0, hail = false } = {}) {
   const sunElev = -Math.cos(dayTime * Math.PI * 2);
   const clear = smoothstep(-0.25, 0.3, sunElev);
   const gloom = Math.min(1, rain * 0.75 + storm * 0.2);
@@ -46,6 +46,8 @@ export function environment(dayTime, { rain = 0, storm = 0, wetness = 0, flash =
     top: mix(skyColor('top', sunElev), overcast('top'), gloom),
     bottom: mix(skyColor('bottom', sunElev), overcast('bottom'), gloom),
     moonPhase,
+    wind,
+    hail,
     // A full moon lifts the darkness a little on clear nights.
     light: Math.max(clear, (1 - clear) * moonFullness(moonPhase) * 0.12 * (1 - rain)) * (1 - rain * 0.35) * (1 - storm * 0.3),
     warm: clamp(1 - Math.abs(sunElev) / 0.35) * (1 - rain * 0.7),

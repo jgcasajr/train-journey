@@ -1,4 +1,5 @@
 import { shade } from './sky.js';
+import { drawBlizzard, drawHail } from './weatherFx.js';
 import { clamp, hash, hex, mix, mod, rgba, smoothstep } from './utils.js';
 
 const RAINBOW = ['#ff4b4b', '#ff9f40', '#ffe066', '#6bd66b', '#4da3ff', '#5b5bd6', '#a05bd6'].map(hex);
@@ -88,7 +89,8 @@ export function drawMist(ctx, layout, state, env, y, thickness, seed) {
 /** What falls from the sky: rain, snow (winter or mountains) or, in autumn, a few leaves. */
 export function precipitationKind(env, snowyBiome) {
   if (env.rain < 0.02) return env.season.autumn > 0.5 ? 'leaves' : null;
-  return env.season.winter > 0.5 || snowyBiome > 0.5 ? 'snow' : 'rain';
+  if (env.season.winter > 0.5 || snowyBiome > 0.5) return env.storm > 0.4 || (env.wind ?? 0) > 0.7 ? 'blizzard' : 'snow';
+  return env.hail ? 'hail' : 'rain';
 }
 
 function drawRainStreaks(ctx, layout, state, amount) {
@@ -131,8 +133,14 @@ export function drawPrecipitation(ctx, layout, state, env, kind) {
       ctx.arc(x, y, u * 0.35 * depth, 0, Math.PI * 2);
     });
     ctx.fill();
+  } else if (kind === 'hail') {
+    drawRainStreaks(ctx, layout, state, clamp(env.rain * 0.5));
+    drawHail(ctx, layout, state, env);
+  } else if (kind === 'blizzard') {
+    drawBlizzard(ctx, layout, state, env);
   } else if (kind === 'leaves') {
-    drawFlakes(ctx, layout, state, 18, 0.08, (x, y, depth, i) => {
+    const wind = env.wind ?? 0;
+    drawFlakes(ctx, layout, state, 18 + Math.round(wind * 40), 0.08 + wind * 0.08, (x, y, depth, i) => {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(state.time * (1 + hash(i, 1515) * 2) + i);

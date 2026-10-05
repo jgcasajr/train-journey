@@ -159,7 +159,7 @@ export function step(prev, dt, input) {
     ...updateDining(next, dt, input),
     jolt: state.brakeStarted ? 1 : next.jolt,
   };
-  return { ...result, ...bellaGreeting(prev, result) };
+  return { ...result, ...bellaGreeting(prev, result), drowsy: Boolean(input.drowsy) };
 }
 
 /** Text for the destination board: current or next station. */

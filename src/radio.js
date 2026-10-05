@@ -68,6 +68,8 @@ export function createRadio({ onChange = () => {} } = {}) {
   let timer = null;
   let volumeLevel = 0.8;
   let duckLevel = 1; // lowered while the announcer talks
+  let fadeLevel = 1; // the sleep timer fades the music out
+  const level = () => Math.max(0.0001, volumeLevel * duckLevel * fadeLevel);
 
   function tick() {
     const horizon = graph.ac.currentTime + LOOKAHEAD;
@@ -89,7 +91,7 @@ export function createRadio({ onChange = () => {} } = {}) {
     graph = graph ?? buildGraph();
     await graph.ac.resume();
     const now = graph.ac.currentTime;
-    graph.volume.gain.setTargetAtTime(volumeLevel * duckLevel, now, 0.3);
+    graph.volume.gain.setTargetAtTime(level(), now, 0.3);
     tuning(graph, now);
     cursor = { step: 0, time: now + 0.5, noteAt: now + 2 };
     tick();
@@ -105,12 +107,17 @@ export function createRadio({ onChange = () => {} } = {}) {
     next: () => tune(STATIONS[(STATIONS.indexOf(station) + 1) % STATIONS.length]),
     setVolume(v) {
       volumeLevel = Math.max(0.0001, Math.min(1, v));
-      if (graph && station !== 'off') graph.volume.gain.setTargetAtTime(volumeLevel * duckLevel, graph.ac.currentTime, 0.1);
+      if (graph && station !== 'off') graph.volume.gain.setTargetAtTime(level(), graph.ac.currentTime, 0.1);
     },
     /** Lowers the music to `factor` of its volume (1 = back to normal), e.g. under the announcer. */
     duck(factor) {
       duckLevel = Math.max(0.05, Math.min(1, factor));
-      if (graph && station !== 'off') graph.volume.gain.setTargetAtTime(volumeLevel * duckLevel, graph.ac.currentTime, 0.4);
+      if (graph && station !== 'off') graph.volume.gain.setTargetAtTime(level(), graph.ac.currentTime, 0.4);
+    },
+    /** Fades the music to `factor` of its volume (sleep timer); 1 = back to normal. */
+    fade(factor) {
+      fadeLevel = Math.max(0, Math.min(1, factor));
+      if (graph && station !== 'off') graph.volume.gain.setTargetAtTime(level(), graph.ac.currentTime, 0.5);
     },
     /** Soft bell for timer changes (only audible once the radio has been used). */
     bell() {

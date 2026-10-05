@@ -171,6 +171,7 @@ export function createAudio() {
   let graph = null;
   let enabled = false;
   let lastBell = 0;
+  let volume = 1; // sleep timer fade (0..1)
 
   return {
     get enabled() {
@@ -178,10 +179,16 @@ export function createAudio() {
     },
     async toggle() {
       graph = graph ?? buildGraph();
+      graph.master.gain.value = 0.9 * volume;
       if (enabled) await graph.ac.suspend();
       else await graph.ac.resume();
       enabled = !enabled;
       return enabled;
+    },
+    /** Overall loudness 0..1 (the sleep timer fades it out). */
+    setVolume(v) {
+      volume = Math.max(0, Math.min(1, v));
+      if (graph) graph.master.gain.setTargetAtTime(0.9 * volume, graph.ac.currentTime, 0.5);
     },
     /** `bell`: a level crossing is near — its warning bell rings twice a second. */
     update(speed, rain, bell = false) {

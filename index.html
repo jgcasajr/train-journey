@@ -36,6 +36,7 @@
       <button id="map-btn" type="button" aria-pressed="false">Mapa</button>
       <button id="photo" type="button">Foto</button>
       <button id="postcard" type="button" title="Salva a vista como cartão-postal, com selo e carimbo">Cartão-postal</button>
+      <button id="sleep-btn" type="button" aria-pressed="false" data-i18n-skip title="Timer de sono: a viagem vai escurecendo e silenciando até você dormir">Dormir</button>
       <button id="share-btn" type="button" title="Copia um link que abre esta mesma vista: lugar, hora, clima e vagão">Compartilhar</button>
     </div>
 
@@ -213,6 +214,20 @@
       <button id="arrival-choose" type="button">Escolher outro destino</button>
     </div>
   </section>
+
+  <section id="sleep-dialog" class="intention hidden" role="dialog" aria-labelledby="sleep-title">
+    <p class="arrival-kicker">Timer de sono</p>
+    <h2 id="sleep-title">Dormir embalado pelo trem</h2>
+    <p class="intention-help">Ela adormece, os sons e o rádio vão sumindo e a tela escurece devagar. Toque na tela para acordar.</p>
+    <div id="sleep-choices" class="arrival-actions sleep-choices"></div>
+    <div class="arrival-actions">
+      <button id="sleep-cancel" type="button">Agora não</button>
+    </div>
+  </section>
+
+  <div id="sleep-veil" class="sleep-veil hidden" aria-hidden="true">
+    <p id="sleep-night">Boa noite 🌙</p>
+  </div>
 
   <section id="intention" class="intention hidden" role="dialog" aria-labelledby="intention-title">
     <p class="arrival-kicker">Diário de intenções</p>

@@ -143,6 +143,7 @@ export const DISCOVERIES = [
   { id: 'punctual', category: 'Conquistas', icon: '⏰', title: 'Pontualidade britânica', hint: 'Marque um horário de chegada e chegue na hora.', test: (f) => f.awarded?.has('punctual') },
   { id: 'focus1', category: 'Conquistas', icon: '🎯', title: 'Um bloco de foco', hint: 'Use o modo Foco até a primeira pausa.', test: (f) => f.awarded?.has('focus1') },
   { id: 'focus4', category: 'Conquistas', icon: '🏔️', title: 'Quatro blocos seguidos', hint: 'Uma sessão longa de foco no trem.', test: (f) => f.awarded?.has('focus4') },
+  { id: 'sleepTimer', category: 'Conquistas', icon: '😴', title: 'Bons sonhos', hint: 'Use o timer de sono até o fim.', test: (f) => f.awarded?.has('sleepTimer') },
   { id: 'letterOut', category: 'Conquistas', icon: '✉️', title: 'Carta enviada', hint: 'Compartilhe a vista com uma carta.', test: (f) => f.awarded?.has('letterOut') },
   { id: 'letterIn', category: 'Conquistas', icon: '💌', title: 'Uma carta para você', hint: 'Abra um link que traga uma carta.', test: (f) => f.awarded?.has('letterIn') },
   { id: 'postcard', category: 'Conquistas', icon: '💌', title: 'Primeiro cartão-postal', hint: 'Mande notícias da viagem.', test: (f) => f.awarded?.has('postcard') },

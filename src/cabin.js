@@ -68,7 +68,7 @@ function targetActivity(state) {
   if (state.time < (state.sipUntil ?? 0) && state.coffee > 0.05) return 'sip';
   if (state.speech || companionLine(state, null) || passerbyEngages(state)) return 'talk';
   const woken = state.time < (state.wakeUntil ?? 0);
-  if (isNight(state.dayTime) && state.dwell <= 0 && !woken) return 'sleep';
+  if ((isNight(state.dayTime) || state.drowsy) && state.dwell <= 0 && !woken) return 'sleep'; // drowsy: sleep timer
   const slot = Math.floor(state.time / ACTIVITY_SLOT);
   const r = hash(slot, 1811);
   const local = state.time - slot * ACTIVITY_SLOT;

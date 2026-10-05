@@ -23,6 +23,7 @@ const TEMPLATES = {
 const BY_ID = {
   bella: 'A Bella apareceu e correu ao lado do trem. Corre, Bella!',
   bellaPet: 'Fiz carinho na Bella. Saudade boa.',
+  sleepTimer: 'Dormi embalada pelo barulho dos trilhos. Boa noite.',
 };
 const THOUGHT = 'Pensei: “{x}”';
 const SKETCH = 'Desenhei a paisagem no bloquinho: {x}.';

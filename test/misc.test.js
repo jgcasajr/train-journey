@@ -39,3 +39,23 @@ test('a shared link carries the exact view', () => {
     ['12.35', '3', '18:00', 'rain', 'autumn', 'dining'],
   );
 });
+
+test('the sleep timer fades sound and light gradually', async () => {
+  const { sleepLevels } = await import('../src/sleepTimer.js');
+  const start = sleepLevels(0);
+  const half = sleepLevels(0.5);
+  const end = sleepLevels(1);
+  assert.equal(start.volume, 1);
+  assert.equal(start.veil, 0);
+  assert.ok(half.volume < 1 && half.volume > 0);
+  assert.ok(half.veil > 0 && half.veil < end.veil);
+  assert.equal(end.volume, 0);
+  assert.ok(sleepLevels(0.01).drowsy);
+});
+
+test('a drowsy passenger falls asleep even in daylight', async () => {
+  const { run: go } = await import('./helpers.js');
+  const input = baseInput({ stops: false, drowsy: true });
+  const s = go(start(input), input, 8);
+  assert.ok(s.pose.sleep > 0.5, `sleep pose ${s.pose.sleep}`);
+});

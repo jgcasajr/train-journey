@@ -69,6 +69,10 @@ São duas linhas que se cruzam na **estação Nexus**:
 
 A Horizonte tem outra ordem de paisagens (começa no litoral) e cenário próprio: casas, árvores, rios, túneis e passagens de nível são outros. Parado na Nexus, aparece o botão **Fazer baldeação**: a tela escurece e a câmera vai para a plataforma da Nexus, sob a cobertura em arco de ferro e vidro — o trem vinho da Aurora de um lado, o azul-petróleo da Horizonte do outro. Ela desce com a mala de rodinhas, atravessa sob a placa da Nexus enquanto o alto-falante anuncia "Atenção: trem da Linha Horizonte na plataforma 2. Boa viagem!", embarca, as portas fecham e a vista volta para a cabine do trem novo. À noite as luminárias da plataforma acendem. Escolhendo um destino da outra linha, o letreiro avisa "baldeação em Nexus", o trem para lá (mesmo com as paradas desligadas) e ela troca de trem sozinha; o resumo da chegada soma os km das duas linhas. Cada linha tem o seu vagão: a **Aurora** é o clássico (madeira, latão e veludo vinho) e a **Horizonte** é o moderno (painéis claros, metal escovado e tecido azul-petróleo) — cortinas, moldura da janela, parapeito e bancos mudam junto. O mapa e o km do letreiro são sempre da linha atual. Diário: 6 estações novas, "Baldeação na Nexus" e "Linha Horizonte".
 
+## Timer de sono
+
+Botão **Dormir** no painel: escolha 15, 30, 45 ou 60 minutos e a viagem vai se despedindo. A passageira adormece na hora, os sons do trem e o rádio vão sumindo devagar na segunda metade do tempo, o locutor se cala e a tela escurece aos poucos até ficar só um "Boa noite 🌙". O botão mostra os minutos que faltam (tocar nele de novo cancela). No fim, um toque na tela ou qualquer tecla acorda tudo: o som volta e o rádio volta à estação de antes. Nada segura a tela acesa, então o aparelho pode apagar sozinho.
+
 ## Respirar no ritmo dos trilhos
 
 Botão **Respirar**: um círculo suave cresce enquanto você inspira e diminui enquanto solta — **4 tempos para dentro, 4 para fora**, com a contagem na tela. O tempo segue o "tum" das juntas dos trilhos (uma a cada 25 m): a 90 km/h, um tempo por segundo; mais devagar, a respiração fica mais lenta (e parado na estação, um por segundo). São 6 ciclos; no fim, "Que bom. Siga viagem com calma." e uma figurinha no diário. **Parar** ou Esc interrompe.
@@ -179,7 +183,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 133 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a Bella (e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 134 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a Bella (e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -347,6 +351,7 @@ src/
   moon.js       fases da lua e noites de meteoros
   wildlife.js   cervos e baleia
   bella.js      a Bella, pastora-alemã que corre ao lado do trem
+  sleepTimer.js timer de sono: ela dorme, o som some e a tela escurece
   animals.js    cavalos a galope, golfinhos e capivaras
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro

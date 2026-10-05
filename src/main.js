@@ -15,6 +15,7 @@ import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
 import { createLetters } from './letters.js';
+import { createSleepTimer } from './sleepTimer.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -260,6 +261,7 @@ function start() {
 
   window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx); });
   const announcer = createAnnouncer(document, { radio });
+  const sleep = createSleepTimer(document, { audio, radio, onAsleep: () => journal.award('sleepTimer') });
   const headphones = document.getElementById('headphones');
   headphones.addEventListener('change', () => audio.setHeadphones(headphones.checked));
   controls.onSoundClick(async (e) => {
@@ -280,7 +282,7 @@ function start() {
     const focusPlan = focus.update(state, read.stops);
     const destination = focusPlan?.destination ?? arrival.destination();
     const plan = schedule.update(state, destination, read.stops, focusPlan?.target ?? null);
-    const input = plan ? { ...read, targetKmh: plan.kmh } : read;
+    const input = { ...(plan ? { ...read, targetKmh: plan.kmh } : read), drowsy: sleep.tick(now).drowsy };
     controls.showScheduledSpeed(plan ? plan.kmh : null);
     state = step(state, dt, { ...input, destination, destinationAt: plan?.stopAt ?? null, events: clicks.takeEvents() });
     arrival.update(state, focus.active());
@@ -314,7 +316,7 @@ function start() {
       if (env.hail && env.rain > 0.3 && Math.random() < dt * 14) audio.sfx('click', Math.random() * 2 - 1); // hail ticking on the roof
       notebook.observe(state, env);
       a11y.observe(state, env);
-      announcer.observe(state, env, weatherTargets(input, state.time).mode);
+      if (!sleep.active()) announcer.observe(state, env, weatherTargets(input, state.time).mode);
       const booms = burstsExploded(state.time - dt, state, env, view);
       if (booms > 0) audio.sfx('boom');
     }

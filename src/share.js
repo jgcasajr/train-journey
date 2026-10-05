@@ -1,6 +1,7 @@
 import { LINES, biomeName, lineAt, lineKm } from './biomes.js';
 import { CARS } from './cars.js';
 import { t } from './i18n.js';
+import { encodeLetter } from './letters.js';
 
 const WEATHERS = ['auto', 'clear', 'rain', 'storm'];
 const SEASONS = ['auto', 'spring', 'summer', 'autumn', 'winter'];
@@ -59,29 +60,40 @@ function toast(doc, text) {
   setTimeout(() => node.classList.remove('visible'), TOAST_MS);
 }
 
-/** The "Share view" button: native share sheet on phones, clipboard elsewhere. */
-export function createShare(doc, { getView, onShared }) {
+/**
+ * The "Share view" button: first offers to write a letter (carried inside the link), then
+ * opens the native share sheet on phones or copies the link elsewhere.
+ * `compose(replyTo)` resolves to a letter, null (no letter) or undefined (cancelled).
+ */
+export function createShare(doc, { getView, onShared, compose }) {
   const button = doc.getElementById('share-btn');
   if (!button) throw new Error('Missing element #share-btn');
-  button.addEventListener('click', async (e) => {
-    e.stopPropagation();
+  async function start(replyTo = null) {
     const { state, input } = getView();
     if (!state) return;
-    const url = sharedViewUrl(window.location, state, input);
+    const letter = await compose(replyTo);
+    if (letter === undefined) return;
+    const view = new URL(sharedViewUrl(window.location, state, input));
+    if (letter) view.searchParams.set('carta', encodeLetter(letter));
+    const url = view.toString();
     const where = `${t(LINES[lineAt(state.distance)].name)}, km ${lineKm(state.distance).toFixed(1)}, ${t(biomeName(state.distance))}`;
-    const text = t(`Estou viajando de trem (${where}). Vem ver a mesma vista:`);
+    const text = letter
+      ? t(`Te escrevi uma carta do trem (${where}). Abra para ler e ver a mesma vista:`)
+      : t(`Estou viajando de trem (${where}). Vem ver a mesma vista:`);
     try {
       if (navigator.share) await navigator.share({ title: 'Train Journey', text, url });
       else {
         await navigator.clipboard.writeText(`${text} ${url}`);
         toast(doc, t('Link copiado! Cole onde quiser.'));
       }
-      onShared();
+      onShared(Boolean(letter));
     } catch (err) {
       if (err?.name === 'AbortError') return; // closed the share sheet
       console.warn('Share failed:', err);
       toast(doc, t('Não deu para copiar. O link está no endereço da página.'));
       window.history.replaceState(null, '', url);
     }
-  });
+  }
+  button.addEventListener('click', (e) => { e.stopPropagation(); start(); });
+  return { start };
 }

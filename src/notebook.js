@@ -54,7 +54,8 @@ const clockOf = (dayTime) => {
 
 /** One entry as text in the current language. */
 export function entryText(entry) {
-  const body = t(entry.tpl).replace('{x}', entry.x ? t(entry.x) : '');
+  // `raw`: someone's own words (a letter), never translated.
+  const body = t(entry.tpl).replace('{x}', entry.x ? t(entry.x) : '') + (entry.raw ? ` “${entry.raw}”` : '');
   return `${entry.date} ${entry.clock} · km ${entry.km.toFixed(1)} — ${body}`;
 }
 
@@ -110,6 +111,10 @@ export function createNotebook(doc) {
       const stamp = stampOf(state);
       const lines = discoveries.filter((d) => TEMPLATES[d.category]).map((d) => ({ ...stamp, tpl: TEMPLATES[d.category], x: d.title }));
       if (lines.length > 0) write(lines);
+    },
+    /** A letter she received, copied into the notebook. */
+    letter(letter, state) {
+      write([{ ...stampOf(state), tpl: 'Recebi uma carta de {x}:', x: letter.name || 'um viajante', raw: letter.text }]);
     },
     /** Called every frame: the first page (once), and about half of her thoughts get written down. */
     observe(state, env) {

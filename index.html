@@ -180,6 +180,30 @@
     <div class="arrival-actions"><button id="focus-close" type="button">Fechar</button></div>
   </section>
 
+  <section id="letter-compose" class="intention hidden" role="dialog" aria-labelledby="letter-compose-title">
+    <p class="arrival-kicker">Carta de viagem</p>
+    <h2 id="letter-compose-title" data-i18n-skip>Uma carta junto com a vista?</h2>
+    <p class="intention-help">A carta vai dentro do link: quem abrir recebe durante a viagem. Nada fica guardado em servidor.</p>
+    <textarea id="letter-text" maxlength="280" rows="4" placeholder="Escreva algo para quem vai abrir o link..."></textarea>
+    <input id="letter-name" class="letter-name" maxlength="40" placeholder="Assinatura (opcional)">
+    <div class="arrival-actions">
+      <button id="letter-send" type="button">Compartilhar com a carta</button>
+      <button id="letter-plain" type="button">Só a vista</button>
+      <button id="letter-cancel" type="button">Cancelar</button>
+    </div>
+  </section>
+
+  <section id="letter-card" class="letter-card hidden" aria-live="polite">
+    <p class="arrival-kicker">✉️ Uma carta para você</p>
+    <blockquote id="letter-body" data-i18n-skip></blockquote>
+    <p id="letter-from" data-i18n-skip></p>
+    <div class="arrival-actions">
+      <button id="letter-reply" type="button">Responder</button>
+      <button id="letter-save" type="button">Guardar no caderno</button>
+      <button id="letter-close" type="button">Fechar</button>
+    </div>
+  </section>
+
   <section id="arrival" class="arrival hidden" aria-live="polite">
     <p class="arrival-kicker">Fim da viagem</p>
     <h2 id="arrival-title" data-i18n-skip></h2>

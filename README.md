@@ -165,7 +165,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 126 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 128 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -191,6 +191,10 @@ O cursor vira mãozinha sobre o que é clicável.
 ## Compartilhar a vista
 
 Botão **Compartilhar**: gera um link que abre **exatamente a mesma vista** — mesmo ponto do trajeto e linha, dia (fase da lua), hora, clima, estação do ano e vagão — com uma frase pronta ("Estou viajando de trem (Linha Aurora, km 12.3, Montanhas). Vem ver a mesma vista:"). No celular abre o compartilhamento do sistema; no computador, copia para a área de transferência. O link usa os parâmetros `km`, `dia`, `hora` (HH:MM), `clima` (clear/rain/storm/auto), `estacao` (spring/summer/autumn/winter/auto) e `vagao` (passenger/dining/panorama/sleeper/baggage/cab). Nada pessoal vai no link. Figurinha: "Vista compartilhada".
+
+## Cartas entre viajantes
+
+Ao **Compartilhar**, dá para escrever uma **carta** curta (até 280 caracteres, com assinatura opcional). Ela vai **dentro do próprio link** — sem servidor, sem conta, nada guardado fora. Quem abre o link recebe, já viajando, um envelope "Uma carta para você" com o texto em letra de mão, a assinatura, a data e de onde foi enviada; pode **Responder** (gera outro link com a resposta) ou **Guardar no caderno**. A carta é mostrada só como texto, tem limite de tamanho e sai do endereço depois de lida. Lembre: quem tiver o link pode ler a carta. Figurinhas: "Carta enviada" e "Uma carta para você".
 
 ## Instalar e usar offline
 
@@ -292,6 +296,7 @@ src/
   travelers.js  viajantes que voltam (capítulos das histórias)
   install.js    service worker e botão de instalar o app
   share.js      link para compartilhar a vista atual
+  letters.js    cartas entre viajantes (dentro do link)
   settings.js   configurações salvas e seções do painel
   a11y.js       acessibilidade (movimento reduzido, texto maior, descrição da cena)
   starSky.js    céu da Linha Estelar (Via Láctea, planetas, constelações)

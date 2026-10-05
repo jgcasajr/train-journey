@@ -1,6 +1,6 @@
 import { createAudio } from './audio.js';
 import { companionLine } from './companion.js';
-import { biomeName, lineKm, nightLine } from './biomes.js';
+import { biomeName, lineKm, nightLine, LINES, lineAt } from './biomes.js';
 import { createArrival } from './arrival.js';
 import { createControls } from './controls.js';
 import { createFog } from './fog.js';
@@ -9,11 +9,12 @@ import { createJournal } from './journal.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { createModes } from './modes.js';
 import { moonPhase } from './moon.js';
-import { currentLang } from './i18n.js';
+import { currentLang, t } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
+import { createLetters } from './letters.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -191,7 +192,20 @@ function start() {
   const clicks = createClicks({ canvas, audio, radio, controls, getScene: () => scene });
   const { pointer } = clicks;
   setupInstall(document, { onInstalled: () => journal.award('installed') });
-  createShare(document, { getView: () => ({ state, input: controls.read() }), onShared: () => journal.award('shared') });
+  const letters = createLetters(document, {
+    onReceived: () => { journal.award('letterIn'); audio.chime(); },
+    onSaveToNotebook: (letter) => notebook.letter(letter, state),
+  });
+  const share = createShare(document, {
+    getView: () => ({ state, input: controls.read() }),
+    onShared: (withLetter) => { journal.award('shared'); if (withLetter) journal.award('letterOut'); },
+    compose: (replyTo) => letters.compose(replyTo),
+  });
+  document.getElementById('letter-reply').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('letter-card').classList.add('hidden');
+    share.start(letters.replyTarget());
+  });
   const notebook = createNotebook(document);
   const journal = createJournal(document, { onDiscover: (fresh, s) => { audio.sfx('discover'); notebook.note(fresh, s); } });
   const travelers = createTravelers({ onRecall: (text) => clicks.queue({ type: 'recall', text }) });
@@ -238,6 +252,7 @@ function start() {
   const day = Number(params.get('dia'));
   const withDay = params.has('dia') && Number.isFinite(day) ? { ...start, dayCount: Math.floor(day) } : start;
   let state = params.has('pass') ? { ...withDay, nextPassing: 2 } : withDay;
+  letters.receive(params, params.has('km') ? `${t(LINES[lineAt(state.distance)].name)}, ${t(biomeName(state.distance))}` : '');
   let last = performance.now();
   let hudTimer = 0;
   let lastBabyLine = null;

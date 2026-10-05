@@ -17,6 +17,7 @@ import { applySharedView, createShare } from './share.js';
 import { createLetters } from './letters.js';
 import { createSleepTimer } from './sleepTimer.js';
 import { createPassport } from './passport.js';
+import { createMissions } from './missions.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -263,7 +264,16 @@ function start() {
   window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx); });
   const announcer = createAnnouncer(document, { radio });
   const passport = createPassport(document, {
-    onStamp: ({ lineId, complete }) => { audio.sfx('stamp'); if (complete) journal.award(`passport:${lineId}`); },
+    onStamp: ({ lineId, complete }) => { audio.sfx('stamp'); journal.award('stamp'); if (complete) journal.award(`passport:${lineId}`); },
+  });
+  const missions = createMissions(document, {
+    onDone: (mission, rec) => {
+      audio.sfx('discover');
+      journal.notify(`${mission.icon}  ${t('Missão do dia cumprida!')}`);
+      journal.award('mission1');
+      if (rec.total >= 7) journal.award('missions7');
+      if (rec.streak >= 3) journal.award('streak3');
+    },
   });
   const sleep = createSleepTimer(document, { audio, radio, onAsleep: () => journal.award('sleepTimer') });
   const headphones = document.getElementById('headphones');
@@ -317,7 +327,8 @@ function start() {
       render(ctx, view, state, sceneEnvironment(state), { fog, dt, station: radio.station, intention: intention.current(), platform: transfer.sceneAt(now), calm: a11y.calm() });
       scene = { view, state };
       const env = sceneEnvironment(state);
-      journal.observe(state, env, view);
+      const facts = journal.observe(state, env, view);
+      missions.observe(facts, state);
       if (env.hail && env.rain > 0.3 && Math.random() < dt * 14) audio.sfx('click', Math.random() * 2 - 1); // hail ticking on the roof
       notebook.observe(state, env);
       a11y.observe(state, env);

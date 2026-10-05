@@ -102,7 +102,7 @@ export function createJournal(doc, { onDiscover }) {
     if (toastTimer || toasts.length === 0) return;
     const [next, ...rest] = toasts;
     toasts = rest;
-    ui.toast.textContent = t(`${next.icon}  Nova descoberta: ${next.title}!`);
+    ui.toast.textContent = next.text ?? t(`${next.icon}  Nova descoberta: ${next.title}!`);
     ui.toast.classList.add('visible');
     toastTimer = setTimeout(() => {
       ui.toast.classList.remove('visible');
@@ -140,7 +140,7 @@ export function createJournal(doc, { onDiscover }) {
     foundCount: () => DISCOVERIES.filter((d) => progress.found[d.id]).length,
     /** Marks something that happened outside the scene (e.g. a postcard sent); checked next frame. */
     award(id) { awarded = new Set([...awarded, id]); },
-    /** Called every frame; records whatever is newly discovered. */
+    /** Called every frame; records whatever is newly discovered and returns the frame's facts. */
     observe(state, env, view) {
       const step = lastDistance === null ? 0 : state.distance - lastDistance;
       const tick = lastTime === null ? 0 : state.time - lastTime;
@@ -162,13 +162,19 @@ export function createJournal(doc, { onDiscover }) {
       };
       if (fresh.length === 0) {
         if (Math.floor(seconds / 30) !== Math.floor((seconds - tick) / 30) || newDay) save(progress);
-        return;
+        return facts;
       }
       save(progress);
       render();
       toasts = [...toasts, ...fresh];
       showNextToast();
       onDiscover(fresh, state);
+      return facts;
+    },
+    /** Queues a toast with any text (shown between discovery toasts). */
+    notify(text) {
+      toasts = [...toasts, { text }];
+      showNextToast();
     },
   };
 }

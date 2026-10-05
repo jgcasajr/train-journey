@@ -59,3 +59,17 @@ test('a drowsy passenger falls asleep even in daylight', async () => {
   const s = go(start(input), input, 8);
   assert.ok(s.pose.sleep > 0.5, `sleep pose ${s.pose.sleep}`);
 });
+
+test('passport stamps: one per station and line, first visit kept, never mutated', async () => {
+  const { LINE_PAGES, addStamp, lineComplete } = await import('../src/passport.js');
+  const empty = Object.freeze({});
+  const one = addStamp(empty, 'aurora', 'Nexus', Date.UTC(2026, 9, 5, 12));
+  assert.deepEqual(empty, {});
+  assert.ok(one.aurora.Nexus.date);
+  assert.equal(addStamp(one, 'aurora', 'Nexus', Date.UTC(2027, 0, 1, 12)), one, 'same station again changes nothing');
+  assert.equal(addStamp(one, 'horizonte', 'Nexus').aurora, one.aurora);
+  assert.equal(lineComplete(one, 'aurora'), false);
+  const full = LINE_PAGES[0].stations.reduce((b, s) => addStamp(b, 'aurora', s.name), {});
+  assert.equal(lineComplete(full, 'aurora'), true);
+  assert.deepEqual(LINE_PAGES.map((p) => p.stations.length), [10, 9, 8]);
+});

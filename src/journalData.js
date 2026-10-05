@@ -25,7 +25,7 @@ import { deerInView, whaleAt } from './wildlife.js';
 import { bellaAt } from './bella.js';
 import { capybarasInView, dolphinsAt, herdInView } from './animals.js';
 
-const BIOME_ICONS = {
+export const BIOME_ICONS = {
   Campos: '🌾', Fazenda: '🐄', Floresta: '🌲', Montanhas: '🏔️', Outono: '🍂', Subúrbio: '🏡', Cidade: '🏙️', Litoral: '🏖️',
   Deserto: '🏜️', Vinhedos: '🍇', Lago: '🏞️',
 };
@@ -143,6 +143,10 @@ export const DISCOVERIES = [
   { id: 'punctual', category: 'Conquistas', icon: '⏰', title: 'Pontualidade britânica', hint: 'Marque um horário de chegada e chegue na hora.', test: (f) => f.awarded?.has('punctual') },
   { id: 'focus1', category: 'Conquistas', icon: '🎯', title: 'Um bloco de foco', hint: 'Use o modo Foco até a primeira pausa.', test: (f) => f.awarded?.has('focus1') },
   { id: 'focus4', category: 'Conquistas', icon: '🏔️', title: 'Quatro blocos seguidos', hint: 'Uma sessão longa de foco no trem.', test: (f) => f.awarded?.has('focus4') },
+  ...LINES.map((l) => ({
+    id: `passport:${l.id}`, category: 'Conquistas', icon: '🛂', title: `Passaporte da ${l.name}`,
+    hint: 'Carimbe todas as estações dessa linha.', test: (f) => f.awarded?.has(`passport:${l.id}`),
+  })),
   { id: 'sleepTimer', category: 'Conquistas', icon: '😴', title: 'Bons sonhos', hint: 'Use o timer de sono até o fim.', test: (f) => f.awarded?.has('sleepTimer') },
   { id: 'letterOut', category: 'Conquistas', icon: '✉️', title: 'Carta enviada', hint: 'Compartilhe a vista com uma carta.', test: (f) => f.awarded?.has('letterOut') },
   { id: 'letterIn', category: 'Conquistas', icon: '💌', title: 'Uma carta para você', hint: 'Abra um link que traga uma carta.', test: (f) => f.awarded?.has('letterIn') },

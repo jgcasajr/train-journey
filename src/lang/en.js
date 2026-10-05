@@ -505,6 +505,14 @@ export const EN = {
   'Instale o app pelo painel.': 'Install the app from the panel.',
   'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
+  'Passaporte': 'Passport',
+  'Um carimbo para cada estação onde o trem parar': 'A stamp for every station where the train stops',
+  '🛂 Passaporte de viagem': '🛂 Travel passport',
+  'PASSAPORTE DE VIAGEM': 'TRAVEL PASSPORT',
+  'Baixar imagem': 'Download image',
+  'Linha completa!': 'Line complete!',
+  'Pare nas estações para carimbar.': 'Stop at stations to get stamps.',
+  'Carimbe todas as estações dessa linha.': 'Get a stamp at every station of this line.',
   'Dormir': 'Sleep',
   'Timer de sono: a viagem vai escurecendo e silenciando até você dormir': 'Sleep timer: the trip slowly darkens and quiets down until you fall asleep',
   'Timer de sono': 'Sleep timer',
@@ -849,6 +857,9 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^(d+) de (d+) carimbos$/, (tr, n, total) => `${n} of ${total} stamps`],
+  [/^Primeiro carimbo em (.+)$/, (tr, date) => `First stamp on ${date}`],
+  [/^Passaporte da (.+)$/, (tr, line) => `${tr(line)} passport`],
   [/^Responder a (.+)$/, (tr, name) => `Reply to ${name}`],
   [/^Te escrevi uma carta do trem \((.+)\)\. Abra para ler e ver a mesma vista:$/, (tr, where) => `I wrote you a letter from the train (${where}). Open it to read and see the same view:`],
   [/^— (.+), (\S+)(?: · enviada de (.+))?$/, (tr, who, date, where) => `— ${who === 'um viajante' ? 'a traveler' : who}, ${date}${where ? ` · sent from ${where}` : ''}`],

@@ -16,6 +16,7 @@ import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
 import { createLetters } from './letters.js';
 import { createSleepTimer } from './sleepTimer.js';
+import { createPassport } from './passport.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -261,6 +262,9 @@ function start() {
 
   window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx); });
   const announcer = createAnnouncer(document, { radio });
+  const passport = createPassport(document, {
+    onStamp: ({ lineId, complete }) => { audio.sfx('stamp'); if (complete) journal.award(`passport:${lineId}`); },
+  });
   const sleep = createSleepTimer(document, { audio, radio, onAsleep: () => journal.award('sleepTimer') });
   const headphones = document.getElementById('headphones');
   headphones.addEventListener('change', () => audio.setHeadphones(headphones.checked));
@@ -288,6 +292,7 @@ function start() {
     arrival.update(state, focus.active());
     intention.update(state);
     travelers.observe(state);
+    passport.observe(state);
     breathing.update(dt, state.speed);
     transfer.update(state);
     playSounds(audio, state);

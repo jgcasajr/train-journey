@@ -13,6 +13,14 @@ npm start
 Abre em http://localhost:5173 (a porta pode ser trocada com `PORT=8080 npm start`).
 Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um servidor estático mínimo em Node.
 
+## Testes
+
+```bash
+npm test
+```
+
+Usa o test runner do próprio Node (sem dependências). Cobre a simulação pura (`step` não muta o estado, aceleração, paradas, destino), as linhas e a baldeação em Nexus, os horários marcados, as cartas no link, a tradução, o modo foco e o link compartilhado; também confere que todo módulo carrega e que o `main.js` só importa nomes que existem. Roda no GitHub Actions a cada push.
+
 ## O que tem
 
 - **Parallax em 8 camadas**: montanhas distantes, montanhas médias, mar, colinas, campos, arbustos, postes com fios e o chão passando rente ao trilho.

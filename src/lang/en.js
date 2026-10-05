@@ -505,6 +505,12 @@ export const EN = {
   'Instale o app pelo painel.': 'Install the app from the panel.',
   'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
+  'Hora e clima reais': 'Real time and weather',
+  'A hora segue o seu relógio; com sua permissão, o clima e a estação do ano seguem o lugar onde você está (localização aproximada enviada só ao Open-Meteo)': 'The time follows your clock; with your permission, the weather and season follow where you are (approximate location sent only to Open-Meteo)',
+  'Buscando o clima onde você está...': 'Looking up the weather where you are...',
+  'O mesmo céu que o seu': 'The same sky as yours',
+  'Ligue "Hora e clima reais" no painel.': 'Turn on "Real time and weather" in the panel.',
+  'tempo bom': 'fair weather',
   'Missão do dia': 'Mission of the day',
   'Missão do dia cumprida!': 'Mission of the day done!',
   'Missão cumprida!': 'Mission done!',
@@ -899,6 +905,9 @@ const nextName = (tr, name) => (name === 'a próxima' ? tr(name) : name);
 
 // Strings built at runtime: [regex over the Portuguese text, (tr, ...groups) => English]. `tr` translates a sub-part.
 export const EN_PATTERNS = [
+  [/^Hora real: (S+).$/, (tr, clock) => `Real time: ${clock}.`],
+  [/^Só a hora real ((S+)): sem localização para o clima.$/, (tr, clock) => `Real time only (${clock}): no location for the weather.`],
+  [/^Hora real: (S+) · lá fora: (.+?)( (neve))? · atualizado às (S+)$/, (tr, clock, w, snow, at) => `Real time: ${clock} · outside: ${tr(w)}${snow ? ' (snow)' : ''} · updated at ${at}`],
   [/^(d+) dias seguidos$/, (tr, n) => `${n} days in a row`],
   [/^(d+) de (d+) carimbos$/, (tr, n, total) => `${n} of ${total} stamps`],
   [/^Primeiro carimbo em (.+)$/, (tr, date) => `First stamp on ${date}`],

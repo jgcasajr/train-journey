@@ -18,6 +18,7 @@ import { createLetters } from './letters.js';
 import { createSleepTimer } from './sleepTimer.js';
 import { createPassport } from './passport.js';
 import { createMissions } from './missions.js';
+import { createRealWorld } from './realWorld.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -275,6 +276,7 @@ function start() {
       if (rec.streak >= 3) journal.award('streak3');
     },
   });
+  const realWorld = createRealWorld(document);
   const sleep = createSleepTimer(document, { audio, radio, onAsleep: () => journal.award('sleepTimer') });
   const headphones = document.getElementById('headphones');
   headphones.addEventListener('change', () => audio.setHeadphones(headphones.checked));
@@ -292,7 +294,8 @@ function start() {
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
-    const read = controls.read();
+    const read = realWorld.apply(controls.read());
+    if (realWorld.located()) journal.award('realSky');
     const focusPlan = focus.update(state, read.stops);
     const destination = focusPlan?.destination ?? arrival.destination();
     const plan = schedule.update(state, destination, read.stops, focusPlan?.target ?? null);
@@ -312,7 +315,7 @@ function start() {
     if (babyLine && babyLine !== lastBabyLine) audio.sfx(babyLine.startsWith('Uá') ? 'cry' : 'babble');
     lastBabyLine = babyLine;
     modes.tick(state.distance, state.destination);
-    if (input.autoDay) controls.showDayTime(state.dayTime);
+    if (input.autoDay || realWorld.active()) controls.showDayTime(state.dayTime);
     hudTimer += dt;
     if (hudTimer > HUD_INTERVAL) {
       hudTimer = 0;

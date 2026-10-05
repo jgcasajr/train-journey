@@ -6,6 +6,7 @@ const FIELDS = {
   speed: 'value',
   time: 'value',
   'auto-day': 'checked',
+  'real-world': 'checked',
   weather: 'value',
   season: 'value',
   stops: 'checked',

@@ -12,6 +12,7 @@ import { sleeperHeadBox } from './sleeperView.js';
 import { hornBox } from './cabDash.js';
 import { carLayout, seatedCar } from './cars.js';
 import { balloonsInView, flockBirds } from './skylife.js';
+import { bellaBox } from './bella.js';
 
 const ANIMALS = {
   cows: { text: 'Muuu!', sound: 'moo' },
@@ -55,6 +56,8 @@ function panoramaTarget(view, state, p) {
 /** Things outside the window; `q` is the click in outside-view coordinates. */
 function outsideTarget(view, state, env, q) {
   const { u } = view;
+  const bella = bellaBox(view, state);
+  if (bella && inBox(q, bella)) return { type: 'bella', sound: 'bark' };
   if (flockBirds(view, state, env).some((b) => near(q, b, u * 3))) return { type: 'scatter', sound: 'flutter' };
   const balloon = balloonsInView(view, state, env).find((b) => near(q, { x: b.x, y: b.y + b.s * 0.4 }, b.s * 1.3));
   if (balloon) return { type: 'wave', id: balloon.i, sound: 'cheer' };

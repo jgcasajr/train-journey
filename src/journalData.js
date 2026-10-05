@@ -22,6 +22,8 @@ import { DWELL, stationsBetween } from './stations.js';
 import { reunionAt, runnerAt, stopElapsed, vendorAt } from './stationPeople.js';
 import { FIELDS_DEPTH } from './landscape.js';
 import { deerInView, whaleAt } from './wildlife.js';
+import { bellaAt } from './bella.js';
+import { capybarasInView, dolphinsAt, herdInView } from './animals.js';
 
 const BIOME_ICONS = {
   Campos: '🌾', Fazenda: '🐄', Floresta: '🌲', Montanhas: '🏔️', Outono: '🍂', Subúrbio: '🏡', Cidade: '🏙️', Litoral: '🏖️',
@@ -118,6 +120,11 @@ export const DISCOVERIES = [
   { id: 'gale', category: 'Céu e clima', icon: '🌬️', title: 'Vendaval', hint: 'Veja as árvores se curvarem ao vento.', test: (f) => f.wind > 0.8 },
   { id: 'deer', category: 'Raridades', icon: '🦌', title: 'Cervo', hint: 'Bem no meio da floresta.', test: (f) => f.deer },
   { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
+  { id: 'bella', category: 'Personagens', icon: '🐕', title: 'Bella', hint: 'Uma pastora-alemã que corre ao lado do trem.', test: (f) => f.bella },
+  { id: 'bellaPet', category: 'Momentos', icon: '💕', title: 'Carinho na Bella', hint: 'Quando ela aparecer, toque nela.', test: (f) => f.bellaPets > 0 },
+  { id: 'herd', category: 'Pelo caminho', icon: '🐎', title: 'Cavalos a galope', hint: 'Nos campos, às vezes eles apostam corrida com o trem.', test: (f) => f.herd },
+  { id: 'dolphins', category: 'Raridades', icon: '🐬', title: 'Golfinhos', hint: 'Saltos no mar aberto.', test: (f) => f.dolphins },
+  { id: 'capybaras', category: 'Pelo caminho', icon: '🦫', title: 'Família de capivaras', hint: 'Na beira do lago.', test: (f) => f.capybaras },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
   { id: 'arrival', category: 'Marcos', icon: '🏁', title: 'Chegada ao destino', hint: 'Escolha um destino no painel.', test: (f) => f.arrival },
   { id: 'km10', category: 'Marcos', icon: '🛤️', title: '10 km de viagem', hint: 'Continue a viagem.', test: (f) => f.traveled >= 10000 },
@@ -191,6 +198,11 @@ export function factsFrom({ state, env, view, traveled }) {
     deer: deerInView(view, state).some((d) => d.x > view.win.x && d.x < view.win.x + view.win.w),
     fireworks: fireworkBursts(state, env, view).some((b) => b.age > 0.5),
     whale: whaleAt(state, view) !== null,
+    bella: (bellaAt(state)?.t ?? 0) > 4 && bellaAt(state).alpha > 0.8,
+    bellaPets: state.bellaPets ?? 0,
+    herd: (herdInView(view, state) ?? []).some((h) => h.x > view.win.x && h.x < view.win.x + view.win.w),
+    dolphins: (dolphinsAt(state, view)?.t ?? 0) > 1.5,
+    capybaras: capybarasInView(view, state).some((c) => c.x > view.win.x && c.x < view.win.x + view.win.w),
     meteorShower: meteorsAt(state, env).length > 0,
     fullMoon: env.sunElev < -0.1 && env.rain < 0.3 && moonFullness(env.moonPhase ?? 0.5) > 0.93,
     newMoon: env.sunElev < -0.1 && moonFullness(env.moonPhase ?? 0.5) < 0.05,

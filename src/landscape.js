@@ -19,6 +19,8 @@ import { stationsBetween } from './stations.js';
 import { drawTunnels } from './tunnel.js';
 import { drawMist, drawPrecipitation, precipitationKind } from './weatherView.js';
 import { drawWhale, drawWildlife } from './wildlife.js';
+import { drawBella } from './bella.js';
+import { drawCapybaras, drawDolphins, drawHerd } from './animals.js';
 import { fbm, hash, hex, mix, noise1, rgba, scale } from './utils.js';
 
 const TRUNK = hex('#4a3526');
@@ -151,6 +153,7 @@ function drawWater(ctx, layout, state, env) {
   });
   drawBoats(ctx, layout, state, env, lf, top);
   drawWhale(ctx, layout, state, env, top);
+  drawDolphins(ctx, layout, state, env, top);
 }
 
 function drawHills(ctx, layout, state, env) {
@@ -229,6 +232,8 @@ function drawFields(ctx, layout, state, env) {
   drawVines(ctx, layout, lf, heightAt, env, state.seasonPhase);
   drawCircus(ctx, layout, state, env, FIELDS_DEPTH, heightAt);
   drawWildlife(ctx, layout, state, env, heightAt);
+  drawCapybaras(ctx, layout, state, env, heightAt);
+  drawHerd(ctx, layout, state, env, heightAt);
   drawMist(ctx, layout, state, env, horizon + win.h * 0.2, win.h * 0.07, 1611);
 }
 
@@ -337,6 +342,7 @@ export function drawLandscape(ctx, layout, state, env) {
   drawBridges(ctx, layout, state, env);
   drawViaduct(ctx, layout, state, env);
   drawStations(ctx, layout, state, env);
+  drawBella(ctx, layout, state, env);
   drawPrecipitation(ctx, layout, state, env, precipitationKind(env, num(biomeAt(state.distance), 'snow')));
   drawTunnels(ctx, layout, state, env);
 }

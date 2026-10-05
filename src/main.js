@@ -251,7 +251,8 @@ function start() {
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
   const day = Number(params.get('dia'));
   const withDay = params.has('dia') && Number.isFinite(day) ? { ...start, dayCount: Math.floor(day) } : start;
-  let state = params.has('pass') ? { ...withDay, nextPassing: 2 } : withDay;
+  const withBella = params.has('bella') ? { ...withDay, bellaFirst: 3 } : withDay; // ?bella: she comes running right away
+  let state = params.has('pass') ? { ...withBella, nextPassing: 2 } : withBella;
   letters.receive(params, params.has('km') ? `${t(LINES[lineAt(state.distance)].name)}, ${t(biomeName(state.distance))}` : '');
   let last = performance.now();
   let hudTimer = 0;

@@ -1,4 +1,5 @@
 import { biomeName, lineAt, LINES } from './biomes.js';
+import { bellaAt } from './bella.js';
 import { t } from './i18n.js';
 import { nextStation } from './stations.js';
 
@@ -46,7 +47,8 @@ export function describeScene(state, env) {
     : next ? t(`Próxima estação: ${next.name}.`) : ''; // no distance: it would change every few seconds
   const top = Object.entries(state.pose ?? {}).sort((a, b) => b[1] - a[1])[0];
   const doing = ACTIVITIES.find(([k]) => k === top?.[0] && top[1] > 0.5)?.[1] ?? 'Ela olha a paisagem pela janela.';
-  return `${where}. ${when}. ${stop} ${t(doing)}`.replace(/\s+/g, ' ').trim();
+  const bella = bellaAt(state) ? t('A Bella corre ao lado do trem.') : '';
+  return `${where}. ${when}. ${stop} ${t(doing)} ${bella}`.replace(/\s+/g, ' ').trim();
 }
 
 /**

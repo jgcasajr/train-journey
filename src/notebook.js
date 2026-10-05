@@ -19,6 +19,11 @@ const TEMPLATES = {
   'Marcos': 'Marco da viagem: {x}.',
   'Conquistas': 'Conquista: {x}. Um passo de cada vez.',
 };
+/** Discoveries with a line of their own. */
+const BY_ID = {
+  bella: 'A Bella apareceu e correu ao lado do trem. Corre, Bella!',
+  bellaPet: 'Fiz carinho na Bella. Saudade boa.',
+};
 const THOUGHT = 'Pensei: “{x}”';
 const SKETCH = 'Desenhei a paisagem no bloquinho: {x}.';
 const FIRST_PAGE = 'Comecei este caderno hoje. Nova fase, página em branco.';
@@ -109,7 +114,8 @@ export function createNotebook(doc) {
     /** Called with the journal's new discoveries: one line each. */
     note(discoveries, state) {
       const stamp = stampOf(state);
-      const lines = discoveries.filter((d) => TEMPLATES[d.category]).map((d) => ({ ...stamp, tpl: TEMPLATES[d.category], x: d.title }));
+      const lines = discoveries.filter((d) => BY_ID[d.id] || TEMPLATES[d.category])
+        .map((d) => (BY_ID[d.id] ? { ...stamp, tpl: BY_ID[d.id], x: '' } : { ...stamp, tpl: TEMPLATES[d.category], x: d.title }));
       if (lines.length > 0) write(lines);
     },
     /** A letter she received, copied into the notebook. */

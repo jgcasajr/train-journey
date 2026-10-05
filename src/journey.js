@@ -1,3 +1,4 @@
+import { bellaGreeting } from './bella.js';
 import { biomeAt, num } from './biomes.js';
 import { initialCabin, updateCabin } from './cabin.js';
 import { DAY_SECONDS } from './clock.js';
@@ -150,7 +151,7 @@ export function step(prev, dt, input) {
   const afterEvents = applyEvents(prev, input.events ?? []);
   const state = { ...afterEvents, ...updateDestination(afterEvents, input) };
   const next = state.dwell > 0 ? standing(state, dt, input) : moving(state, dt, input);
-  return {
+  const result = {
     ...next,
     ...updateInteraction(next, dt),
     ...updateCompanion(next),
@@ -158,6 +159,7 @@ export function step(prev, dt, input) {
     ...updateDining(next, dt, input),
     jolt: state.brakeStarted ? 1 : next.jolt,
   };
+  return { ...result, ...bellaGreeting(prev, result) };
 }
 
 /** Text for the destination board: current or next station. */

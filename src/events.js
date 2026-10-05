@@ -1,3 +1,4 @@
+import { PETS } from './bella.js';
 import { biomeName } from './biomes.js';
 import { isNight } from './clock.js';
 import { companionClicked } from './companion.js';
@@ -86,6 +87,10 @@ function reduce(state, event) {
     case 'recall': {
       const ev = passerbyAt(state.time, state.dayTime);
       return ev ? { passerbySpeech: { text: event.text, until: state.time + 3.4, k: ev.k }, recalls: (state.recalls ?? 0) + 1 } : {};
+    }
+    case 'bella': {
+      const pets = (state.bellaPets ?? 0) + 1;
+      return { ...say(state, PETS[(pets - 1) % PETS.length]), ...addEffect(state, { kind: 'bella' }), bellaPets: pets };
     }
     case 'cat':
       return { catPetAt: state.time, catPets: (state.catPets ?? 0) + 1 };

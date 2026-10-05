@@ -13,6 +13,8 @@ const FIELDS = {
   'radio-volume': 'value',
   'radio-station': 'value',
   headphones: 'checked',
+  'reduce-motion': 'checked',
+  'large-text': 'checked',
 };
 
 function read(key, fallback) {

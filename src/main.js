@@ -15,6 +15,7 @@ import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
 import { applySharedView, createShare } from './share.js';
 import { restoreSettings } from './settings.js';
+import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
 import { createNotebook } from './notebook.js';
 import { createSchedule } from './schedule.js';
@@ -179,7 +180,8 @@ function postcardInfo(state) {
 function start() {
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
-  restoreSettings(document); // saved panel settings first; a shared link (below) overrides them
+  const savedSettings = restoreSettings(document); // saved panel settings first; a shared link (below) overrides them
+  const a11y = createA11y(document, { savedSettings });
   applySharedView(document, new URLSearchParams(window.location.search));
   const controls = createControls(document);
   const audio = createAudio();
@@ -283,17 +285,19 @@ function start() {
       hudTimer = 0;
       updatePanel(controls, state, input, schedule.boardText(state, destination) ?? arrival.boardText(state, input.targetKmh));
     }
-    const look = pointer.updateLook(dt);
+    const headLook = pointer.updateLook(dt);
+    const look = a11y.calm() ? { x: 0, y: 0 } : headLook; // reduced motion: no swaying point of view
     const strokes = pointer.takeStrokes();
     if (layout.W > 0 && layout.H > 0) {
       if (state.fog > 0.1 && strokes.length > 0) fog.wipe(strokes, layout);
       const view = { ...layout, lookX: look.x, lookY: look.y };
-      render(ctx, view, state, sceneEnvironment(state), { fog, dt, station: radio.station, intention: intention.current(), platform: transfer.sceneAt(now) });
+      render(ctx, view, state, sceneEnvironment(state), { fog, dt, station: radio.station, intention: intention.current(), platform: transfer.sceneAt(now), calm: a11y.calm() });
       scene = { view, state };
       const env = sceneEnvironment(state);
       journal.observe(state, env, view);
       if (env.hail && env.rain > 0.3 && Math.random() < dt * 14) audio.sfx('click', Math.random() * 2 - 1); // hail ticking on the roof
       notebook.observe(state, env);
+      a11y.observe(state, env);
       announcer.observe(state, env, weatherTargets(input, state.time).mode);
       const booms = burstsExploded(state.time - dt, state, env, view);
       if (booms > 0) audio.sfx('boom');

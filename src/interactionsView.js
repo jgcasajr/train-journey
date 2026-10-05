@@ -3,6 +3,7 @@ import { aisleEventAt, beatAt } from './cabin.js';
 import { layerFrame } from './frame.js';
 import { passengerHead } from './passenger.js';
 import { t } from './i18n.js';
+import { canvasTextScale } from './a11y.js';
 
 const FLOAT_SECONDS = 1.8;
 
@@ -32,7 +33,7 @@ export function drawThought(ctx, layout, source) {
   const text = t(source);
   const { u, W } = layout;
   const head = passengerHead(layout);
-  ctx.font = `italic 500 ${u * 2}px Georgia, serif`;
+  ctx.font = `italic 500 ${u * 2 * canvasTextScale()}px Georgia, serif`;
   const w = ctx.measureText(text).width + u * 3;
   const h = u * 4;
   const x = Math.min(Math.max(u, head.x - w / 2 + u * 6), W - w - u);

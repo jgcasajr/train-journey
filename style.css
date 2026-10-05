@@ -536,3 +536,28 @@ input[type="time"] {
 .section > summary::after { content: "▸"; color: var(--muted); transition: transform 0.2s; }
 .section[open] > summary::after { transform: rotate(90deg); }
 .section[open] > summary { margin-bottom: 2px; }
+
+/* ---------- Accessibility ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+body.large-text .panel { font-size: 16px; }
+body.large-text .panel h1 { font-size: 18px; }
+body.large-text .board { font-size: 16px; }
+body.large-text .toast { font-size: 18px; }
+body.large-text .journal, body.large-text .notebook-list { font-size: 16px; }
+body.large-text .hint { font-size: 13px; }
+body.large-text .pill { font-size: 16px; }
+body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after {
+  animation: none !important;
+  transition-duration: 0.01ms !important;
+}

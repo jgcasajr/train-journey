@@ -15,6 +15,7 @@
 </head>
 <body>
   <canvas id="scene" aria-label="Vista da janela de um trem em movimento"></canvas>
+  <div id="scene-desc" class="sr-only" aria-live="polite" data-i18n-skip></div>
 
   <div class="board" aria-hidden="true" data-i18n-skip>
     <span id="hud-km">km 0.0</span><span class="sep">•</span>
@@ -134,6 +135,8 @@
           <option value="en">English</option>
         </select>
       </label>
+      <label class="check"><input type="checkbox" id="reduce-motion"> Movimento reduzido</label>
+      <label class="check"><input type="checkbox" id="large-text"> Texto maior</label>
       <button id="install-btn" type="button" class="hidden">Instalar app</button>
       <button id="reset-settings" type="button">Restaurar configurações</button>
       <p class="hint hint-mouse">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>

@@ -4,6 +4,7 @@ import { passengerHand, passengerHead, passengerOrigin } from './passenger.js';
 import { dishFor } from './dining.js';
 import { nextStation } from './stations.js';
 import { t } from './i18n.js';
+import { canvasTextScale } from './a11y.js';
 import { circle, clamp, hex, lerp, rgba } from './utils.js';
 
 const NAVY = hex('#1f2a44');
@@ -182,7 +183,7 @@ function drawHandCup(ctx, c, [x, y]) {
 
 export function drawBubble(ctx, source, anchor, u, W, tone) {
   const text = t(source);
-  ctx.font = `600 ${u * 2.1}px system-ui, sans-serif`;
+  ctx.font = `600 ${u * 2.1 * canvasTextScale()}px system-ui, sans-serif`;
   const w = ctx.measureText(text).width + u * 2.4;
   const h = u * 3.8;
   const bx = clamp(anchor.x - w / 2, u, W - w - u);

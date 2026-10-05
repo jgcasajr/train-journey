@@ -156,7 +156,9 @@ function renderBaggage(ctx, layout, state, env, ctxOpts) {
 }
 
 /** The whole frame for the car she is in (or the platform scene while she changes trains). */
-export function render(ctx, layout, state, env, { fog, dt, station, intention, platform }) {
+export function render(ctx, layout, state, sceneEnv, { fog, dt, station, intention, platform, calm = false }) {
+  // Reduced motion: no carriage sway and only a faint hint of lightning flashes.
+  const env = calm ? { ...sceneEnv, flash: sceneEnv.flash * 0.15 } : sceneEnv;
   if (platform) {
     drawPlatformScene(ctx, layout, env, platform);
     return;
@@ -169,7 +171,7 @@ export function render(ctx, layout, state, env, { fog, dt, station, intention, p
   }
   const blocked = Math.max(tunnelCoverage(layout, state), passingCoverage(layout, state));
   const L = interiorLighting(env, blocked, { lampMode: state.lampMode, curtains: state.curtains, theme: cabinTheme(state.distance) });
-  const opts = { L, blocked, bob: trainBob(state, layout.u), fog, dt, station, intention };
+  const opts = { L, blocked, bob: calm ? 0 : trainBob(state, layout.u), fog, dt, station, intention };
   if (state.car === 'panorama') renderPanorama(ctx, layout, state, env, opts);
   else if (state.car === 'baggage') renderBaggage(ctx, layout, state, env, opts);
   else if (state.car === 'sleeper') renderSleeper(ctx, layout, state, env, opts);

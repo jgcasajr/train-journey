@@ -204,6 +204,17 @@ No celular a vista vem primeiro: o painel fica guardado atrás do botão ☰ e a
 
 O painel tem no topo os botões de momento (Relaxar, Foco, Respirar, Intenção, Mapa, Foto, Cartão-postal, Compartilhar) e, abaixo, seções que abrem e fecham: **Viagem** (vagão, destino, chegar às, paradas, velocidade), **Céu e clima**, **Som** (som, fones, rádio, volume), **Diário e caderno** e **Ajustes** (idioma, instalar o app, restaurar configurações). Ele **lembra tudo da última vez** — velocidade, hora, clima, estação do ano, paradas, vagão, rádio, volume, fones e quais seções estavam abertas. Um link compartilhado tem prioridade sobre o que estava salvo. O rádio lembrado volta a tocar no primeiro toque na tela (os navegadores só liberam áudio depois de um gesto).
 
+## Acessibilidade
+
+Em **Ajustes**:
+
+- **Movimento reduzido** — sem balanço do vagão, solavancos, "olhar ao redor", clarões de relâmpago nem animações piscando. Já vem ligado se o sistema pede menos movimento.
+- **Texto maior** — painel, letreiro, avisos, diário, caderno e os balões de fala dentro da cena ficam maiores.
+- **Descrição para leitores de tela** — uma região invisível (aria-live) narra a cena quando ela muda: linha e paisagem, período do dia e céu, próxima estação ou a estação onde o trem está parado, e o que a passageira está fazendo; e lê as falas dos personagens ("Fala: Que campo bonito!").
+- Foco visível ao navegar pelo teclado em todos os controles.
+
+As duas opções ficam salvas com as outras configurações.
+
 ## Controles
 
 | Controle | Efeito |
@@ -282,6 +293,7 @@ src/
   install.js    service worker e botão de instalar o app
   share.js      link para compartilhar a vista atual
   settings.js   configurações salvas e seções do painel
+  a11y.js       acessibilidade (movimento reduzido, texto maior, descrição da cena)
   starSky.js    céu da Linha Estelar (Via Láctea, planetas, constelações)
   announcer.js  locutor do rádio (voz sintetizada, crônicas)
   focus.js      modo foco (blocos até estações, pausas nas plataformas)

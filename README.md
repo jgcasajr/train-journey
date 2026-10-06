@@ -81,6 +81,10 @@ No topo do painel, um pequeno objetivo por dia do calendário — o mesmo para t
 
 Botão **Passaporte** (em Diário e caderno): um livreto com uma página dupla por linha. Cada estação onde o trem para ganha um carimbo de borracha na página da sua linha — anel duplo na cor da linha, o ícone da paisagem, o nome da estação, a data da primeira visita e o nome da linha, levemente torto e com falhas de tinta. Estações ainda não visitadas aparecem como círculos tracejados. Nexus carimba nas três linhas (também na baldeação). A página esquerda mostra quantos carimbos faltam; completar uma linha vale uma figurinha. **Baixar imagem** salva a página dupla como PNG. Fica guardado no navegador.
 
+## Gravar a janela
+
+Botão **Gravar** no painel: um **timelapse de 20 s** em que a viagem corre 10× mais rápido (uns 3 minutos e meio de trem — paisagens, estações e o céu mudando), ou um **vídeo de 15 s** no ritmo normal. Grava só a janela e a cabine (o painel fica de fora), direto no navegador, e salva o arquivo no aparelho (MP4 onde o navegador suporta, senão WebM). Um selo "● REC" mostra o tempo que falta; tocar no botão de novo encerra antes. O som não entra no vídeo.
+
 ## Timer de sono
 
 Botão **Dormir** no painel: escolha 15, 30, 45 ou 60 minutos e a viagem vai se despedindo. A passageira adormece na hora, os sons do trem e o rádio vão sumindo devagar na segunda metade do tempo, o locutor se cala e a tela escurece aos poucos até ficar só um "Boa noite 🌙". O botão mostra os minutos que faltam (tocar nele de novo cancela). No fim, um toque na tela ou qualquer tecla acorda tudo: o som volta e o rádio volta à estação de antes. Nada segura a tela acesa, então o aparelho pode apagar sozinho.
@@ -199,7 +203,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 142 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 143 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -372,6 +376,7 @@ src/
   missions.js   missão do dia, com sequência de dias
   realWorld.js  hora e clima reais (relógio do aparelho + Open-Meteo)
   cityNight.js  cidade à noite: brilho no céu, neon e reflexos no vidro
+  recorder.js   gravação em vídeo e timelapse (MediaRecorder)
   animals.js    cavalos a galope, golfinhos e capivaras
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro

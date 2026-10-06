@@ -73,3 +73,11 @@ test('passport stamps: one per station and line, first visit kept, never mutated
   assert.equal(lineComplete(full, 'aurora'), true);
   assert.deepEqual(LINE_PAGES.map((p) => p.stations.length), [10, 9, 8]);
 });
+
+test('recordings pick a supported format and get a telling file name', async () => {
+  const { pickMime, videoName } = await import('../src/recorder.js');
+  assert.equal(pickMime((m) => m.startsWith('video/webm')), 'video/webm;codecs=vp9');
+  assert.equal(pickMime(() => false), null);
+  assert.equal(videoName('timelapse', 12.34, 'video/mp4;codecs=avc1'), 'train-journey-timelapse-km12.3.mp4');
+  assert.equal(videoName('clip', 3, 'video/webm'), 'train-journey-video-km3.0.webm');
+});

@@ -19,6 +19,7 @@ import { createSleepTimer } from './sleepTimer.js';
 import { createPassport } from './passport.js';
 import { createMissions } from './missions.js';
 import { createRealWorld } from './realWorld.js';
+import { createRecorder } from './recorder.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -277,6 +278,18 @@ function start() {
     },
   });
   const realWorld = createRealWorld(document);
+  const recorder = createRecorder(document, {
+    canvas,
+    getKm: () => lineKm(state.distance),
+    onDone: (mode) => {
+      journal.notify(t(mode === 'timelapse' ? '🎬  Timelapse salvo!' : '🎬  Vídeo salvo!'));
+      journal.award('timelapse');
+    },
+    onError: (err) => {
+      console.error('Recording failed:', err);
+      journal.notify(t('Não foi possível gravar o vídeo.'));
+    },
+  });
   const sleep = createSleepTimer(document, { audio, radio, onAsleep: () => journal.award('sleepTimer') });
   const headphones = document.getElementById('headphones');
   headphones.addEventListener('change', () => audio.setHeadphones(headphones.checked));
@@ -301,7 +314,10 @@ function start() {
     const plan = schedule.update(state, destination, read.stops, focusPlan?.target ?? null);
     const input = { ...(plan ? { ...read, targetKmh: plan.kmh } : read), drowsy: sleep.tick(now).drowsy };
     controls.showScheduledSpeed(plan ? plan.kmh : null);
-    state = step(state, dt, { ...input, destination, destinationAt: plan?.stopAt ?? null, events: clicks.takeEvents() });
+    const stepInput = { ...input, destination, destinationAt: plan?.stopAt ?? null };
+    state = step(state, dt, { ...stepInput, events: clicks.takeEvents() });
+    for (let k = 1; k < recorder.speedup(); k++) state = step(state, dt, { ...stepInput, events: [] }); // timelapse
+    recorder.tick(now);
     arrival.update(state, focus.active());
     intention.update(state);
     travelers.observe(state);

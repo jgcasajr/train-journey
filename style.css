@@ -673,3 +673,21 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 .panel input:disabled,
 .panel select:disabled { opacity: 0.4; cursor: not-allowed; }
 #real-world-status:empty { display: none; }
+
+/* ---------- Recording ---------- */
+.rec-badge {
+  position: fixed;
+  top: 14px;
+  left: 16px;
+  z-index: 25;
+  padding: 6px 12px;
+  font: 700 13px/1 system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: rgba(200, 30, 40, 0.85);
+  border-radius: 999px;
+  animation: rec-pulse 1.2s ease-in-out infinite;
+}
+.rec-badge.hidden { display: none; }
+@keyframes rec-pulse { 50% { opacity: 0.55; } }
+#record-btn[aria-pressed="true"] { color: #fff; background: #b8242e; border-color: #7a1820; }

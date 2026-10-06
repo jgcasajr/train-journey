@@ -36,6 +36,7 @@
       <button id="map-btn" type="button" aria-pressed="false">Mapa</button>
       <button id="photo" type="button">Foto</button>
       <button id="postcard" type="button" title="Salva a vista como cartão-postal, com selo e carimbo">Cartão-postal</button>
+      <button id="record-btn" type="button" aria-pressed="false" data-i18n-skip title="Grava a janela em vídeo: 15 s normais ou um timelapse 10× mais rápido">Gravar</button>
       <button id="sleep-btn" type="button" aria-pressed="false" data-i18n-skip title="Timer de sono: a viagem vai escurecendo e silenciando até você dormir">Dormir</button>
       <button id="share-btn" type="button" title="Copia um link que abre esta mesma vista: lugar, hora, clima e vagão">Compartilhar</button>
     </div>
@@ -233,6 +234,19 @@
       <button id="passport-close" type="button">Fechar</button>
     </div>
   </section>
+
+  <section id="record-dialog" class="intention hidden" role="dialog" aria-labelledby="record-title">
+    <p class="arrival-kicker">Gravar a janela</p>
+    <h2 id="record-title">Um vídeo da viagem</h2>
+    <p class="intention-help">Grava só a janela, sem o painel, e salva o arquivo no aparelho. O som não entra no vídeo.</p>
+    <div class="arrival-actions">
+      <button id="record-timelapse" type="button">Timelapse de 20 s (10× mais rápido)</button>
+      <button id="record-clip" type="button">Vídeo de 15 s</button>
+      <button id="record-cancel" type="button">Agora não</button>
+    </div>
+  </section>
+
+  <div id="rec-badge" class="rec-badge hidden" aria-live="polite" data-i18n-skip></div>
 
   <section id="sleep-dialog" class="intention hidden" role="dialog" aria-labelledby="sleep-title">
     <p class="arrival-kicker">Timer de sono</p>

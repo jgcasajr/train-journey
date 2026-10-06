@@ -153,6 +153,7 @@ export const DISCOVERIES = [
   { id: 'missions7', category: 'Conquistas', icon: '🗓️', title: 'Sete missões cumpridas', hint: 'Uma missão por dia, sem pressa.', test: (f) => f.awarded?.has('missions7') },
   { id: 'streak3', category: 'Conquistas', icon: '🔥', title: 'Três dias seguidos', hint: 'Cumpra a missão do dia três dias seguidos.', test: (f) => f.awarded?.has('streak3') },
   { id: 'realSky', category: 'Céu e clima', icon: '📍', title: 'O mesmo céu que o seu', hint: 'Ligue "Hora e clima reais" no painel.', test: (f) => f.awarded?.has('realSky') },
+  { id: 'timelapse', category: 'Conquistas', icon: '🎬', title: 'Diretor de fotografia', hint: 'Grave um vídeo ou timelapse da janela.', test: (f) => f.awarded?.has('timelapse') },
   { id: 'sleepTimer', category: 'Conquistas', icon: '😴', title: 'Bons sonhos', hint: 'Use o timer de sono até o fim.', test: (f) => f.awarded?.has('sleepTimer') },
   { id: 'letterOut', category: 'Conquistas', icon: '✉️', title: 'Carta enviada', hint: 'Compartilhe a vista com uma carta.', test: (f) => f.awarded?.has('letterOut') },
   { id: 'letterIn', category: 'Conquistas', icon: '💌', title: 'Uma carta para você', hint: 'Abra um link que traga uma carta.', test: (f) => f.awarded?.has('letterIn') },

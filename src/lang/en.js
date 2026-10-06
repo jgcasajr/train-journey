@@ -505,6 +505,8 @@ export const EN = {
   'Instale o app pelo painel.': 'Install the app from the panel.',
   'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
+  'Cidade acordada': 'City that never sleeps',
+  'Passe pela cidade grande à noite.': 'Ride through the big city at night.',
   'Hora e clima reais': 'Real time and weather',
   'A hora segue o seu relógio; com sua permissão, o clima e a estação do ano seguem o lugar onde você está (localização aproximada enviada só ao Open-Meteo)': 'The time follows your clock; with your permission, the weather and season follow where you are (approximate location sent only to Open-Meteo)',
   'Buscando o clima onde você está...': 'Looking up the weather where you are...',

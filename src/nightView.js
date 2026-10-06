@@ -14,9 +14,10 @@ export const auroraNight = (dayCount) => hash(dayCount, 2901) < 0.25;
 
 /** How strong the aurora is now (0..1). */
 export function auroraStrength(state, env) {
-  const snow = num(biomeAt(state.distance), 'snow');
-  const chance = Math.max(snow, auroraNight(state.dayCount ?? 0) ? 0.7 : 0);
-  return clamp(darkness(env) * (1 - env.rain * 3) * chance);
+  const bm = biomeAt(state.distance);
+  const chance = Math.max(num(bm, 'snow'), auroraNight(state.dayCount ?? 0) ? 0.7 : 0);
+  const cityLights = 1 - num(bm, 'city') * 0.9; // light pollution washes it out over towns
+  return clamp(darkness(env) * (1 - env.rain * 3) * chance * cityLights);
 }
 
 /** Green curtains with violet hems, rippling slowly across the sky (drawn right after the sky). */

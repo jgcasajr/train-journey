@@ -1,7 +1,8 @@
 import { num } from './biomes.js';
 import { forEachSegment, forEachSlot, layerFrame } from './layers.js';
 import { shade } from './sky.js';
-import { hash, hex, mod, radialGlow, rgba, scale, smoothstep } from './utils.js';
+import { drawNeon, nightness } from './cityNight.js';
+import { hash, hex, mod, radialGlow, rgba, scale } from './utils.js';
 
 const CONCRETE = ['#8d939c', '#a39c91', '#6f7885', '#b5b0a6', '#7d8a95', '#9a8878'].map(hex);
 const GLASS = hex('#34414f');
@@ -12,20 +13,31 @@ const SMOKE = hex('#c8c8c8');
 const WALL = hex('#8c8a84');
 const METAL = hex('#3d4148');
 const LAMP = hex('#ffcf7a');
+const TV = hex('#9ec7ff');
 
-const nightness = (env) => smoothstep(0.55, 0.15, env.light);
+/**
+ * Whether a window is lit now. About one in five is "alive": someone switches the light on or
+ * off every few seconds to a few tens of seconds.
+ */
+function windowLit(key, night, time) {
+  if (hash(key, 408) > 0.2) return hash(key, 404) < 0.45 * night;
+  const period = 5 + hash(key, 411) * 25;
+  return hash(key * 7 + Math.floor((time + hash(key, 412) * period) / period), 413) < 0.5 * night;
+}
 
-function drawWindows(ctx, left, top, w, h, b, env, night) {
+function drawWindows(ctx, left, top, w, h, b, env, night, time) {
   const cols = Math.floor((w - b.cell) / (b.cell * 1.8));
   const rows = Math.floor((h - b.cell) / (b.cell * 2.2));
   if (cols < 1 || rows < 1) return;
   const lit = new Path2D();
   const dark = new Path2D();
+  const tv = new Path2D(); // the bluish flicker of a television
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const isLit = hash(b.id * 977 + r * 31 + c, 404) < 0.45 * night;
+      const key = b.id * 977 + r * 31 + c;
+      const isLit = windowLit(key, night, time);
       if (!isLit && !b.dayWindows) continue;
-      (isLit ? lit : dark).rect(left + b.cell + c * b.cell * 1.8, top + b.cell + r * b.cell * 2.2, b.cell, b.cell * 1.2);
+      (isLit ? (hash(key, 414) < 0.08 ? tv : lit) : dark).rect(left + b.cell + c * b.cell * 1.8, top + b.cell + r * b.cell * 2.2, b.cell, b.cell * 1.2);
     }
   }
   ctx.fillStyle = rgba(shade(GLASS, env, b.haze), 0.7);
@@ -33,6 +45,8 @@ function drawWindows(ctx, left, top, w, h, b, env, night) {
   if (night <= 0) return;
   ctx.fillStyle = rgba(LIT, 0.9 * night);
   ctx.fill(lit);
+  ctx.fillStyle = rgba(TV, night * (0.55 + 0.3 * Math.sin(time * 9 + b.id) * Math.sin(time * 3.1)));
+  ctx.fill(tv);
 }
 
 /** b: { x, y, w, h, id, cell, haze, dayWindows } — y is the ground line. */
@@ -44,7 +58,8 @@ export function drawBuilding(ctx, b, env, time) {
   ctx.fillStyle = body;
   ctx.fillRect(left, top, b.w, b.h);
   if (hash(b.id, 406) < 0.3) ctx.fillRect(b.x - b.w * 0.3, top - b.h * 0.12, b.w * 0.6, b.h * 0.12);
-  drawWindows(ctx, left, top, b.w, b.h, b, env, night);
+  drawWindows(ctx, left, top, b.w, b.h, b, env, night, time);
+  if (b.dayWindows) drawNeon(ctx, b, night, time); // mid-distance blocks only, not the far skyline
   if (hash(b.id, 405) > 0.35 || b.h < b.w * 2) return;
   const tip = top - b.h * 0.25;
   ctx.fillRect(b.x - 0.5, tip, 1.2, b.h * 0.25);

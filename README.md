@@ -137,6 +137,10 @@ Outros bichos: cavalos a galope nos campos e fazendas, apostando corrida com o t
 
 Cada um tem a sua figurinha em Raridades.
 
+## Cidade grande à noite
+
+À noite, a cidade acorda: um brilho âmbar de poluição luminosa sobe atrás dos prédios; parte das janelas acende e apaga sozinha de tempos em tempos (alguém chegou em casa, alguém foi dormir), e algumas piscam o azul de uma televisão; letreiros de neon (rosa, ciano, amarelo, verde, lilás) brilham nas laterais dos prédios, uns falhando. No vidro do trem, as luzes da rua passam como reflexos desfocados, que viram rastros quando o trem corre. A aurora boreal some sobre as cidades — a luz delas apaga o céu.
+
 ## Noite
 
 À noite, **luzes de vilas distantes** piscam ao pé das montanhas do fundo. Nas noites limpas das montanhas nevadas aparece a **aurora boreal** — cortinas verdes com barra violeta ondulando no céu — e, em algumas noites especiais, ela aparece em qualquer paisagem (figurinha "Aurora boreal").
@@ -195,7 +199,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 141 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a Bella (e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 142 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -367,6 +371,7 @@ src/
   passport.js   passaporte: carimbos por estação e linha (passportDraw.js desenha)
   missions.js   missão do dia, com sequência de dias
   realWorld.js  hora e clima reais (relógio do aparelho + Open-Meteo)
+  cityNight.js  cidade à noite: brilho no céu, neon e reflexos no vidro
   animals.js    cavalos a galope, golfinhos e capivaras
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro

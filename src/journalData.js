@@ -23,6 +23,7 @@ import { reunionAt, runnerAt, stopElapsed, vendorAt } from './stationPeople.js';
 import { FIELDS_DEPTH } from './landscape.js';
 import { deerInView, whaleAt } from './wildlife.js';
 import { bellaAt } from './bella.js';
+import { cityNight } from './cityNight.js';
 import { capybarasInView, dolphinsAt, herdInView } from './animals.js';
 
 export const BIOME_ICONS = {
@@ -125,6 +126,7 @@ export const DISCOVERIES = [
   { id: 'herd', category: 'Pelo caminho', icon: '🐎', title: 'Cavalos a galope', hint: 'Nos campos, às vezes eles apostam corrida com o trem.', test: (f) => f.herd },
   { id: 'dolphins', category: 'Raridades', icon: '🐬', title: 'Golfinhos', hint: 'Saltos no mar aberto.', test: (f) => f.dolphins },
   { id: 'capybaras', category: 'Pelo caminho', icon: '🦫', title: 'Família de capivaras', hint: 'Na beira do lago.', test: (f) => f.capybaras },
+  { id: 'cityNight', category: 'Pelo caminho', icon: '🌃', title: 'Cidade acordada', hint: 'Passe pela cidade grande à noite.', test: (f) => f.cityNight },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
   { id: 'arrival', category: 'Marcos', icon: '🏁', title: 'Chegada ao destino', hint: 'Escolha um destino no painel.', test: (f) => f.arrival },
   { id: 'km10', category: 'Marcos', icon: '🛤️', title: '10 km de viagem', hint: 'Continue a viagem.', test: (f) => f.traveled >= 10000 },
@@ -207,6 +209,7 @@ export function factsFrom({ state, env, view, traveled }) {
     deer: deerInView(view, state).some((d) => d.x > view.win.x && d.x < view.win.x + view.win.w),
     fireworks: fireworkBursts(state, env, view).some((b) => b.age > 0.5),
     whale: whaleAt(state, view) !== null,
+    cityNight: cityNight(state, env) > 0.7,
     bella: (bellaAt(state)?.t ?? 0) > 4 && bellaAt(state).alpha > 0.8,
     bellaPets: state.bellaPets ?? 0,
     herd: (herdInView(view, state) ?? []).some((h) => h.x > view.win.x && h.x < view.win.x + view.win.w),

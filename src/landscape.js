@@ -5,6 +5,7 @@ import { drawViaduct } from './viaduct.js';
 import { drawCircus } from './rareEvents.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
+import { drawCityGlow } from './cityNight.js';
 import { drawBoats, drawLighthouses } from './coast.js';
 import { drawCropPatches, drawFarmProp, drawFence, farmPropKind } from './farm.js';
 import { acrossGradient, fillRidge, forEachSlot, layerFrame, traceRidge } from './layers.js';
@@ -330,6 +331,7 @@ export function drawLandscape(ctx, layout, state, env) {
   drawMountains(ctx, layout, state, env, MOUNTAINS[1]);
   drawMirage(ctx, layout, state, env);
   drawBalloons(ctx, layout, state, env);
+  drawCityGlow(ctx, layout, state, env);
   drawSkyline(ctx, layout, state, env);
   drawWater(ctx, layout, state, env);
   drawHills(ctx, layout, state, env);

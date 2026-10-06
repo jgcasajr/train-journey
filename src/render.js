@@ -11,6 +11,7 @@ import { drawCompanion } from './companionView.js';
 import { drawDiningRoom, drawDiningTable } from './diningView.js';
 import { LOOK_FAR } from './frame.js';
 import { drawDrops, drawGlass } from './glass.js';
+import { drawCityReflections } from './cityNight.js';
 import { drawFloats, drawSpeech, drawThought } from './interactionsView.js';
 import {
   drawCord, drawCurtains, drawRadio, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
@@ -71,6 +72,7 @@ function drawOutside(ctx, view, state, env, { L, blocked, bob, fog, dt, alone = 
     ctx.fillRect(win.x, win.y, win.w, win.h);
   }
   if (!alone) drawReflection(ctx, view, state, L); // no one sits by the baggage door
+  drawCityReflections(ctx, view, state, env);
   drawGlass(ctx, view, L);
   fog.draw(ctx, view, state.fog, dt);
   drawDrops(ctx, view, state, falling === 'rain' ? state.rain : 0);

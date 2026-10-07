@@ -1,9 +1,11 @@
 import { STYLES, epiano, pad, tuning } from './radioStyles.js';
+import { THEMES, scheduleLandscape } from './landscapeMusic.js';
 
 // The cabin radio: generative stations played through a soft echo, with its own AudioContext
-// (independent of the train sounds). 'ambient' is the slow pad music of relax mode.
-export const STATIONS = ['off', 'ambient', 'lofi', 'classical', 'bossa'];
-export const STATION_NAMES = { off: 'Desligado', ambient: 'Ambiente', lofi: 'Lo-fi', classical: 'Clássica', bossa: 'Bossa nova' };
+// (independent of the train sounds). 'ambient' is the slow pad music of relax mode;
+// 'landscape' follows the view (see landscapeMusic.js).
+export const STATIONS = ['off', 'landscape', 'ambient', 'lofi', 'classical', 'bossa'];
+export const STATION_NAMES = { off: 'Desligado', landscape: 'Paisagem', ambient: 'Ambiente', lofi: 'Lo-fi', classical: 'Clássica', bossa: 'Bossa nova' };
 
 const LOOKAHEAD = 0.3; // seconds scheduled ahead
 const TICK_MS = 60;
@@ -69,13 +71,14 @@ export function createRadio({ onChange = () => {} } = {}) {
   let volumeLevel = 0.8;
   let duckLevel = 1; // lowered while the announcer talks
   let fadeLevel = 1; // the sleep timer fades the music out
+  let scene = { biome: 'Campos', night: false }; // what the window shows, for the landscape station
   const level = () => Math.max(0.0001, volumeLevel * duckLevel * fadeLevel);
 
   function tick() {
     const horizon = graph.ac.currentTime + LOOKAHEAD;
-    cursor = station === 'ambient'
-      ? scheduleAmbient(graph, cursor, horizon)
-      : scheduleStyle(graph, STYLES[station], cursor, horizon);
+    if (station === 'landscape') cursor = scheduleLandscape(graph, cursor, horizon, () => scene);
+    else if (station === 'ambient') cursor = scheduleAmbient(graph, cursor, horizon);
+    else cursor = scheduleStyle(graph, STYLES[station], cursor, horizon);
   }
 
   async function tune(next) {
@@ -93,7 +96,7 @@ export function createRadio({ onChange = () => {} } = {}) {
     const now = graph.ac.currentTime;
     graph.volume.gain.setTargetAtTime(level(), now, 0.3);
     tuning(graph, now);
-    cursor = { step: 0, time: now + 0.5, noteAt: now + 2 };
+    cursor = { step: 0, time: now + 0.5, noteAt: now + 2, theme: THEMES[scene.biome] ? scene.biome : 'Campos' };
     tick();
     timer = setInterval(tick, TICK_MS);
   }
@@ -118,6 +121,10 @@ export function createRadio({ onChange = () => {} } = {}) {
     fade(factor) {
       fadeLevel = Math.max(0, Math.min(1, factor));
       if (graph && station !== 'off') graph.volume.gain.setTargetAtTime(level(), graph.ac.currentTime, 0.5);
+    },
+    /** What the window shows now (biome name, night), followed by the landscape station. */
+    setScene(biome, night) {
+      if (biome !== scene.biome || night !== scene.night) scene = { biome, night };
     },
     /** Soft bell for timer changes (only audible once the radio has been used). */
     bell() {

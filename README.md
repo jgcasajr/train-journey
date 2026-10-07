@@ -189,6 +189,24 @@ Um radinho antigo no parapeito da janela: clique nele para trocar de estação (
 
 Ao trocar de estação ouve-se o chiado de sintonia; com o rádio ligado o mostrador acende e as notinhas sobem.
 
+## Trilha da janela
+
+No rádio, a estação **Paisagem** toca uma trilha gerada na hora que acompanha o que passa pela janela — cada paisagem tem seu tema, com escala, instrumentos e andamento próprios:
+
+- **Campos**: folk em Sol, violão dedilhado e flauta
+- **Fazenda**: "boom-chick" caipira em Ré
+- **Floresta**: Ré dórico, pads, flauta errante e um pica-pau de vez em quando
+- **Montanhas**: Mi menor em quintas abertas, um zumbido grave e sinos ecoando
+- **Outono**: arpejos de piano em Lá menor, em 6/8
+- **Subúrbio**: lo-fi tranquilo em Fá
+- **Cidade**: jazz, com baixo caminhante, acordes com sétima e chimbal com swing
+- **Litoral**: pentatônica leve com marimba e um chocalho como a espuma do mar
+- **Deserto**: Mi frígio dominante sobre um bordão, tambor de moldura e flauta ornamentada
+- **Vinhedos**: valsa em Fá
+- **Lago**: Fá lídio, pads longos e notas de vidro
+
+O tema muda só no fim de uma frase musical, sem cortar no meio do compasso. À noite tudo fica mais suave: sem bateria e com menos notas.
+
 ## Locutor
 
 Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio navegador, ele anuncia a próxima estação e a chegada ("Estação Nexus. Desembarque com cuidado..."), os marcos do dia (6h, meio-dia, 18h, meia-noite), mudanças de clima, noites de chuva de meteoros e, a cada ~6 minutos, lê uma **crônica da viagem** sobre a paisagem do momento ("no outono as árvores ensinam a soltar..."). A música do rádio baixa sozinha enquanto ele fala. Fala em português ou inglês, conforme o idioma escolhido. A voz depende das vozes instaladas no sistema.
@@ -377,6 +395,7 @@ src/
   realWorld.js  hora e clima reais (relógio do aparelho + Open-Meteo)
   cityNight.js  cidade à noite: brilho no céu, neon e reflexos no vidro
   recorder.js   gravação em vídeo e timelapse (MediaRecorder)
+  landscapeMusic.js  estação Paisagem: um tema musical por paisagem
   animals.js    cavalos a galope, golfinhos e capivaras
   audio.js      som gerado com Web Audio (sem arquivos)
   controls.js   painel e letreiro

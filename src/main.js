@@ -325,6 +325,7 @@ function start() {
     breathing.update(dt, state.speed);
     transfer.update(state);
     playSounds(audio, state);
+    radio.setScene(biomeName(state.distance), sceneEnvironment(state).sunElev < -0.1);
     passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue, aislePan(state)));
     const baby = companionLine(state, null);
     const babyLine = baby?.who === 'b' ? baby.text : null;

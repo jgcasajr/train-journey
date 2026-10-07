@@ -505,6 +505,8 @@ export const EN = {
   'Instale o app pelo painel.': 'Install the app from the panel.',
   'Fones de ouvido (som espacial)': 'Headphones (spatial sound)',
   'Caderno': 'Notebook',
+  'Paisagem (trilha da janela)': 'Landscape (soundtrack of the view)',
+  'Paisagem': 'Landscape',
   'Gravar': 'Record',
   'Grava a janela em vídeo: 15 s normais ou um timelapse 10× mais rápido': 'Records the window as a video: 15 s at normal speed or a 10× faster timelapse',
   'Gravar a janela': 'Record the window',

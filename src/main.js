@@ -20,6 +20,7 @@ import { createPassport } from './passport.js';
 import { createMissions } from './missions.js';
 import { createRealWorld } from './realWorld.js';
 import { createRecorder } from './recorder.js';
+import { HOLIDAYS, createCalendar } from './calendar.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -70,7 +71,9 @@ function resizeCanvas(canvas, ctx) {
 /** The Star Line keeps the sky between 22h and 1h, whatever the clock says. */
 const skyTime = (state) => (nightLine(state.distance) ? (0.92 + (state.dayTime % 1) * 0.12) % 1 : state.dayTime);
 
-const sceneEnvironment = (state) => environment(skyTime(state), {
+const calendar = createCalendar(new URLSearchParams(window.location.search));
+
+const sceneEnvironment = (state) => ({ ...environment(skyTime(state), {
   rain: state.rain,
   storm: state.storm,
   wetness: state.wetness,
@@ -79,7 +82,7 @@ const sceneEnvironment = (state) => environment(skyTime(state), {
   moonPhase: moonPhase(state.dayCount, state.dayTime),
   wind: windAt(state),
   hail: hailAt(state),
-});
+}), holiday: calendar.current(), time: state.time });
 
 /** Where the aisle character is, left (-1) to right (1), for their sounds. */
 function aislePan(state) {
@@ -278,6 +281,8 @@ function start() {
     },
   });
   const realWorld = createRealWorld(document);
+  const holiday = HOLIDAYS[calendar.current()];
+  if (holiday) setTimeout(() => journal.notify(`${holiday.icon}  ${t(holiday.greeting)}`), 4000);
   const bellaAboardBox = document.getElementById('bella-aboard');
   const recorder = createRecorder(document, {
     canvas,

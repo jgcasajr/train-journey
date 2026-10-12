@@ -6,6 +6,7 @@ import { drawCircus } from './rareEvents.js';
 import { drawBridges, drawRiverBand } from './bridge.js';
 import { drawCityBlock, drawSkyline, drawStreetside } from './city.js';
 import { drawCityGlow } from './cityNight.js';
+import { drawKites } from './holidayView.js';
 import { drawBoats, drawLighthouses } from './coast.js';
 import { drawCropPatches, drawFarmProp, drawFence, farmPropKind } from './farm.js';
 import { acrossGradient, fillRidge, forEachSlot, layerFrame, traceRidge } from './layers.js';
@@ -55,6 +56,7 @@ function houseStyle(id, env, haze) {
     wall: rgba(shade(WALLS[Math.floor(hash(id, 302) * WALLS.length)], env, haze)),
     roof: rgba(shade(snowCover(ROOFS[Math.floor(hash(id, 303) * ROOFS.length)], env, 0.85), env, haze)),
     window: lit ? rgba(LAMP) : rgba(shade(DARK_GLASS, env, haze)),
+    lights: env.holiday === 'natal' && hash(id, 304) < 0.6 ? { env, id } : null, // Christmas
   };
 }
 
@@ -335,6 +337,7 @@ export function drawLandscape(ctx, layout, state, env) {
   drawSkyline(ctx, layout, state, env);
   drawWater(ctx, layout, state, env);
   drawHills(ctx, layout, state, env);
+  if (env.holiday === 'criancas') drawKites(ctx, layout, state, env);
   drawFields(ctx, layout, state, env);
   drawParallelRoad(ctx, layout, state, env);
   drawNear(ctx, layout, state, env);

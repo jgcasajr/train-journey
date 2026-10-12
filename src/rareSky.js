@@ -67,10 +67,11 @@ function drawStreak(ctx, layout, star) {
 /** A fireworks show happens over the city at dusk or night, some of the time. */
 function showAt(state, env, layout) {
   if (env.light > 0.35 || env.rain > 0.3) return null;
+  const newYear = env.holiday === 'anoNovo'; // New Year's Eve: fireworks over every landscape, every show
   const ahead = state.distance + layout.win.w / layout.px / 2;
-  if (num(biomeAt(ahead), 'city') < 0.6) return null;
+  if (!newYear && num(biomeAt(ahead), 'city') < 0.6) return null;
   const k = Math.floor(state.time / SHOW_PERIOD);
-  if (hash(k, 2111) > 0.6) return null;
+  if (!newYear && hash(k, 2111) > 0.6) return null;
   const start = k * SHOW_PERIOD + hash(k, 2112) * (SHOW_PERIOD - SHOW_SECONDS);
   return state.time >= start && state.time <= start + SHOW_SECONDS ? { k, start } : null;
 }

@@ -25,6 +25,7 @@ import { deerInView, whaleAt } from './wildlife.js';
 import { bellaAt } from './bella.js';
 import { bellaWaitsAt } from './bellaPlatform.js';
 import { cityNight } from './cityNight.js';
+import { HOLIDAYS } from './calendar.js';
 import { capybarasInView, dolphinsAt, herdInView } from './animals.js';
 
 export const BIOME_ICONS = {
@@ -131,6 +132,9 @@ export const DISCOVERIES = [
   { id: 'capybaras', category: 'Pelo caminho', icon: '🦫', title: 'Família de capivaras', hint: 'Na beira do lago.', test: (f) => f.capybaras },
   { id: 'cityNight', category: 'Pelo caminho', icon: '🌃', title: 'Cidade acordada', hint: 'Passe pela cidade grande à noite.', test: (f) => f.cityNight },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
+  ...Object.entries(HOLIDAYS).map(([id, h]) => ({
+    id: `holiday:${id}`, category: 'Raridades', icon: h.icon, title: h.title, hint: 'Uma data especial do calendário.', test: (f) => f.holiday === id,
+  })),
   { id: 'arrival', category: 'Marcos', icon: '🏁', title: 'Chegada ao destino', hint: 'Escolha um destino no painel.', test: (f) => f.arrival },
   { id: 'km10', category: 'Marcos', icon: '🛤️', title: '10 km de viagem', hint: 'Continue a viagem.', test: (f) => f.traveled >= 10000 },
   { id: 'km100', category: 'Conquistas', icon: '🏆', title: '100 km de viagem', hint: 'Uma jornada de verdade.', test: (f) => f.traveled >= 100000 },
@@ -214,6 +218,7 @@ export function factsFrom({ state, env, view, traveled }) {
     fireworks: fireworkBursts(state, env, view).some((b) => b.age > 0.5),
     whale: whaleAt(state, view) !== null,
     cityNight: cityNight(state, env) > 0.7,
+    holiday: env.holiday ?? null,
     bella: ((bellaAt(state)?.t ?? 0) > 4 && bellaAt(state).alpha > 0.8) || Boolean(state.bellaAboard),
     bellaAboard: Boolean(state.bellaAboard),
     bellaPets: state.bellaPets ?? 0,

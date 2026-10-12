@@ -16,9 +16,9 @@ const PLANE_SECONDS = 28;
 // ---------- Festa junina at country stations ----------
 
 /** Some days a country station throws a festa junina (flags over the platform, a bonfire). */
-export function festaAt(state, st) {
+export function festaAt(state, st, holiday = null) {
   if (st.grand || st.nexus) return false;
-  return hash(st.id * 31 + (state.dayCount ?? 0), 3401) < 0.3;
+  return hash(st.id * 31 + (state.dayCount ?? 0), 3401) < (holiday === 'junina' ? 0.75 : 0.3); // June: festa season
 }
 
 function drawBunting(ctx, g, x0, x1, y, time) {

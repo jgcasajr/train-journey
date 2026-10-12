@@ -1,4 +1,5 @@
 import { circle } from './utils.js';
+import { drawRoofLights } from './holidayView.js';
 
 const BRANCHES = [[0, -0.5, -0.28, -0.85], [0, -0.45, 0.3, -0.8], [0, -0.6, 0.05, -1.0], [-0.14, -0.7, -0.3, -0.72], [0.16, -0.66, 0.34, -0.62]];
 const BLOSSOM_SPOTS = [[-0.12, -0.8], [0.14, -0.74], [-0.24, -0.58], [0.26, -0.56], [0.02, -0.62], [-0.05, -0.92], [0.18, -0.9]];
@@ -108,7 +109,7 @@ export function drawTree(ctx, type, x, y, s, style) {
   return drawRound(ctx, x, y, s, style);
 }
 
-export function drawHouse(ctx, x, y, s, { wall, roof, window }) {
+export function drawHouse(ctx, x, y, s, { wall, roof, window, lights = null }) {
   const h = s * 0.6;
   ctx.fillStyle = wall;
   ctx.fillRect(x - s / 2, y - h, s, h);
@@ -121,6 +122,7 @@ export function drawHouse(ctx, x, y, s, { wall, roof, window }) {
   ctx.fillStyle = window;
   ctx.fillRect(x - s * 0.28, y - h * 0.7, s * 0.18, h * 0.3);
   ctx.fillRect(x + s * 0.1, y - h * 0.7, s * 0.18, h * 0.3);
+  if (lights) drawRoofLights(ctx, x, y, s, lights.env, lights.id);
 }
 
 export function drawBush(ctx, x, y, s, fill) {

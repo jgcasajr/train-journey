@@ -1,5 +1,5 @@
 import { BRAND } from './brand.js';
-import { currentLang, t } from './i18n.js';
+import { dateLocale, t } from './i18n.js';
 
 const STORAGE_KEY = 'train-journey:intention:v1';
 const MAX_LENGTH = 160;
@@ -32,7 +32,7 @@ function element(doc, id) {
 }
 
 const clean = (text) => text.replace(/\s+/g, ' ').trim().slice(0, MAX_LENGTH);
-const dateOf = (iso) => new Date(iso).toLocaleDateString(currentLang() === 'pt' ? 'pt-BR' : 'en-GB');
+const dateOf = (iso) => new Date(iso).toLocaleDateString(dateLocale());
 
 /** Where the intention comes back: the Nexus station, or the chosen destination. */
 function returnPlace(state) {

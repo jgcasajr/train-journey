@@ -20,6 +20,14 @@ test('patterns translate sentences with names and places', () => {
   assert.match(t('Te escrevi uma carta do trem (Linha Aurora, km 3.0, Campo). Abra para ler e ver a mesma vista:'), /^I wrote you a letter/);
 });
 
+test('runtime sentences of the newer features translate', () => {
+  assert.equal(t('3 dias seguidos'), '3 days in a row');
+  assert.equal(t('6 de 10 carimbos'), '6 of 10 stamps');
+  assert.equal(t('Hora real: 06:21.'), 'Real time: 06:21.');
+  assert.equal(t('Hora real: 06:21 · lá fora: chuva (neve) · atualizado às 06:21'), 'Real time: 06:21 · outside: rain (snow) · updated at 06:21');
+  assert.equal(t('Só a hora real (06:21): sem localização para o clima.'), 'Real time only (06:21): no location for the weather.');
+});
+
 test('unknown and empty text pass through untouched', () => {
   assert.equal(t('Xyzzy'), 'Xyzzy');
   assert.equal(t(''), '');

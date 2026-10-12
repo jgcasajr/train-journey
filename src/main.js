@@ -9,7 +9,7 @@ import { createJournal } from './journal.js';
 import { initialState, stationInfo, step, trainBob } from './journey.js';
 import { createModes } from './modes.js';
 import { moonPhase } from './moon.js';
-import { currentLang, t } from './i18n.js';
+import { dateLocale, t } from './i18n.js';
 import { showSplash } from './brand.js';
 import { createIntention } from './intention.js';
 import { setupInstall } from './install.js';
@@ -185,7 +185,7 @@ function postcardInfo(state) {
     biome: biomeName(state.distance),
     station: state.dwell > 0 ? state.served?.name ?? null : null,
     clock: `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
-    date: new Date().toLocaleDateString(currentLang() === 'pt' ? 'pt-BR' : 'en-GB'),
+    date: new Date().toLocaleDateString(dateLocale()),
   };
 }
 

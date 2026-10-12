@@ -1,7 +1,10 @@
 import { EN, EN_PATTERNS } from './lang/en.js';
+import { ES } from './lang/es.js';
+import { ES_PATTERNS } from './lang/esPatterns.js';
 
 const STORAGE_KEY = 'train-journey:lang';
-const LANGS = ['pt', 'en'];
+const LANGS = ['pt', 'en', 'es'];
+const HTML_LANG = { pt: 'pt-BR', en: 'en', es: 'es' };
 const ATTRS = ['title', 'aria-label', 'placeholder'];
 
 function initialLang() {
@@ -13,27 +16,41 @@ function initialLang() {
   } catch (err) {
     console.warn('Language preference unavailable:', err);
   }
-  return navigator.language?.toLowerCase().startsWith('pt') ? 'pt' : 'en';
+  const device = navigator.language?.toLowerCase() ?? '';
+  if (device.startsWith('pt')) return 'pt';
+  return device.startsWith('es') ? 'es' : 'en';
 }
 
 let lang = initialLang();
 let listeners = [];
 const original = new WeakMap(); // DOM text node / element → its Portuguese text(s)
 
-const lowerKeys = new Map(Object.entries(EN).map(([pt, en]) => [pt.toLowerCase(), en.toLowerCase()]));
-
-function toEnglish(text) {
-  if (EN[text] !== undefined) return EN[text];
-  const lower = lowerKeys.get(text);
-  if (lower !== undefined) return lower;
-  for (const [re, fn] of EN_PATTERNS) {
-    const m = text.match(re);
-    if (m) return fn(toEnglish, ...m.slice(1));
-  }
-  return text;
+/**
+ * A translator into one language: exact dictionary entries, their lowercase forms, then the
+ * patterns for strings built at runtime. Anything unknown stays in Portuguese.
+ */
+function translator(dict, patterns) {
+  const lowerKeys = new Map(Object.entries(dict).map(([pt, tr]) => [pt.toLowerCase(), tr.toLowerCase()]));
+  const translate = (text) => {
+    if (dict[text] !== undefined) return dict[text];
+    const lower = lowerKeys.get(text);
+    if (lower !== undefined) return lower;
+    for (const [re, fn] of patterns) {
+      const m = text.match(re);
+      if (m) return fn(translate, ...m.slice(1));
+    }
+    return text;
+  };
+  return translate;
 }
 
+const TRANSLATORS = { en: translator(EN, EN_PATTERNS), es: translator(ES, ES_PATTERNS) };
+
 export const currentLang = () => lang;
+
+/** Locale for dates and for the announcer's voice in the current language. */
+export const dateLocale = () => ({ pt: 'pt-BR', en: 'en-GB', es: 'es-ES' })[lang];
+export const voiceLocale = () => ({ pt: 'pt-BR', en: 'en-US', es: 'es-ES' })[lang];
 
 /** Runs `fn` after every language switch (for text that scripts set once). */
 export function onLangChange(fn) {
@@ -43,7 +60,7 @@ export function onLangChange(fn) {
 /** Translates a Portuguese UI/dialogue string into the current language. */
 export function t(text) {
   if (lang === 'pt' || typeof text !== 'string' || text === '') return text;
-  return toEnglish(text);
+  return TRANSLATORS[lang](text);
 }
 
 function translateTextNode(node) {
@@ -73,7 +90,7 @@ export function translateDom(root) {
   for (let n = walker.nextNode(); n; n = walker.nextNode()) nodes.push(n);
   nodes.forEach(translateTextNode);
   root.querySelectorAll(ATTRS.map((a) => `[${a}]`).join(',')).forEach(translateAttributes);
-  root.ownerDocument.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  root.ownerDocument.documentElement.lang = HTML_LANG[lang];
 }
 
 /** Switches language, remembers it and re-translates the page. */

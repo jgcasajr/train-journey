@@ -239,7 +239,7 @@ O tema muda só no fim de uma frase musical, sem cortar no meio do compasso. À 
 
 ## Locutor
 
-Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio navegador, ele anuncia a próxima estação e a chegada ("Estação Nexus. Desembarque com cuidado..."), os marcos do dia (6h, meio-dia, 18h, meia-noite), mudanças de clima, noites de chuva de meteoros e, a cada ~6 minutos, lê uma **crônica da viagem** sobre a paisagem do momento ("no outono as árvores ensinam a soltar..."). A música do rádio baixa sozinha enquanto ele fala. Fala em português ou inglês, conforme o idioma escolhido. A voz depende das vozes instaladas no sistema.
+Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio navegador, ele anuncia a próxima estação e a chegada ("Estação Nexus. Desembarque com cuidado..."), os marcos do dia (6h, meio-dia, 18h, meia-noite), mudanças de clima, noites de chuva de meteoros e, a cada ~6 minutos, lê uma **crônica da viagem** sobre a paisagem do momento ("no outono as árvores ensinam a soltar..."). A música do rádio baixa sozinha enquanto ele fala. Fala em português, inglês ou espanhol, conforme o idioma escolhido. A voz depende das vozes instaladas no sistema.
 
 ## Modos de uso
 
@@ -314,7 +314,7 @@ As duas opções ficam salvas com as outras configurações.
 | Clima | Automático, limpo, chuva ou tempestade |
 | Estação do ano | Automática, primavera, verão, outono ou inverno |
 | Parar nas estações | Liga/desliga as paradas (desligado, o trem passa direto) |
-| Idioma | Português ou English — troca na hora, sem reiniciar a viagem (lembrado no navegador; `?lang=en` na URL também funciona) |
+| Idioma | Português, English ou Español — troca na hora, sem reiniciar a viagem (lembrado no navegador; `?lang=en` ou `?lang=es` na URL também funcionam; sem escolha, segue o idioma do aparelho) |
 | Som | Ativa o áudio (navegadores exigem um clique) |
 | Fones de ouvido | Som espacial: o "tum-tum" dos trilhos vem do truque da frente (direita) e depois do de trás (esquerda), o trem que cruza passa da direita para a esquerda, o sino da passagem de nível vem da frente, o trovão cai de um lado, os sons do corredor acompanham o personagem, cada clique soa do lado em que você clicou e a chuva bate no vidro de um lado. Sem fones, a separação fica suave para caixas de som |
 | Mover o mouse | Olhar ao redor |
@@ -393,6 +393,7 @@ src/
   postcard.js   composição do cartão-postal (foto, selo, carimbo, recado)
   i18n.js       idioma: t() traduz textos na exibição, troca ao vivo PT/EN
   lang/en.js    dicionário português → inglês (frases e padrões)
+  lang/es.js    dicionário português → espanhol (esPatterns.js: frases montadas na hora)
   interactions.js o que foi clicado (hit-test)
   events.js     efeito de cada clique no estado (falas, gole, freio...)
   interactionsView.js textos flutuantes e falas da passageira

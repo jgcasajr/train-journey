@@ -1,5 +1,5 @@
 import { biomeName } from './biomes.js';
-import { currentLang, t } from './i18n.js';
+import { currentLang, t, voiceLocale } from './i18n.js';
 import { meteorNight } from './moon.js';
 import { nextStation } from './stations.js';
 import { hash } from './utils.js';
@@ -77,7 +77,7 @@ export function createAnnouncer(doc, { radio }) {
     if (!synth || !box.checked) return;
     if (synth.pending) synth.cancel(); // never pile up stale news
     const u = new SpeechSynthesisUtterance(t(text));
-    u.lang = currentLang() === 'pt' ? 'pt-BR' : 'en-US';
+    u.lang = voiceLocale();
     const voice = synth.getVoices().find((v) => v.lang?.toLowerCase().startsWith(u.lang.slice(0, 2)));
     if (voice) u.voice = voice;
     u.rate = 1;

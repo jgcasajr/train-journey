@@ -1,4 +1,5 @@
 import { lit } from './interior.js';
+import { currentLook } from './passenger.js';
 import { circle, hex, rgba } from './utils.js';
 
 const QUILT = ['#5b43a8', '#3b6fa0', '#c9b4f0', '#e8dcc0'].map(hex);
@@ -7,8 +8,6 @@ const SHEET_SHADE = hex('#d9d2c4');
 const WOOD = hex('#5a3524');
 const WOOD_DARK = hex('#3a2218');
 const BRASS = hex('#b08d57');
-const SKIN = hex('#d8a07c');
-const HAIR = hex('#2e1d14');
 const LAMP = hex('#ffd28c');
 
 /** On wide screens the berth is drawn bigger (she would look tiny scaled by the height alone). */
@@ -119,11 +118,11 @@ function drawHead(ctx, layout, L, b, awake) {
   ctx.beginPath();
   ctx.roundRect(head.x - u * 8, b.top - u * 3.6, u * 13, u * 4.4, u * 2);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(HAIR, L));
+  ctx.fillStyle = rgba(lit(currentLook().hair, L));
   ctx.beginPath();
   ctx.ellipse(head.x - u * 2.4, head.y + u * 0.6, u * 4.8, u * 2.4, -0.1, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(SKIN, L));
+  ctx.fillStyle = rgba(lit(currentLook().skin, L));
   ctx.beginPath();
   ctx.ellipse(head.x, head.y - u * 0.4, u * 3, u * 2.6, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -132,11 +131,11 @@ function drawHead(ctx, layout, L, b, awake) {
   ctx.moveTo(head.x + u * 0.6, head.y - u * 2.8);
   ctx.quadraticCurveTo(head.x + u * 1.3, head.y - u * 3.9, head.x + u * 1.9, head.y - u * 2.7);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(HAIR, L));
+  ctx.fillStyle = rgba(lit(currentLook().hair, L));
   ctx.beginPath();
   ctx.arc(head.x - u * 0.8, head.y - u * 0.6, u * 3.1, Math.PI * 0.55, Math.PI * 1.45);
   ctx.fill();
-  ctx.strokeStyle = rgba(lit(HAIR, L));
+  ctx.strokeStyle = rgba(lit(currentLook().hair, L));
   ctx.lineWidth = Math.max(1, u * 0.35);
   ctx.beginPath();
   if (awake) circle(ctx, head.x + u * 0.2, head.y - u * 1.6, u * 0.4);

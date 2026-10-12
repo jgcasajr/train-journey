@@ -81,3 +81,13 @@ test('recordings pick a supported format and get a telling file name', async () 
   assert.equal(videoName('timelapse', 12.34, 'video/mp4;codecs=avc1'), 'train-journey-timelapse-km12.3.mp4');
   assert.equal(videoName('clip', 3, 'video/webm'), 'train-journey-video-km3.0.webm');
 });
+
+test('the passenger look takes valid choices and falls back for anything else', async () => {
+  const { DEFAULT_LOOK, lookFrom } = await import('../src/appearance.js');
+  const look = lookFrom({ hairColor: 'ruivo', hairStyle: 'solto', skin: 'negra', sweater: 'verde', pants: 'jeans', glasses: true });
+  assert.deepEqual(look.hair, [138, 58, 30]);
+  assert.equal(look.hairStyle, 'solto');
+  assert.equal(look.glasses, true);
+  assert.equal(look.beard, false);
+  assert.deepEqual(lookFrom({ hairColor: '<script>', hairStyle: 'moicano', glasses: 'yes' }), DEFAULT_LOOK);
+});

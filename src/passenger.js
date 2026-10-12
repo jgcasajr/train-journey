@@ -2,12 +2,15 @@ import { aisleEventAt, beatAt, cupWithPassenger } from './cabin.js';
 import { companionLine } from './companion.js';
 import { passerbyAt, passerbyLine } from './passersby.js';
 import { lit } from './interior.js';
+import { DEFAULT_LOOK } from './appearance.js';
 import { circle, clamp, hex, mix, rgba } from './utils.js';
 
-const SKIN = hex('#d8a07c');
-const HAIR = hex('#2e1d14');
-const SWEATER = hex('#c07a36');
-const PANTS = hex('#2c3750');
+let look = DEFAULT_LOOK; // chosen in the panel (see appearance.js)
+
+/** Sets how she looks (a whole new look object; see lookFrom). */
+export const setLook = (next) => { look = next; };
+/** The current look (for the other views that draw her, like the sleeper berth). */
+export const currentLook = () => look;
 const WHITE = hex('#ffffff');
 const BOOK = hex('#2f4f6f');
 const PAGE = hex('#f3ecd8');
@@ -63,7 +66,7 @@ function drawSeat(ctx, L) {
 }
 
 function drawLegs(ctx, L) {
-  ctx.strokeStyle = rgba(lit(PANTS, L));
+  ctx.strokeStyle = rgba(lit(look.pants, L));
   ctx.lineCap = 'round';
   ctx.lineWidth = 9;
   ctx.beginPath();
@@ -85,7 +88,7 @@ function drawTorso(ctx, L, rim) {
   ctx.bezierCurveTo(8, -26, 9, -14, 8, -6);
   ctx.bezierCurveTo(7, -2, 5, 0, 2, 1);
   ctx.closePath();
-  ctx.fillStyle = rgba(lit(SWEATER, L));
+  ctx.fillStyle = rgba(lit(look.sweater, L));
   ctx.fill();
   ctx.strokeStyle = rim;
   ctx.lineWidth = 0.6;
@@ -97,22 +100,19 @@ function drawHead(ctx, L, head, rim) {
   ctx.save();
   ctx.translate(1.4 + head.dx, -42 + head.dy);
   ctx.rotate(head.tilt);
-  ctx.fillStyle = rgba(lit(SKIN, L));
+  ctx.fillStyle = rgba(lit(look.skin, L));
   ctx.fillRect(-1.8, 3, 3.6, 5);
   ctx.beginPath();
   ctx.arc(0, 0, 6.2, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(HAIR, L));
-  ctx.beginPath();
-  ctx.arc(-0.2, -0.6, 6.7, Math.PI * 0.62, Math.PI * 1.95);
-  ctx.closePath();
-  circle(ctx, -5.2, -3.2, 2.4);
-  ctx.fill();
-  ctx.fillStyle = rgba(mix(lit(SKIN, L), lit(HAIR, L), 0.25));
+  drawHair(ctx, L);
+  if (look.beard) drawBeard(ctx, L);
+  ctx.fillStyle = rgba(mix(lit(look.skin, L), lit(look.hair, L), 0.25));
   ctx.beginPath();
   ctx.ellipse(1.2, 0.8, 1, 1.6, 0, 0, Math.PI * 2);
   ctx.fill();
   if (head.face > 0.05) drawFaceProfile(ctx, L, head);
+  if (look.glasses) drawGlasses(ctx, head.face);
   ctx.strokeStyle = rim;
   ctx.lineWidth = 0.6;
   ctx.beginPath();
@@ -121,21 +121,75 @@ function drawHead(ctx, L, head, rim) {
   ctx.restore();
 }
 
+/** Her hair in the chosen style (head space: +x is her face, -x the back of her head). */
+function drawHair(ctx, L) {
+  ctx.fillStyle = rgba(lit(look.hair, L));
+  if (look.hairStyle === 'solto') { // long and loose, down her back
+    ctx.beginPath();
+    ctx.moveTo(-6.4, -2.5);
+    ctx.quadraticCurveTo(-8.4, 5, -6.8, 12);
+    ctx.lineTo(-1.6, 11);
+    ctx.lineTo(-0.8, 4);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.beginPath();
+  ctx.arc(-0.2, -0.6, look.hairStyle === 'curto' ? 6.5 : 6.7, Math.PI * 0.62, Math.PI * 1.95);
+  ctx.closePath();
+  if (look.hairStyle === 'coque') circle(ctx, -5.2, -3.2, 2.4);
+  ctx.fill();
+  if (look.hairStyle === 'rabo') { // ponytail swinging a little
+    ctx.beginPath();
+    ctx.ellipse(-7, 1.2, 1.7, 4.4, 0.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/** A short beard along the jaw. */
+function drawBeard(ctx, L) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(0, 0, 6.2, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = rgba(lit(look.hair, L));
+  ctx.beginPath();
+  ctx.ellipse(3.6, 5, 2.9, 1.8, -0.45, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/** Glasses: the temple arm from ear to face, and the lens when she turns in profile. */
+function drawGlasses(ctx, face) {
+  ctx.strokeStyle = 'rgba(25,20,18,0.85)';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(0.6, -1.4);
+  ctx.lineTo(5.4, -1.7);
+  ctx.stroke();
+  if (face < 0.05) return;
+  ctx.globalAlpha = Math.min(1, face * 1.4);
+  ctx.lineWidth = 0.45;
+  ctx.beginPath();
+  ctx.roundRect(3.1, -2.6, 2.6, 1.9, 0.6);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
 /** When she turns toward a visitor her profile shows: eye, nose and a mouth that moves as she talks. */
 function drawFaceProfile(ctx, L, head) {
   ctx.save();
   ctx.globalAlpha = Math.min(1, head.face * 1.4);
-  ctx.fillStyle = rgba(lit(SKIN, L));
+  ctx.fillStyle = rgba(lit(look.skin, L));
   ctx.beginPath();
   ctx.moveTo(5.6, -1.2);
   ctx.quadraticCurveTo(7.4, 0.6, 5.9, 1.4);
   ctx.closePath();
   ctx.fill();
-  ctx.fillStyle = rgba(lit(HAIR, L));
+  ctx.fillStyle = rgba(lit(look.hair, L));
   ctx.beginPath();
   ctx.ellipse(3.9, -1.3, 0.55, 0.7, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = rgba(mix(lit(SKIN, L), [120, 40, 40], 0.5));
+  ctx.strokeStyle = rgba(mix(lit(look.skin, L), [120, 40, 40], 0.5));
   ctx.lineWidth = 0.45;
   ctx.lineCap = 'round';
   ctx.beginPath();
@@ -233,7 +287,7 @@ function drawBook(ctx, L, [x, y], amount, time) {
   drawTurningPage(ctx, L, time);
   ctx.fillStyle = cover;
   fillPoly(ctx, [[0.3, -0.1], [NEAR_TIP[0] + 0.2, NEAR_TIP[1] - 0.3], [NEAR_TIP[0] + 0.9, NEAR_TIP[1] - 0.2], [1, 0.2]]);
-  ctx.fillStyle = rgba(lit(SKIN, L)); // her other hand holding the far edge
+  ctx.fillStyle = rgba(lit(look.skin, L)); // her other hand holding the far edge
   ctx.beginPath();
   ctx.arc(FAR_TIP[0] + 0.6, FAR_TIP[1] + 0.9, 1.4, 0, Math.PI * 2);
   ctx.fill();
@@ -414,7 +468,7 @@ function drawArm(ctx, L, pose, holdingNewCup, time, knitted = 0) {
   const [mx, my] = handMotion(pose, base.hand, time);
   const hand = [base.hand[0] + mx, base.hand[1] + my];
   const elbow = [base.elbow[0] + mx * 0.3, base.elbow[1] + my * 0.3];
-  const sleeve = mix(lit(SWEATER, L), [0, 0, 0], 0.15);
+  const sleeve = mix(lit(look.sweater, L), [0, 0, 0], 0.15);
   const path = () => {
     ctx.beginPath();
     ctx.moveTo(-2, -29);
@@ -444,7 +498,7 @@ function drawArm(ctx, L, pose, holdingNewCup, time, knitted = 0) {
   if (pose.sketch > 0.2) drawPencil(ctx, L, pencilTip(time), hand, pose.sketch);
   if (pose.snack > 0.3) drawSandwich(ctx, L, hand, pose.snack);
   if (pose.ticket > 0.3) drawTicket(ctx, L, hand, pose.ticket);
-  ctx.fillStyle = rgba(lit(SKIN, L));
+  ctx.fillStyle = rgba(lit(look.skin, L));
   ctx.beginPath();
   ctx.arc(hand[0], hand[1], 1.7, 0, Math.PI * 2);
   ctx.fill();
@@ -509,17 +563,17 @@ export function drawReflection(ctx, layout, state, L) {
   ctx.translate(origin.x + 16 * u, origin.y - 40 * u);
   ctx.scale(u * 0.9, u * 0.9);
   ctx.rotate(pose.sleep * 0.25);
-  ctx.fillStyle = rgba(lit(SWEATER, L));
+  ctx.fillStyle = rgba(lit(look.sweater, L));
   ctx.beginPath();
   ctx.moveTo(-9, 16);
   ctx.quadraticCurveTo(-8, 7, 0, 7);
   ctx.quadraticCurveTo(8, 7, 9, 16);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(SKIN, L));
+  ctx.fillStyle = rgba(lit(look.skin, L));
   ctx.beginPath();
   ctx.ellipse(0, 0, 5.4, 6.4, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = rgba(lit(HAIR, L));
+  ctx.fillStyle = rgba(lit(look.hair, L));
   ctx.beginPath();
   ctx.arc(0, -0.8, 6.3, Math.PI * 1.02, Math.PI * 1.98);
   ctx.quadraticCurveTo(6.2, 3, 5, 5);
@@ -528,11 +582,13 @@ export function drawReflection(ctx, layout, state, L) {
   ctx.lineTo(-5, 5);
   ctx.quadraticCurveTo(-6.2, 3, -6.3, -0.8);
   ctx.fill();
-  circle(ctx, 5.8, -4.5, 2.2);
-  ctx.fill();
+  if (look.hairStyle === 'coque') {
+    circle(ctx, 5.8, -4.5, 2.2);
+    ctx.fill();
+  }
   const eyesY = 0.4 + pose.read * 0.8;
-  ctx.strokeStyle = rgba(lit(HAIR, L));
-  ctx.fillStyle = rgba(lit(HAIR, L));
+  ctx.strokeStyle = rgba(lit(look.hair, L));
+  ctx.fillStyle = rgba(lit(look.hair, L));
   ctx.lineWidth = 0.5;
   [-2, 2].forEach((ex) => {
     ctx.beginPath();

@@ -17,6 +17,13 @@ const FIELDS = {
   headphones: 'checked',
   'reduce-motion': 'checked',
   'large-text': 'checked',
+  'look-hair': 'value',
+  'look-style': 'value',
+  'look-skin': 'value',
+  'look-sweater': 'value',
+  'look-pants': 'value',
+  'look-glasses': 'checked',
+  'look-beard': 'checked',
 };
 
 function read(key, fallback) {

@@ -22,6 +22,8 @@ import { createRealWorld } from './realWorld.js';
 import { createRecorder } from './recorder.js';
 import { HOLIDAYS, createCalendar } from './calendar.js';
 import { WONDERS, withEclipse } from './skyWonders.js';
+import { createAppearance } from './appearance.js';
+import { setLook } from './passenger.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -283,6 +285,7 @@ function start() {
     },
   });
   const realWorld = createRealWorld(document);
+  createAppearance(document, setLook);
   const holiday = HOLIDAYS[calendar.current()];
   if (holiday) setTimeout(() => journal.notify(`${holiday.icon}  ${t(holiday.greeting)}`), 4000);
   const bellaAboardBox = document.getElementById('bella-aboard');

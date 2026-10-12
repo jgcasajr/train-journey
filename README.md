@@ -136,6 +136,10 @@ Em homenagem à Bella: de vez em quando uma pastora-alemã aparece correndo ao l
 
 Outros bichos: cavalos a galope nos campos e fazendas, apostando corrida com o trem; golfinhos saltando um depois do outro no mar do litoral; e famílias de capivaras pastando na beira do lago.
 
+## A passageira do seu jeito
+
+Em **Ajustes → Aparência da passageira** dá para escolher a cor do cabelo (castanho escuro, preto, ruivo, loiro, grisalho), o penteado (coque, curto, rabo de cavalo, longo e solto), o tom de pele, a cor do suéter e da calça, e ligar óculos e barba — dá para fazer um passageiro também. Vale no assento, no reflexo do vidro e no vagão-leito, e fica salvo com as outras configurações.
+
 ## Céu raro
 
 Mais raros que as estrelas cadentes:
@@ -424,6 +428,7 @@ src/
   cityNight.js  cidade à noite: brilho no céu, neon e reflexos no vidro
   calendar.js   datas especiais pelo calendário real (holidayView.js desenha)
   skyWonders.js cometa, eclipse total e arco-íris lunar
+  appearance.js aparência da passageira (cabelo, pele, roupa, óculos, barba)
   recorder.js   gravação em vídeo e timelapse (MediaRecorder)
   landscapeMusic.js  estação Paisagem: um tema musical por paisagem
   animals.js    cavalos a galope, golfinhos e capivaras

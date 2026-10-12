@@ -17,6 +17,7 @@ const FIELDS = {
   headphones: 'checked',
   'reduce-motion': 'checked',
   'large-text': 'checked',
+  'battery-saver': 'value',
   'look-hair': 'value',
   'look-style': 'value',
   'look-skin': 'value',

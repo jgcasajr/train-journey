@@ -2,6 +2,12 @@
 // Strings built at runtime are in esPatterns.js.
 
 export const ES = {
+  "Economia de bateria": "Ahorro de batería",
+  "Menos quadros por segundo e resolução menor, para deixar a janela rodando por horas": "Menos cuadros por segundo y menor resolución, para dejar la ventana funcionando por horas",
+  "Desligada": "Apagado",
+  "Automática (bateria fraca)": "Automático (batería baja)",
+  "Ligada": "Encendido",
+  "🔋  Bateria fraca: modo economia ligado.": "🔋  Batería baja: modo ahorro encendido.",
   "Álbum": "Álbum",
   "Um livreto com tudo da viagem, para guardar ou imprimir": "Un librito con todo el viaje, para guardar o imprimir",
   "📖 Álbum da viagem": "📖 Álbum del viaje",

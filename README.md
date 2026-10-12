@@ -89,6 +89,10 @@ Botão **Passaporte** (em Diário e caderno): um livreto com uma página dupla p
 
 Botão **Gravar** no painel: um **timelapse de 20 s** em que a viagem corre 10× mais rápido (uns 3 minutos e meio de trem — paisagens, estações e o céu mudando), ou um **vídeo de 15 s** no ritmo normal. Grava só a janela e a cabine (o painel fica de fora), direto no navegador, e salva o arquivo no aparelho (MP4 onde o navegador suporta, senão WebM). Um selo "● REC" mostra o tempo que falta; tocar no botão de novo encerra antes. O som não entra no vídeo.
 
+## Economia de bateria
+
+Em **Ajustes → Economia de bateria**: **Ligada** desenha 20 quadros por segundo (em vez de até 60) numa resolução menor, para deixar a janela rodando por horas — no teste, o tempo de processamento caiu mais da metade. **Automática** liga sozinha quando o aparelho está fora da tomada e com 25% de bateria ou menos (nos navegadores que informam a bateria) e avisa na tela. A viagem continua igual: só fica um pouco menos fluida.
+
 ## Timer de sono
 
 Botão **Dormir** no painel: escolha 15, 30, 45 ou 60 minutos e a viagem vai se despedindo. A passageira adormece na hora, os sons do trem e o rádio vão sumindo devagar na segunda metade do tempo, o locutor se cala e a tela escurece aos poucos até ficar só um "Boa noite 🌙". O botão mostra os minutos que faltam (tocar nele de novo cancela). No fim, um toque na tela ou qualquer tecla acorda tudo: o som volta e o rádio volta à estação de antes. Nada segura a tela acesa, então o aparelho pode apagar sozinho.
@@ -435,6 +439,7 @@ src/
   skyWonders.js cometa, eclipse total e arco-íris lunar
   appearance.js aparência da passageira (cabelo, pele, roupa, óculos, barba)
   album.js      álbum da viagem para ler, imprimir ou salvar em PDF
+  batterySaver.js  economia de bateria (menos quadros, resolução menor)
   recorder.js   gravação em vídeo e timelapse (MediaRecorder)
   landscapeMusic.js  estação Paisagem: um tema musical por paisagem
   animals.js    cavalos a galope, golfinhos e capivaras

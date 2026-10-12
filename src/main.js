@@ -24,6 +24,7 @@ import { HOLIDAYS, createCalendar } from './calendar.js';
 import { WONDERS, withEclipse } from './skyWonders.js';
 import { createAppearance } from './appearance.js';
 import { createAlbum } from './album.js';
+import { createBatterySaver, shouldDraw } from './batterySaver.js';
 import { setLook } from './passenger.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
@@ -56,8 +57,9 @@ function computeLayout(W, H) {
   return { W, H, u, px: u * 1.6, win, horizon: win.y + win.h * 0.55 };
 }
 
-function resizeCanvas(canvas, ctx) {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+/** Sizes the canvas to the window; the battery saver draws at 1 pixel per CSS pixel. */
+function resizeCanvas(canvas, ctx, saving = false) {
+  const dpr = saving ? 1 : Math.min(window.devicePixelRatio || 1, 2);
   const W = window.innerWidth;
   const H = window.innerHeight;
   canvas.width = Math.round(W * dpr);
@@ -271,7 +273,9 @@ function start() {
   let hudTimer = 0;
   let lastBabyLine = null;
 
-  window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx); });
+  let saving = false;
+  let lastDraw = 0;
+  window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx, saving); });
   const announcer = createAnnouncer(document, { radio });
   const passport = createPassport(document, {
     onStamp: ({ lineId, complete }) => { audio.sfx('stamp'); journal.award('stamp'); if (complete) journal.award(`passport:${lineId}`); },
@@ -288,6 +292,11 @@ function start() {
   const realWorld = createRealWorld(document);
   createAppearance(document, setLook);
   createAlbum(document, { canvas, onOpen: () => journal.award('album') });
+  createBatterySaver(document, navigator, (on, { auto }) => {
+    saving = on;
+    layout = resizeCanvas(canvas, ctx, saving);
+    if (on && auto) journal.notify(t('🔋  Bateria fraca: modo economia ligado.'));
+  });
   const holiday = HOLIDAYS[calendar.current()];
   if (holiday) setTimeout(() => journal.notify(`${holiday.icon}  ${t(holiday.greeting)}`), 4000);
   const bellaAboardBox = document.getElementById('bella-aboard');
@@ -318,6 +327,11 @@ function start() {
   });
 
   function frame(now) {
+    if (!shouldDraw(now, lastDraw, saving)) { // battery saver: skip this frame, time keeps adding up
+      requestAnimationFrame(frame);
+      return;
+    }
+    lastDraw = now;
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const read = realWorld.apply(controls.read());

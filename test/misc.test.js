@@ -108,3 +108,16 @@ test('the album gathers what the browser kept, and copes with missing or broken 
   assert.deepEqual(full.letters, [], 'broken letters storage is ignored');
   localStorage.clear();
 });
+
+test('battery saver: on, off, or automatic on a low battery that is not charging', async () => {
+  const { saverActive, shouldDraw, SAVER_FPS } = await import('../src/batterySaver.js');
+  assert.equal(saverActive('on', null), true);
+  assert.equal(saverActive('off', { charging: false, level: 0.05 }), false);
+  assert.equal(saverActive('auto', null), false, 'unknown battery: stays off');
+  assert.equal(saverActive('auto', { charging: false, level: 0.2 }), true);
+  assert.equal(saverActive('auto', { charging: true, level: 0.2 }), false);
+  assert.equal(saverActive('auto', { charging: false, level: 0.8 }), false);
+  assert.equal(shouldDraw(1010, 1000, true), false, 'too soon at 20 fps');
+  assert.equal(shouldDraw(1000 + 1000 / SAVER_FPS, 1000, true), true);
+  assert.equal(shouldDraw(1001, 1000, false), true, 'never skips when not saving');
+});

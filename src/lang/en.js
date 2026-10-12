@@ -2,6 +2,12 @@
 
 // Portuguese → English, exact strings shown on screen.
 export const EN = {
+  "Economia de bateria": "Battery saver",
+  "Menos quadros por segundo e resolução menor, para deixar a janela rodando por horas": "Fewer frames per second and a lower resolution, to leave the window running for hours",
+  "Desligada": "Off",
+  "Automática (bateria fraca)": "Automatic (low battery)",
+  "Ligada": "On",
+  "🔋  Bateria fraca: modo economia ligado.": "🔋  Low battery: saver mode on.",
   "Álbum": "Album",
   "Um livreto com tudo da viagem, para guardar ou imprimir": "A booklet with everything from the trip, to keep or print",
   "📖 Álbum da viagem": "📖 Trip album",

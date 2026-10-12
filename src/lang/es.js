@@ -2,6 +2,8 @@
 // Strings built at runtime are in esPatterns.js.
 
 export const ES = {
+  "📳 Vibração (celular)": "📳 Vibración (celular)",
+  "No celular: sente as juntas dos trilhos, as freadas, o trem que cruza e trovões perto": "En el celular: siente las juntas de los rieles, los frenazos, el tren que cruza y los truenos cercanos",
   "Economia de bateria": "Ahorro de batería",
   "Menos quadros por segundo e resolução menor, para deixar a janela rodando por horas": "Menos cuadros por segundo y menor resolución, para dejar la ventana funcionando por horas",
   "Desligada": "Apagado",

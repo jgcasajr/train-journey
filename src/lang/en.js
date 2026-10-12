@@ -2,6 +2,8 @@
 
 // Portuguese → English, exact strings shown on screen.
 export const EN = {
+  "📳 Vibração (celular)": "📳 Vibration (phone)",
+  "No celular: sente as juntas dos trilhos, as freadas, o trem que cruza e trovões perto": "On phones: feel the rail joints, the brakes, passing trains and nearby thunder",
   "Economia de bateria": "Battery saver",
   "Menos quadros por segundo e resolução menor, para deixar a janela rodando por horas": "Fewer frames per second and a lower resolution, to leave the window running for hours",
   "Desligada": "Off",

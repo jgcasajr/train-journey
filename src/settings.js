@@ -18,6 +18,7 @@ const FIELDS = {
   'reduce-motion': 'checked',
   'large-text': 'checked',
   'battery-saver': 'value',
+  haptics: 'checked',
   'look-hair': 'value',
   'look-style': 'value',
   'look-skin': 'value',

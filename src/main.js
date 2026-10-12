@@ -25,6 +25,7 @@ import { WONDERS, withEclipse } from './skyWonders.js';
 import { createAppearance } from './appearance.js';
 import { createAlbum } from './album.js';
 import { createBatterySaver, shouldDraw } from './batterySaver.js';
+import { createHaptics } from './haptics.js';
 import { setLook } from './passenger.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
@@ -292,6 +293,7 @@ function start() {
   const realWorld = createRealWorld(document);
   createAppearance(document, setLook);
   createAlbum(document, { canvas, onOpen: () => journal.award('album') });
+  const haptics = createHaptics(document, navigator);
   createBatterySaver(document, navigator, (on, { auto }) => {
     saving = on;
     layout = resizeCanvas(canvas, ctx, saving);
@@ -352,6 +354,7 @@ function start() {
     breathing.update(dt, state.speed);
     transfer.update(state);
     playSounds(audio, state);
+    haptics.play(state, { quiet: sleep.active() });
     radio.setScene(biomeName(state.distance), sceneEnvironment(state).sunElev < -0.1);
     passerbyCues(state.time - dt, state.time, state.dayTime).forEach((cue) => audio.sfx(cue, aislePan(state)));
     const baby = companionLine(state, null);

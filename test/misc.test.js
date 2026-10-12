@@ -121,3 +121,14 @@ test('battery saver: on, off, or automatic on a low battery that is not charging
   assert.equal(shouldDraw(1000 + 1000 / SAVER_FPS, 1000, true), true);
   assert.equal(shouldDraw(1001, 1000, false), true, 'never skips when not saving');
 });
+
+test('vibration follows the trip, strongest event first', async () => {
+  const { hapticFor } = await import('../src/haptics.js');
+  assert.equal(hapticFor({ speed: 20 }), null);
+  assert.deepEqual(hapticFor({ crossedJoint: true, speed: 20 }), [6, 80, 6]);
+  assert.equal(hapticFor({ crossedJoint: true, speed: 1 }), null, 'no clacks while creeping');
+  assert.deepEqual(hapticFor({ arrived: true }), [25, 70, 25]);
+  assert.deepEqual(hapticFor({ brakeStarted: true, crossedJoint: true, speed: 20 }), [90, 40, 140]);
+  assert.deepEqual(hapticFor({ lightningStarted: true, lightning: { far: 0.2 } }), [160]);
+  assert.equal(hapticFor({ lightningStarted: true, lightning: { far: 0.9 } }), null, 'far thunder is not felt');
+});

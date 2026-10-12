@@ -19,6 +19,8 @@ const MUZZLE = hex('#4a3524');
 const COLLAR = hex('#d23c5a');
 const TONGUE = hex('#e2687a');
 const HEART = hex('#ff5c8a');
+/** Her coat, shared by every drawing of her. */
+export const COAT = { TAN, TAN_LIGHT, SADDLE, MASK, MUZZLE, COLLAR, TONGUE, HEART };
 
 const GREETINGS = ['Olha a Bella! Corre, Bella!', 'Bella! Você veio me acompanhar?', 'Vai, Bella! Mais rápido que o trem!', 'Minha Bella... sempre do meu lado.'];
 export const PETS = ['Boa menina, Bella!', 'Te amo, Bella!', 'Quem é a cachorra mais linda? A Bella!'];

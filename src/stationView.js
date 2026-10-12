@@ -2,6 +2,7 @@ import { drawNexusEmblem } from './brand.js';
 import { trackX } from './frame.js';
 import { drawFesta, festaAt } from './rareEvents.js';
 import { drawPlatformLife } from './stationPeople.js';
+import { drawBellaPlatform } from './bellaPlatform.js';
 import { stationsBetween } from './stations.js';
 import { shade } from './sky.js';
 import { circle, hash, hex, mix, radialGlow, rgba, scale, smoothstep } from './utils.js';
@@ -131,6 +132,7 @@ function drawPeople(ctx, g, state) {
   const benches = Array.from({ length: 6 }, (_, k) => st.start + 18 + k * 26);
   benches.forEach((m) => drawBench(ctx, g, toX(m), g.platformTop + win.h * 0.04));
   drawPlatformLife(ctx, g, state);
+  drawBellaPlatform(ctx, g, state);
 }
 
 function drawCanopy(ctx, g) {

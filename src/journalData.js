@@ -23,6 +23,7 @@ import { reunionAt, runnerAt, stopElapsed, vendorAt } from './stationPeople.js';
 import { FIELDS_DEPTH } from './landscape.js';
 import { deerInView, whaleAt } from './wildlife.js';
 import { bellaAt } from './bella.js';
+import { bellaWaitsAt } from './bellaPlatform.js';
 import { cityNight } from './cityNight.js';
 import { capybarasInView, dolphinsAt, herdInView } from './animals.js';
 
@@ -123,6 +124,7 @@ export const DISCOVERIES = [
   { id: 'fireworks', category: 'Raridades', icon: '🎆', title: 'Fogos de artifício', hint: 'A cidade à noite às vezes comemora.', test: (f) => f.fireworks },
   { id: 'bella', category: 'Personagens', icon: '🐕', title: 'Bella', hint: 'Uma pastora-alemã que corre ao lado do trem.', test: (f) => f.bella },
   { id: 'bellaAboard', category: 'Personagens', icon: '🐾', title: 'Bella a bordo', hint: 'Ligue "Bella viaja comigo" no painel.', test: (f) => f.bellaAboard },
+  { id: 'bellaWaits', category: 'Personagens', icon: '🚉', title: 'Bella me esperando', hint: 'Alguns dias ela espera o trem numa estação.', test: (f) => f.bellaWaits },
   { id: 'bellaPet', category: 'Momentos', icon: '💕', title: 'Carinho na Bella', hint: 'Quando ela aparecer, toque nela.', test: (f) => f.bellaPets > 0 },
   { id: 'herd', category: 'Pelo caminho', icon: '🐎', title: 'Cavalos a galope', hint: 'Nos campos, às vezes eles apostam corrida com o trem.', test: (f) => f.herd },
   { id: 'dolphins', category: 'Raridades', icon: '🐬', title: 'Golfinhos', hint: 'Saltos no mar aberto.', test: (f) => f.dolphins },
@@ -175,7 +177,7 @@ function platformFacts(state) {
   const st = stationsBetween(state.distance - 1, state.distance + 1).find((s) => s.id === state.served?.id);
   if (!st) return {};
   const elapsed = stopElapsed(state, st);
-  return { hug: reunionAt(st) && elapsed > 6, runner: runnerAt(st) && elapsed > DWELL - 2.5, cheeseBread: vendorAt(st) };
+  return { bellaWaits: bellaWaitsAt(st, state) && elapsed > 2, hug: reunionAt(st) && elapsed > 6, runner: runnerAt(st) && elapsed > DWELL - 2.5, cheeseBread: vendorAt(st) };
 }
 
 /** Facts about the current frame that discoveries are tested against. */

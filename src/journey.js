@@ -1,4 +1,5 @@
 import { bellaGreeting } from './bella.js';
+import { bellaPlatformGreeting } from './bellaPlatform.js';
 import { biomeAt, num } from './biomes.js';
 import { initialCabin, updateCabin } from './cabin.js';
 import { DAY_SECONDS } from './clock.js';
@@ -159,7 +160,7 @@ export function step(prev, dt, input) {
     ...updateDining(next, dt, input),
     jolt: state.brakeStarted ? 1 : next.jolt,
   };
-  return { ...result, ...bellaGreeting(prev, result), drowsy: Boolean(input.drowsy), bellaAboard: Boolean(input.bellaAboard) };
+  return { ...result, ...bellaGreeting(prev, result), ...bellaPlatformGreeting(prev, result), drowsy: Boolean(input.drowsy), bellaAboard: Boolean(input.bellaAboard) };
 }
 
 /** Text for the destination board: current or next station. */

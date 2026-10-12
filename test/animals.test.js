@@ -48,3 +48,19 @@ test('with Bella aboard she no longer runs outside, and her mood follows the tri
   assert.ok(bellaMood({ ...calm, time: 2, effects: [{ kind: 'bella', born: 1.5 }] }).happy > 0.5, 'happy when petted');
   assert.deepEqual(['passenger', 'dining', 'sleeper', 'cab'].map(bellaCanBoard), [true, true, false, false]);
 });
+
+test('some days Bella waits at a station and the passenger greets her on arrival', async () => {
+  const { bellaWaitsAt, bellaPlatformGreeting } = await import('../src/bellaPlatform.js');
+  const { stationsBetween } = await import('../src/stations.js');
+  const sts = stationsBetween(0, 38500 * 3);
+  const days = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const waits = days.flatMap((d) => sts.filter((st) => bellaWaitsAt(st, { dayCount: d })));
+  assert.ok(waits.length > 0 && waits.length < sts.length * days.length * 0.4, `${waits.length} waits`);
+  const nexus = sts.find((st) => st.nexus);
+  const day = days.find((d) => bellaWaitsAt(nexus, { dayCount: d }));
+  assert.equal(bellaWaitsAt(nexus, { dayCount: day, bellaAboard: true }), false, 'not while she travels aboard');
+  const prev = { arrived: false, dayCount: day, time: 10 };
+  const next = { ...prev, arrived: true, served: { id: nexus.id, name: 'Nexus' }, pose: { sleep: 0 } };
+  assert.match(bellaPlatformGreeting(prev, next).speech.text, /Bella/);
+  assert.deepEqual(bellaPlatformGreeting(next, next), {}, 'only on arrival');
+});

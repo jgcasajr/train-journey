@@ -135,6 +135,7 @@
       <div class="buttons">
         <button id="journal-btn" data-i18n-skip type="button" class="journal-btn">Diário</button>
         <button id="notebook-btn" type="button" class="journal-btn">Caderno</button>
+        <button id="album-btn" type="button" class="journal-btn" title="Um livreto com tudo da viagem, para guardar ou imprimir">Álbum</button>
         <button id="passport-btn" type="button" class="journal-btn" title="Um carimbo para cada estação onde o trem parar">Passaporte</button>
       </div>
     </details>
@@ -277,6 +278,17 @@
       <button id="arrival-continue" type="button">Continuar viajando</button>
       <button id="arrival-choose" type="button">Escolher outro destino</button>
     </div>
+  </section>
+
+  <section id="album" class="album hidden" role="dialog" aria-labelledby="album-title">
+    <header class="album-bar">
+      <strong id="album-title">📖 Álbum da viagem</strong>
+      <span class="album-actions">
+        <button id="album-print" type="button">Imprimir ou salvar PDF</button>
+        <button id="album-close" type="button">Fechar</button>
+      </span>
+    </header>
+    <div id="album-pages" class="album-pages" data-i18n-skip></div>
   </section>
 
   <section id="passport" class="passport hidden" role="dialog" aria-labelledby="passport-title">

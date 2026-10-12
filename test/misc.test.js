@@ -91,3 +91,20 @@ test('the passenger look takes valid choices and falls back for anything else', 
   assert.equal(look.beard, false);
   assert.deepEqual(lookFrom({ hairColor: '<script>', hairStyle: 'moicano', glasses: 'yes' }), DEFAULT_LOOK);
 });
+
+test('the album gathers what the browser kept, and copes with missing or broken data', async () => {
+  const { albumData } = await import('../src/album.js');
+  localStorage.clear();
+  const empty = albumData();
+  assert.deepEqual([empty.km, empty.stickers.length, empty.stamps, empty.notebook.length, empty.letters.length], [0, 0, 0, 0, 0]);
+  localStorage.setItem('train-journey:journal:v1', JSON.stringify({ found: { deer: { km: 3, clock: '10:00' } }, traveled: 12500, seconds: 3900 }));
+  localStorage.setItem('train-journey:passport:v1', JSON.stringify({ aurora: { Nexus: { date: '05/10/2026', at: 1 } } }));
+  localStorage.setItem('train-journey:letters:v1', '{not json');
+  const full = albumData();
+  assert.equal(full.km, 12.5);
+  assert.equal(full.minutes, 65);
+  assert.deepEqual(full.stickers.map((d) => d.id), ['deer']);
+  assert.equal(full.stamps, 1);
+  assert.deepEqual(full.letters, [], 'broken letters storage is ignored');
+  localStorage.clear();
+});

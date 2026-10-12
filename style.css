@@ -694,3 +694,68 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 
 /* ---------- Appearance ---------- */
 .field-title { margin: 10px 0 2px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; }
+
+/* ---------- Trip album ---------- */
+.album {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow-y: auto;
+  background: rgba(20, 18, 16, 0.92);
+}
+.album.hidden { display: none; }
+.album-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  color: #f3ead8;
+  background: rgba(20, 18, 16, 0.96);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.album-actions { display: flex; gap: 8px; }
+.album-actions button { padding: 8px 14px; font: inherit; border-radius: 999px; border: 1px solid #e0c48a; background: #fffaf0; color: #3a2c20; cursor: pointer; }
+.album-pages { display: grid; gap: 22px; max-width: 860px; margin: 22px auto 40px; padding: 0 16px; }
+.album-page {
+  padding: 28px 30px;
+  color: #3a2c20;
+  background: #f8f1e1;
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  font-family: Georgia, "Times New Roman", serif;
+}
+.album-page h3 { margin: 0 0 14px; font-size: 24px; }
+.album-page h4 { margin: 18px 0 8px; font-size: 16px; color: #7a5a30; }
+.album-cover { text-align: center; }
+.album-cover h2 { margin: 4px 0 16px; font-size: 34px; }
+.album-kicker { margin: 0; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #7a6650; }
+.album-photo { width: 100%; border-radius: 4px; border: 8px solid #fff; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); transform: rotate(-0.6deg); }
+.album-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; margin: 18px 0 6px; padding: 0; list-style: none; }
+.album-stats li { display: grid; }
+.album-stats strong { font-size: 22px; }
+.album-stats span { font-size: 12px; color: #7a6650; }
+.album-date { margin: 10px 0 0; font-style: italic; color: #7a6650; }
+.album-spread { display: block; width: 100%; height: auto; margin: 0 0 12px; border-radius: 10px; }
+.album-stickers { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.album-stickers li { display: grid; gap: 2px; padding: 8px 10px; background: #fffaf0; border: 1px solid #e6d6b4; border-radius: 8px; font-size: 13px; }
+.album-icon { font-size: 22px; }
+.album-stickers small { color: #8a7660; font-size: 11px; }
+.album-quote { margin: 6px 0; font: 18px/1.45 "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; color: #2f3a5a; overflow-wrap: anywhere; }
+.album-sign { margin: 0 0 10px; font-size: 13px; font-style: italic; color: #7a6650; }
+.album-notebook { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; }
+.album-empty { font-style: italic; color: #7a6650; }
+
+@media print {
+  body.album-open > :not(#album) { display: none !important; }
+  body.album-open { background: #fff; }
+  .album { position: static; overflow: visible; background: none; }
+  .album-bar { display: none; }
+  .album-pages { display: block; margin: 0; max-width: none; padding: 0; }
+  .album-page { box-shadow: none; border-radius: 0; break-after: page; background: #fff; }
+  .album-stickers li { break-inside: avoid; }
+}

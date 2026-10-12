@@ -2,6 +2,25 @@
 
 // Portuguese → English, exact strings shown on screen.
 export const EN = {
+  "Álbum": "Album",
+  "Um livreto com tudo da viagem, para guardar ou imprimir": "A booklet with everything from the trip, to keep or print",
+  "📖 Álbum da viagem": "📖 Trip album",
+  "Álbum da viagem": "Trip album",
+  "Imprimir ou salvar PDF": "Print or save as PDF",
+  "A vista da janela agora": "The view from the window now",
+  "viajados": "travelled",
+  "a bordo": "on board",
+  "figurinhas": "stickers",
+  "carimbos": "stamps",
+  "missões cumpridas": "missions done",
+  "Figurinhas": "Stickers",
+  "Nenhuma figurinha ainda. A viagem está só começando.": "No stickers yet. The journey is just beginning.",
+  "Caderno e cartas": "Notebook and letters",
+  "Intenção da viagem": "Intention for the trip",
+  "Cartas recebidas": "Letters received",
+  "Do caderno": "From the notebook",
+  "O caderno ainda está em branco.": "The notebook is still blank.",
+  "Abra o Álbum em Diário e caderno.": "Open the Album in Journal and notebook.",
   // ---- Panel, HUD and page (index.html, controls.js, journal.js) ----
   'Vista da janela de um trem em movimento': 'View from the window of a moving train',
   'Velocidade': 'Speed',

@@ -23,6 +23,7 @@ import { createRecorder } from './recorder.js';
 import { HOLIDAYS, createCalendar } from './calendar.js';
 import { WONDERS, withEclipse } from './skyWonders.js';
 import { createAppearance } from './appearance.js';
+import { createAlbum } from './album.js';
 import { setLook } from './passenger.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
@@ -286,6 +287,7 @@ function start() {
   });
   const realWorld = createRealWorld(document);
   createAppearance(document, setLook);
+  createAlbum(document, { canvas, onOpen: () => journal.award('album') });
   const holiday = HOLIDAYS[calendar.current()];
   if (holiday) setTimeout(() => journal.notify(`${holiday.icon}  ${t(holiday.greeting)}`), 4000);
   const bellaAboardBox = document.getElementById('bella-aboard');

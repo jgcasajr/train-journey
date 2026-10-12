@@ -77,6 +77,10 @@ Em **Céu e clima**, a opção **Hora e clima reais** faz a viagem acompanhar o 
 
 No topo do painel, um pequeno objetivo por dia do calendário — o mesmo para todo mundo naquele dia e nunca repetido em dois dias seguidos: ver a Bella correr ou fazer carinho nela, golfinhos, baleia, cavalos a galope, aurora, arco-íris, estrela cadente, pôr do sol, parar em Nexus, chegar a um destino, atravessar um túnel ou viaduto, encontrar um cervo, tomar um café com ela, ganhar um carimbo novo no passaporte, viajar 10 km ou ficar 20 minutos a bordo no dia. Cada missão traz uma dica. Ao cumprir, o cartão fica verde com "✓ Missão cumprida!"; dias seguidos viram sequência ("3 dias seguidos"). Fica guardado no navegador.
 
+## Álbum da viagem
+
+Botão **Álbum** (em Diário e caderno): um livreto montado na hora com tudo o que o navegador guardou da viagem — capa com a vista da janela naquele instante e os números (km, tempo a bordo, figurinhas, carimbos, missões), as três páginas do passaporte, todas as figurinhas encontradas (com km e hora), a intenção, as cartas recebidas e as últimas páginas do caderno. **Imprimir ou salvar PDF** usa a impressão do navegador, que mostra só o álbum, uma seção por página.
+
 ## Passaporte de viagem
 
 Botão **Passaporte** (em Diário e caderno): um livreto com uma página dupla por linha. Cada estação onde o trem para ganha um carimbo de borracha na página da sua linha — anel duplo na cor da linha, o ícone da paisagem, o nome da estação, a data da primeira visita e o nome da linha, levemente torto e com falhas de tinta. Estações ainda não visitadas aparecem como círculos tracejados. Nexus carimba nas três linhas (também na baldeação). A página esquerda mostra quantos carimbos faltam; completar uma linha vale uma figurinha. **Baixar imagem** salva a página dupla como PNG. Fica guardado no navegador.
@@ -251,7 +255,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 153 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos, cometa, eclipse total do sol, arco-íris lunar, e as datas especiais: Natal, Ano Novo, Carnaval, festa junina e Dia das Crianças), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (correndo, a bordo, esperando na plataforma e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 154 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos, cometa, eclipse total do sol, arco-íris lunar, e as datas especiais: Natal, Ano Novo, Carnaval, festa junina e Dia das Crianças), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (correndo, a bordo, esperando na plataforma e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -430,6 +434,7 @@ src/
   calendar.js   datas especiais pelo calendário real (holidayView.js desenha)
   skyWonders.js cometa, eclipse total e arco-íris lunar
   appearance.js aparência da passageira (cabelo, pele, roupa, óculos, barba)
+  album.js      álbum da viagem para ler, imprimir ou salvar em PDF
   recorder.js   gravação em vídeo e timelapse (MediaRecorder)
   landscapeMusic.js  estação Paisagem: um tema musical por paisagem
   animals.js    cavalos a galope, golfinhos e capivaras

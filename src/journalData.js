@@ -26,6 +26,7 @@ import { bellaAt } from './bella.js';
 import { bellaWaitsAt } from './bellaPlatform.js';
 import { cityNight } from './cityNight.js';
 import { HOLIDAYS } from './calendar.js';
+import { cometVisible, eclipseAt, moonbowStrength } from './skyWonders.js';
 import { capybarasInView, dolphinsAt, herdInView } from './animals.js';
 
 export const BIOME_ICONS = {
@@ -131,6 +132,9 @@ export const DISCOVERIES = [
   { id: 'dolphins', category: 'Raridades', icon: '🐬', title: 'Golfinhos', hint: 'Saltos no mar aberto.', test: (f) => f.dolphins },
   { id: 'capybaras', category: 'Pelo caminho', icon: '🦫', title: 'Família de capivaras', hint: 'Na beira do lago.', test: (f) => f.capybaras },
   { id: 'cityNight', category: 'Pelo caminho', icon: '🌃', title: 'Cidade acordada', hint: 'Passe pela cidade grande à noite.', test: (f) => f.cityNight },
+  { id: 'comet', category: 'Raridades', icon: '☄️', title: 'Cometa', hint: 'Algumas noites limpas têm uma visita com cauda.', test: (f) => f.comet },
+  { id: 'eclipse', category: 'Raridades', icon: '🌑', title: 'Eclipse total do sol', hint: 'Muito raro, no meio da manhã.', test: (f) => f.eclipse },
+  { id: 'moonbow', category: 'Raridades', icon: '🌙', title: 'Arco-íris lunar', hint: 'Lua cheia baixa e uma chuvinha à noite.', test: (f) => f.moonbow },
   { id: 'whale', category: 'Raridades', icon: '🐋', title: 'Baleia', hint: 'Fique de olho no mar.', test: (f) => f.whale },
   ...Object.entries(HOLIDAYS).map(([id, h]) => ({
     id: `holiday:${id}`, category: 'Raridades', icon: h.icon, title: h.title, hint: 'Uma data especial do calendário.', test: (f) => f.holiday === id,
@@ -219,6 +223,9 @@ export function factsFrom({ state, env, view, traveled }) {
     whale: whaleAt(state, view) !== null,
     cityNight: cityNight(state, env) > 0.7,
     holiday: env.holiday ?? null,
+    comet: cometVisible(state, env),
+    eclipse: (eclipseAt(state)?.cover ?? 0) > 0.95,
+    moonbow: moonbowStrength(state, env) > 0.3,
     bella: ((bellaAt(state)?.t ?? 0) > 4 && bellaAt(state).alpha > 0.8) || Boolean(state.bellaAboard),
     bellaAboard: Boolean(state.bellaAboard),
     bellaPets: state.bellaPets ?? 0,

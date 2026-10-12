@@ -13,6 +13,7 @@ import { LOOK_FAR } from './frame.js';
 import { drawDrops, drawGlass } from './glass.js';
 import { drawCityReflections } from './cityNight.js';
 import { bellaCanBoard, drawBellaAboard } from './bellaAboard.js';
+import { drawSkyWonders } from './skyWonders.js';
 import { drawFloats, drawSpeech, drawThought } from './interactionsView.js';
 import {
   drawCord, drawCurtains, drawRadio, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
@@ -57,6 +58,7 @@ function drawOutside(ctx, view, state, env, { L, blocked, bob, fog, dt, alone = 
   ctx.translate(lookX * u * LOOK_FAR, bob + lookY * u * 3);
   drawSky(ctx, view, state, env);
   drawStarSky(ctx, view, state, env, nightLine(state.distance));
+  drawSkyWonders(ctx, view, state, env);
   drawAurora(ctx, view, state, env);
   drawRainbow(ctx, view, env, doubleRainbow(state));
   drawLightning(ctx, view, state.lightning);

@@ -61,7 +61,8 @@ export function shade(color, env, haze = 0) {
   return mix(warmed, env.bottom, clamp(haze * (1 + env.rain)));
 }
 
-function celestialPos(layout, phase, elev) {
+/** Screen position of the sun (or moon) for a day phase and elevation. */
+export function celestialPos(layout, phase, elev) {
   const { win, horizon } = layout;
   return {
     x: win.x + win.w * (0.1 + 0.8 * clamp((phase - 0.2) / 0.6)),
@@ -75,7 +76,7 @@ function drawSun(ctx, layout, env) {
   const r = layout.u * 2.6;
   const vis = (1 - env.rain * 0.85) * smoothstep(-0.12, 0.02, env.sunElev);
   const core = mix(hex('#fff6d8'), hex('#ffb070'), env.warm);
-  radialGlow(ctx, x, y, r * 9, core, 0.45 * vis);
+  radialGlow(ctx, x, y, r * 9, core, 0.45 * vis * (1 - (env.eclipse ?? 0) * 0.9)); // the glow dims in an eclipse
   ctx.fillStyle = rgba(core, vis);
   ctx.beginPath();
   circle(ctx, x, y, r);

@@ -21,6 +21,7 @@ import { createMissions } from './missions.js';
 import { createRealWorld } from './realWorld.js';
 import { createRecorder } from './recorder.js';
 import { HOLIDAYS, createCalendar } from './calendar.js';
+import { WONDERS, withEclipse } from './skyWonders.js';
 import { restoreSettings } from './settings.js';
 import { createA11y } from './a11y.js';
 import { createAnnouncer } from './announcer.js';
@@ -73,7 +74,7 @@ const skyTime = (state) => (nightLine(state.distance) ? (0.92 + (state.dayTime %
 
 const calendar = createCalendar(new URLSearchParams(window.location.search));
 
-const sceneEnvironment = (state) => ({ ...environment(skyTime(state), {
+const sceneEnvironment = (state) => withEclipse({ ...environment(skyTime(state), {
   rain: state.rain,
   storm: state.storm,
   wetness: state.wetness,
@@ -82,7 +83,7 @@ const sceneEnvironment = (state) => ({ ...environment(skyTime(state), {
   moonPhase: moonPhase(state.dayCount, state.dayTime),
   wind: windAt(state),
   hail: hailAt(state),
-}), holiday: calendar.current(), time: state.time });
+}), holiday: calendar.current(), time: state.time }, state);
 
 /** Where the aisle character is, left (-1) to right (1), for their sounds. */
 function aislePan(state) {
@@ -260,7 +261,8 @@ function start() {
   const day = Number(params.get('dia'));
   const withDay = params.has('dia') && Number.isFinite(day) ? { ...start, dayCount: Math.floor(day) } : start;
   const withBella = params.has('bella') ? { ...withDay, bellaFirst: 3 } : withDay; // ?bella: she comes running right away
-  let state = params.has('pass') ? { ...withBella, nextPassing: 2 } : withBella;
+  const withWonder = WONDERS.includes(params.get('ceu')) ? { ...withBella, wonder: params.get('ceu') } : withBella; // ?ceu=cometa|eclipse|arcolunar
+  let state = params.has('pass') ? { ...withWonder, nextPassing: 2 } : withWonder;
   letters.receive(params, params.has('km') ? `${t(LINES[lineAt(state.distance)].name)}, ${t(biomeName(state.distance))}` : '');
   let last = performance.now();
   let hudTimer = 0;

@@ -136,6 +136,16 @@ Em homenagem à Bella: de vez em quando uma pastora-alemã aparece correndo ao l
 
 Outros bichos: cavalos a galope nos campos e fazendas, apostando corrida com o trem; golfinhos saltando um depois do outro no mar do litoral; e famílias de capivaras pastando na beira do lago.
 
+## Céu raro
+
+Mais raros que as estrelas cadentes:
+
+- **Cometa**: em cerca de 1 a cada 9 dias, um cometa fica no céu a noite inteira, com a cabeça brilhante, uma cauda de poeira amarelada e outra azul, de íons
+- **Eclipse total do sol**: em cerca de 1 a cada 20 dias, no meio da manhã, a Lua passa na frente do Sol. O dia escurece, as casas acendem as luzes e, na totalidade, aparece a coroa
+- **Arco-íris lunar**: um arco claro e pálido, do lado oposto à Lua, numa noite de lua cheia baixa com chuva fina
+
+Para ver ou mandar um deles: `?ceu=cometa`, `?ceu=eclipse` (melhor com `&hora=08:50`) ou `?ceu=arcolunar` no link.
+
 ## Datas especiais
 
 A viagem se enfeita conforme a data real do aparelho:
@@ -237,7 +247,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 150 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos, e as datas especiais: Natal, Ano Novo, Carnaval, festa junina e Dia das Crianças), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (correndo, a bordo, esperando na plataforma e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 153 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos, cometa, eclipse total do sol, arco-íris lunar, e as datas especiais: Natal, Ano Novo, Carnaval, festa junina e Dia das Crianças), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (correndo, a bordo, esperando na plataforma e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -413,6 +423,7 @@ src/
   realWorld.js  hora e clima reais (relógio do aparelho + Open-Meteo)
   cityNight.js  cidade à noite: brilho no céu, neon e reflexos no vidro
   calendar.js   datas especiais pelo calendário real (holidayView.js desenha)
+  skyWonders.js cometa, eclipse total e arco-íris lunar
   recorder.js   gravação em vídeo e timelapse (MediaRecorder)
   landscapeMusic.js  estação Paisagem: um tema musical por paisagem
   animals.js    cavalos a galope, golfinhos e capivaras

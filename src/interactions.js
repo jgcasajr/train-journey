@@ -13,6 +13,7 @@ import { hornBox } from './cabDash.js';
 import { carLayout, seatedCar } from './cars.js';
 import { balloonsInView, flockBirds } from './skylife.js';
 import { bellaBox } from './bella.js';
+import { bellaAboardBox, bellaCanBoard } from './bellaAboard.js';
 
 const ANIMALS = {
   cows: { text: 'Muuu!', sound: 'moo' },
@@ -38,6 +39,7 @@ function cabinTarget(view, state, p) {
   const cupX = o.x + u * 22;
   const ledgeY = win.y + win.h + u * 1.2;
   if (inBox(p, { x: cupX - u * 3.5, y: ledgeY - u * 6, w: u * 7, h: u * 7 })) return { type: 'sip' };
+  if (state.bellaAboard && bellaCanBoard(state.car) && inBox(shifted, bellaAboardBox(view))) return { type: 'bella', sound: 'bark' };
   if (inBox(shifted, { x: o.x - u * 9, y: o.y - u * 50, w: u * 22, h: u * 50 })) return { type: 'talk' };
   if (state.companion?.status === 'seated' && inBox(shifted, companionBox(view))) return { type: 'companion' };
   if (curtainBoxes(view, state.curtains).some((b) => inBox(p, b))) return { type: 'curtain', sound: 'swish' };

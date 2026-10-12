@@ -53,6 +53,7 @@ function visibility(state) {
 
 /** Bella's run right now ({ k, t, alpha }), or null. Pure function of the state; `state.bellaFirst` (from ?bella) brings her first run forward. */
 export function bellaAt(state) {
+  if (state.bellaAboard) return null; // she is inside, by the passenger's side
   const ep = episode(state.time, state.bellaFirst);
   if (!ep) return null;
   const alpha = visibility(state);

@@ -38,3 +38,13 @@ test('no greeting while she is still far behind or already greeted', () => {
   assert.deepEqual(bellaGreeting(running({ time: 29 }), running({ time: 29.1 })), {}, 'already greeted');
   assert.ok(bellaGreeting(running({ time: 27.95 }), running({ time: 28.05 })).speech);
 });
+
+test('with Bella aboard she no longer runs outside, and her mood follows the trip', async () => {
+  const { bellaMood, bellaCanBoard } = await import('../src/bellaAboard.js');
+  assert.equal(bellaAt(running({ bellaAboard: true })), null);
+  const calm = { time: 1, dwell: 0, pose: { sleep: 0 }, effects: [] };
+  assert.equal(bellaMood({ ...calm, dwell: 5 }).station, 1, 'ears up at stations');
+  assert.equal(bellaMood({ ...calm, pose: { sleep: 1 } }).sleep, 1, 'sleeps with her');
+  assert.ok(bellaMood({ ...calm, time: 2, effects: [{ kind: 'bella', born: 1.5 }] }).happy > 0.5, 'happy when petted');
+  assert.deepEqual(['passenger', 'dining', 'sleeper', 'cab'].map(bellaCanBoard), [true, true, false, false]);
+});

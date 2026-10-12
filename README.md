@@ -130,6 +130,8 @@ Figurinhas: "Chuva de granizo", "Nevasca", "Miragem no deserto" e "Vendaval".
 
 Em homenagem à Bella: de vez em quando uma pastora-alemã aparece correndo ao lado do trem, colada nos trilhos — capa preta, orelhas em pé, coleira vermelha e língua de fora, num galope animado. Ela alcança a janela, acompanha o trem por uns 20 segundos e fica para trás; corre até pela plataforma das estações. A passageira fala com ela ("Olha a Bella! Corre, Bella!"), e tocar nela faz carinho: um latido, corações e um "Te amo, Bella!". Ela não entra em túneis, pontes, viadutos nem cidades — vai sumindo devagar antes. A primeira corrida vem logo no começo da viagem; com `?bella` no link ela aparece em segundos (bom para mandar a homenagem a alguém).
 
+**Bella viaja comigo**: com essa opção ligada (em Viagem), a Bella vem junto, sentada no chão ao lado da passageira nos vagões de passageiros e restaurante. Nas estações ela levanta a cabeça e as orelhas para olhar a plataforma; de vez em quando vira para a passageira; à noite, quando ela dorme, a Bella encosta a cabeça no joelho dela e fecha os olhos; tocar nela faz carinho (rabo abanando, corações, latido). Enquanto ela viaja dentro, não corre lá fora.
+
 Outros bichos: cavalos a galope nos campos e fazendas, apostando corrida com o trem; golfinhos saltando um depois do outro no mar do litoral; e famílias de capivaras pastando na beira do lago.
 
 ## Eventos raros
@@ -221,7 +223,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 143 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 144 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (correndo, a bordo e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -389,6 +391,7 @@ src/
   moon.js       fases da lua e noites de meteoros
   wildlife.js   cervos e baleia
   bella.js      a Bella, pastora-alemã que corre ao lado do trem
+  bellaAboard.js  a Bella a bordo, sentada ao lado da passageira
   sleepTimer.js timer de sono: ela dorme, o som some e a tela escurece
   passport.js   passaporte: carimbos por estação e linha (passportDraw.js desenha)
   missions.js   missão do dia, com sequência de dias

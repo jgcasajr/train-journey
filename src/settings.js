@@ -10,6 +10,7 @@ const FIELDS = {
   weather: 'value',
   season: 'value',
   stops: 'checked',
+  'bella-aboard': 'checked',
   car: 'value',
   'radio-volume': 'value',
   'radio-station': 'value',

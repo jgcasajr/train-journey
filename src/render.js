@@ -12,6 +12,7 @@ import { drawDiningRoom, drawDiningTable } from './diningView.js';
 import { LOOK_FAR } from './frame.js';
 import { drawDrops, drawGlass } from './glass.js';
 import { drawCityReflections } from './cityNight.js';
+import { bellaCanBoard, drawBellaAboard } from './bellaAboard.js';
 import { drawFloats, drawSpeech, drawThought } from './interactionsView.js';
 import {
   drawCord, drawCurtains, drawRadio, drawFrame, drawLamp, drawLedge, drawVignette, drawWall, interiorLighting,
@@ -94,6 +95,7 @@ function drawHer(ctx, layout, state, env, L, bob, companion) {
   ctx.save();
   ctx.translate(-lookX * u * 4, -lookY * u * 2);
   drawPassenger(ctx, layout, state, L, env, bob);
+  if (state.bellaAboard && bellaCanBoard(state.car)) drawBellaAboard(ctx, layout, state, L, bob);
   if (companion) drawCompanion(ctx, layout, state, L);
   ctx.restore();
 }

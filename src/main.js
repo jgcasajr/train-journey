@@ -278,6 +278,7 @@ function start() {
     },
   });
   const realWorld = createRealWorld(document);
+  const bellaAboardBox = document.getElementById('bella-aboard');
   const recorder = createRecorder(document, {
     canvas,
     getKm: () => lineKm(state.distance),
@@ -314,7 +315,7 @@ function start() {
     const plan = schedule.update(state, destination, read.stops, focusPlan?.target ?? null);
     const input = { ...(plan ? { ...read, targetKmh: plan.kmh } : read), drowsy: sleep.tick(now).drowsy };
     controls.showScheduledSpeed(plan ? plan.kmh : null);
-    const stepInput = { ...input, destination, destinationAt: plan?.stopAt ?? null };
+    const stepInput = { ...input, destination, destinationAt: plan?.stopAt ?? null, bellaAboard: bellaAboardBox.checked };
     state = step(state, dt, { ...stepInput, events: clicks.takeEvents() });
     for (let k = 1; k < recorder.speedup(); k++) state = step(state, dt, { ...stepInput, events: [] }); // timelapse
     recorder.tick(now);

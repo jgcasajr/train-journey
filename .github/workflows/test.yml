@@ -4,6 +4,7 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch: # run by hand on any branch (e.g. to check a fix before merging)
 
 jobs:
   test:

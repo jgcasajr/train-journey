@@ -1,15 +1,19 @@
 // Offline support: network first (always fresh when online), cached copy when offline.
-const CACHE = 'train-journey-v2';
-const SHELL = ['./', './index.html', './style.css', './src/main.js', './manifest.webmanifest', './icons/icon-192.png'];
+const CACHE = 'train-journey-v6';
+const SHELL = ['./', './index.html', './style.css', './src/main.js', './src/progress.js', './src/itinerary.js', './src/welcome.js', './assets/welcome-canvas.png', './manifest.webmanifest', './icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)));
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('train-journey-') && k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });

@@ -95,11 +95,13 @@ function drawBaby(ctx, c, look, time) {
   ctx.restore();
 }
 
-function drawSketchbook(ctx, c, hand, showing) {
-  const [x, y] = showing ? [hand[0] + 1, hand[1] - 3] : [hand[0] - 3, hand[1] + 1];
+function drawSketchbook(ctx, c, hand, showing, time) {
+  const [x, y] = showing ? [hand[0] + 1, hand[1] - 3] : [9, -10];
   ctx.save();
   ctx.translate(x, y);
-  ctx.rotate(showing ? 0 : -0.25);
+  ctx.rotate(showing ? 0 : -0.12);
+  ctx.fillStyle = c(hex('#76503b'));
+  ctx.fillRect(-4.4, -3.4, 8.8, 6.8);
   ctx.fillStyle = c(hex('#f7f1e1'));
   ctx.fillRect(-4, -3, 8, 6);
   if (showing) {
@@ -112,14 +114,32 @@ function drawSketchbook(ctx, c, hand, showing) {
     circle(ctx, 1.8, -1.4, 0.6);
     ctx.fill();
   } else {
-    ctx.strokeStyle = c(hex('#6a6a6a'));
-    ctx.lineWidth = 0.15;
+    ctx.strokeStyle = c(hex('#afbdc4'));
+    ctx.lineWidth = 0.12;
     ctx.beginPath();
-    ctx.moveTo(-3, 1);
-    ctx.quadraticCurveTo(-1, -1.5, 3, 0.5);
+    for (let row = 0; row < 3; row++) {
+      ctx.moveTo(-3.4, -1.2 + row * 1.65);
+      ctx.lineTo(3.4, -1.2 + row * 1.65);
+    }
+    ctx.stroke();
+    ctx.strokeStyle = c(hex('#6a6a6a'));
+    ctx.lineWidth = 0.2;
+    ctx.beginPath();
+    const progress = (time * 0.38) % 1;
+    ctx.moveTo(-3, -1.5);
+    ctx.quadraticCurveTo(-1, -1.8, -3 + progress * 6, -1.4 + Math.sin(progress * 13) * 0.15);
     ctx.stroke();
   }
   ctx.restore();
+  if (!showing) {
+    ctx.strokeStyle = c(hex('#dca13e'));
+    ctx.lineWidth = 0.42;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(hand[0] - 1.8, hand[1] + 1.4);
+    ctx.lineTo(hand[0] + 1.4, hand[1] - 1.2);
+    ctx.stroke();
+  }
 }
 
 function drawMap(ctx, c) {
@@ -163,7 +183,7 @@ export function drawFrontProps(ctx, c, persona, look, { hand, time, action }) {
   if (persona.id === 'grandma') drawKnitting(ctx, c, hand, time);
   if (persona.id === 'student') drawBook(ctx, c, [11, -10]);
   if (persona.id === 'mother') drawBaby(ctx, c, look, time);
-  if (persona.id === 'artist') drawSketchbook(ctx, c, hand, action === 'show');
+  if (persona.id === 'artist') drawSketchbook(ctx, c, hand, action === 'show', time);
   if (persona.id === 'backpacker') drawMap(ctx, c);
   if (persona.id === 'fisherman') {
     ctx.fillStyle = c(hex('#2f6f98'));

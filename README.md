@@ -17,14 +17,23 @@ Precisa de servidor HTTP porque o código usa ES modules; o `server.js` é um se
 
 ```bash
 npm test
+npm run test:browser
 ```
 
-Usa o test runner do próprio Node (sem dependências). Cobre a simulação pura (`step` não muta o estado, aceleração, paradas, destino), as linhas e a baldeação em Nexus, os horários marcados, as cartas no link, a tradução, o modo foco e o link compartilhado; também confere que todo módulo carrega e que o `main.js` só importa nomes que existem. Roda no GitHub Actions a cada push.
+Usa o test runner do próprio Node (sem dependências). Cobre a simulação pura (`step` não muta o estado, aceleração, paradas, destino), as linhas e a baldeação em Nexus, os horários marcados, as cartas no link, a tradução, o modo foco, o progresso salvo e o link compartilhado; também confere que todo módulo carrega e que o `main.js` só importa nomes que existem. O teste de navegador abre a interface em Chrome/Chromium em tamanhos de computador e celular. Ambos rodam no GitHub Actions a cada push. Para o teste de navegador local, defina `CHROME_BIN` se o Chrome não estiver no PATH.
+
+## Começar e guardar a viagem
+
+Na primeira visita, uma tela ilustrada apresenta a viagem livre e a escolha de destino. **Como começar**, em Ajustes, abre a introdução outra vez. O trem guarda a posição e o estado da viagem no navegador a cada 10 segundos e quando a página é fechada; ao voltar, retoma de onde parou. **Recomeçar viagem atual** reinicia só o trajeto atual, preservando diário e preferências.
+
+Em **Viagem → Roteiro com paradas**, adicione até 12 estações. Ao chegar a uma delas, **Continuar viajando** avança para a próxima; o roteiro pode cruzar as linhas por Nexus. O roteiro fica salvo no navegador. Em **Ajustes → Seu progresso**, **Salvar backup** exporta todos os dados do Train Journey em JSON; **Importar backup** restaura o arquivo no mesmo ou em outro navegador.
+
+O cenário mantém o desenho animado em Canvas, com montanhas, clima e objetos em movimento no mesmo estilo do vagão e dos personagens. Os botões em **Interagir com a cena** oferecem pelo teclado as principais ações que também podem ser acionadas com toque ou clique. **Escrever no caderno** permite ver a animação da passageira imediatamente. Quando uma nova versão offline estiver pronta, o app oferece **Atualizar agora**.
 
 ## O que tem
 
 - **Parallax em 8 camadas**: montanhas distantes, montanhas médias, mar, colinas, campos, arbustos, postes com fios e o chão passando rente ao trilho.
-- **8 biomas** que se alternam a cada 3,5 km com transição suave:
+- **11 biomas** que se alternam a cada 3,5 km com transição suave:
   Campos → Fazenda → Floresta → Montanhas (com neve) → Outono → Subúrbio → Cidade → Litoral → **Deserto** (dunas e cactos saguaro) → **Vinhedos** (fileiras de parreiras, com uvas do verão ao outono, e um **viaduto** de pedra sobre um vale — o chão some e aparece o rio lá embaixo) → **Lago** (água parada espelhando as montanhas nevadas) (ciclo de 38,5 km).
   - **Fazenda**: lavouras em retalhos com sulcos, celeiros com silo, fardos de feno, vacas, cata-vento girando e cerca de madeira.
   - **Subúrbio/Cidade**: skyline no horizonte que cresce conforme o trem se aproxima, prédios com janelas que acendem à noite, antenas piscando, fábricas soltando fumaça, muro e postes de luz.
@@ -57,9 +66,9 @@ Usa o test runner do próprio Node (sem dependências). Cobre a simulação pura
 
 Este trem é o emblema da nova fase do **Fractal Nexus**, da **NexionAI Systems**. Ao abrir, uma tela de abertura curta com o emblema fractal ("Fractal Nexus · NexionAI Systems apresenta") — uma vez por sessão; toque ou tecla pula, `?nosplash` desliga. No bosque de outono fica a **estação Nexus**: fachada lilás, placa violeta com o emblema e um brilho próprio. Parada ali, a passageira sempre pensa algo sobre recomeço, e o cartão-postal ganha um recado especial. Todo cartão-postal leva o selo Fractal Nexus · NexionAI Systems.
 
-## Duas linhas e a baldeação
+## Linhas e baldeação
 
-São duas linhas que se cruzam na **estação Nexus**:
+Aurora e Horizonte são linhas diurnas que se cruzam na **estação Nexus**; a terceira, Estelar, é descrita abaixo:
 
 | Linha | Estações |
 | --- | --- |
@@ -263,7 +272,7 @@ Em **Som**, ligue **Locutor (voz do rádio)**: com a voz sintetizada do próprio
 
 ## Diário de viagem
 
-Botão **Diário** no painel: um caderno com 154 figurinhas para completar — as 18 estações das duas linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos, cometa, eclipse total do sol, arco-íris lunar, e as datas especiais: Natal, Ano Novo, Carnaval, festa junina e Dia das Crianças), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (correndo, a bordo, esperando na plataforma e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
+Botão **Diário** no painel: um caderno com 154 figurinhas para completar — as estações das três linhas, as 11 paisagens, as 4 estações do ano, fenômenos do céu (arco-íris, relâmpago, neve, neblina, estrelas, pôr do sol, lua cheia, lua nova), coisas do caminho (túnel, ponte, passagem de nível, trem cruzando, farol, viaduto), momentos (bilhete, café, freio de emergência, bichos, revoada, balão, companhia de viagem, acordar a passageira), os 10 personagens do corredor e as 6 personalidades do banco da frente, raridades (estrela cadente, chuva de meteoros, arco-íris duplo, coração no céu, festa junina, circo, cervo, fogos de artifício, baleia, golfinhos, cometa, eclipse total do sol, arco-íris lunar, e as datas especiais: Natal, Ano Novo, Carnaval, festa junina e Dia das Crianças), bichos pelo caminho (cavalos a galope, família de capivaras), a cidade acordada à noite, a Bella (correndo, a bordo, esperando na plataforma e um carinho nela) e marcos (chegada ao destino, 10 e 50 km) e conquistas (10 min, 30 min, 1 h e 3 h a bordo, um dia inteiro no trem, um ciclo da lua, 100 km, primeiro cartão-postal, intenção lacrada, intenção que voltou, bons sonhos, passaporte completo de cada linha, missão cumprida, sete missões, três dias seguidos, primeiro vídeo gravado). O diário também conta o tempo total a bordo. Cada descoberta aparece com um aviso na tela e fica salva no navegador (dá para recomeçar pelo próprio diário).
 
 ## Cliques na cena
 
@@ -452,4 +461,4 @@ src/
   controls.js   painel e letreiro
 ```
 
-Todo o cenário é procedural e determinístico (hash por posição), então o mesmo quilômetro sempre tem a mesma paisagem.
+O desenho clássico é procedural e determinístico (hash por posição), então o mesmo quilômetro sempre tem a mesma paisagem. O modo ilustrado acrescenta panoramas gerados para cada linha e mantém os objetos e efeitos animados do Canvas.

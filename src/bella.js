@@ -25,11 +25,15 @@ export const COAT = { TAN, TAN_LIGHT, SADDLE, MASK, MUZZLE, COLLAR, TONGUE, HEAR
 const GREETINGS = ['Olha a Bella! Corre, Bella!', 'Bella! Você veio me acompanhar?', 'Vai, Bella! Mais rápido que o trem!', 'Minha Bella... sempre do meu lado.'];
 export const PETS = ['Boa menina, Bella!', 'Te amo, Bella!', 'Quem é a cachorra mais linda? A Bella!'];
 
-/** The run of this period, if any: { k, t } with t = seconds since she showed up. */
-function episode(time, first = FIRST) {
+/**
+ * The run of this period, if any: { k, t } with t = seconds since she showed up.
+ * `first` (from ?bella) is an extra run at that trip time, also in a resumed trip.
+ */
+function episode(time, first = null) {
+  if (first !== null && time >= first && time <= first + SECONDS) return { k: 0, t: time - first };
   const k = Math.floor(time / PERIOD);
   if (k > 0 && hash(k, 4101) > 0.75) return null;
-  const start = k === 0 ? first : k * PERIOD + hash(k, 4102) * (PERIOD - SECONDS);
+  const start = k === 0 ? FIRST : k * PERIOD + hash(k, 4102) * (PERIOD - SECONDS);
   const t = time - start;
   return t >= 0 && t <= SECONDS ? { k, t } : null;
 }
@@ -56,7 +60,7 @@ function visibility(state) {
 /** Bella's run right now ({ k, t, alpha }), or null. Pure function of the state; `state.bellaFirst` (from ?bella) brings her first run forward. */
 export function bellaAt(state) {
   if (state.bellaAboard) return null; // she is inside, by the passenger's side
-  const ep = episode(state.time, state.bellaFirst);
+  const ep = episode(state.time, state.bellaFirst ?? null);
   if (!ep) return null;
   const alpha = visibility(state);
   return alpha > 0 ? { ...ep, alpha } : null;

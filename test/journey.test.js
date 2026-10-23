@@ -12,6 +12,16 @@ test('step never mutates the previous state', () => {
   assert.equal(JSON.stringify(prev), before);
 });
 
+test('the notebook action starts and holds the writing pose', () => {
+  const input = baseInput({ stops: false });
+  const first = start(input);
+  const writing = step(first, 1, { ...input, events: [{ type: 'sketch' }] });
+  assert.ok(writing.pose.sketch > 0.9);
+  assert.equal(writing.sketchUntil, 16);
+  const next = step(writing, 1, input);
+  assert.ok(next.pose.sketch > 0.9);
+});
+
 test('the train speeds up towards the chosen speed', () => {
   const input = baseInput({ stops: false });
   const s = run({ ...start(input), speed: 0 }, input, 20);

@@ -27,7 +27,7 @@ const HANDS = {
   wave: { hand: [9, -52], elbow: [7, -38] },
   eat: { hand: [7.6, -37], elbow: [10, -25] },
   knit: { hand: [11.5, -17], elbow: [3, -12] },
-  sketch: { hand: [10.5, -21], elbow: [4, -13] },
+  sketch: { hand: [11, -9], elbow: [3.5, -15] },
   snack: { hand: [7.6, -37], elbow: [10, -25] },
 };
 const YARN = ['#7a5bc4', '#efe3c8'].map(hex);
@@ -93,6 +93,12 @@ function drawTorso(ctx, L, rim) {
   ctx.strokeStyle = rim;
   ctx.lineWidth = 0.6;
   ctx.stroke();
+  ctx.strokeStyle = rgba(mix(lit(look.sweater, L), WHITE, 0.3), 0.25);
+  ctx.lineWidth = 0.4;
+  ctx.beginPath();
+  ctx.moveTo(-3.5, -31);
+  ctx.quadraticCurveTo(1, -33.3, 4.7, -31);
+  ctx.stroke();
 }
 
 /** Head turned toward the window: we mostly see hair, an ear and a sliver of cheek. */
@@ -106,7 +112,19 @@ function drawHead(ctx, L, head, rim) {
   ctx.arc(0, 0, 6.2, 0, Math.PI * 2);
   ctx.fill();
   drawHair(ctx, L);
+  ctx.strokeStyle = rgba(mix(lit(look.hair, L), WHITE, 0.23), 0.42);
+  ctx.lineWidth = 0.35;
+  ctx.beginPath();
+  ctx.arc(-0.9, -1.1, 5.5, Math.PI * 1.12, Math.PI * 1.45);
+  ctx.stroke();
   if (look.beard) drawBeard(ctx, L);
+  if (head.focus > 0.4) {
+    ctx.strokeStyle = rgba(mix(lit(look.hair, L), lit(look.skin, L), 0.25), head.focus);
+    ctx.lineWidth = 0.35;
+    ctx.beginPath();
+    ctx.arc(4.2, -0.9, 0.85, 0.18, 1.25);
+    ctx.stroke();
+  }
   ctx.fillStyle = rgba(mix(lit(look.skin, L), lit(look.hair, L), 0.25));
   ctx.beginPath();
   ctx.ellipse(1.2, 0.8, 1, 1.6, 0, 0, Math.PI * 2);
@@ -366,12 +384,13 @@ function drawKnitting(ctx, L, [x, y], amount, time, knitted) {
   ctx.restore();
 }
 
-/** A sketch pad on her knee: the landscape line grows as the pencil moves along it. */
+/** A notebook held steady on her knee while the pencil crosses three short lines. */
 const PAD = { x: 13.5, y: -11, angle: -0.55 }; // sketch pad resting on her knee, tilted toward her
-const SKETCH_SECONDS = 14; // one drawing, then a fresh page
-
-/** The drawing on the pad: point i (0..20) of the hills line, in pad coordinates. */
-const sketchPoint = (i) => [-7.5 + (i / 20) * 7, 3 - Math.sin(i * 0.5) * 0.9 - (i > 8 && i < 13 ? 1.2 : 0)];
+const SKETCH_SECONDS = 13; // three lines, a pause, then a fresh page
+const LINE_SECONDS = 3.7;
+const LINE_START = -8.2;
+const LINE_END = 0.1;
+const lineY = (row, p) => 2.3 + row * 1.75 + Math.sin(p * 19) * 0.11;
 
 /** Pad coordinates → passenger units. */
 function onPad([px, py]) {
@@ -380,15 +399,15 @@ function onPad([px, py]) {
   return [PAD.x + px * c - py * sn, PAD.y + px * sn + py * c];
 }
 
-/** Where the pencil tip is now (passenger units): it travels along the line as it is drawn. */
-function pencilTip(time) {
-  const p = (time % SKETCH_SECONDS) / SKETCH_SECONDS;
-  const i = 20 * p;
-  const [ax, ay] = sketchPoint(Math.floor(i));
-  const [bx, by] = sketchPoint(Math.min(20, Math.floor(i) + 1));
-  const k = i - Math.floor(i);
-  const jitter = Math.sin(time * 23) * 0.12; // the small back-and-forth of a hand drawing
-  return onPad([ax + (bx - ax) * k, ay + (by - ay) * k + jitter]);
+/** The tip follows the ink; a brief lift separates each line. */
+function writingPose(time) {
+  const phase = ((time % SKETCH_SECONDS) + SKETCH_SECONDS) % SKETCH_SECONDS;
+  const row = Math.min(2, Math.floor(phase / LINE_SECONDS));
+  const local = Math.min(1, (phase - row * LINE_SECONDS) / LINE_SECONDS);
+  const progress = Math.min(1, local / 0.88);
+  const lift = local > 0.88 || phase > LINE_SECONDS * 3 ? 0.65 : 0;
+  const tip = onPad([LINE_START + (LINE_END - LINE_START) * progress, lineY(row, progress) - lift]);
+  return { row, progress, tip, hand: [tip[0] + 1.7, tip[1] - 2.25] };
 }
 
 /** The pad on her knee with the line drawn so far (the hand and pencil are drawn by drawArm). */
@@ -398,19 +417,34 @@ function drawSketch(ctx, L, amount, time) {
   ctx.translate(PAD.x, PAD.y);
   ctx.rotate(PAD.angle);
   ctx.fillStyle = rgba(lit(hex('#5a3a2a'), L));
-  ctx.fillRect(-8.3, -0.3, 8.6, 5.9);
+  ctx.fillRect(-9.1, -0.5, 10.2, 7.8);
   ctx.fillStyle = rgba(lit(PAGE, L));
-  ctx.fillRect(-8, 0, 8, 5.3);
-  const p = (time % SKETCH_SECONDS) / SKETCH_SECONDS;
-  ctx.strokeStyle = rgba(lit(hex('#3a3a44'), L));
-  ctx.lineWidth = 0.22;
+  ctx.fillRect(-8.8, -0.2, 9.6, 7.1);
+  ctx.strokeStyle = rgba(lit(hex('#a7b5bd'), L), 0.5);
+  ctx.lineWidth = 0.1;
   ctx.beginPath();
-  for (let i = 0; i <= 20 * p; i++) {
-    const [px, py] = sketchPoint(i);
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
+  for (let row = 0; row < 3; row++) {
+    const y = 2.7 + row * 1.75;
+    ctx.moveTo(-8.2, y);
+    ctx.lineTo(0.1, y);
   }
   ctx.stroke();
+  const writing = writingPose(time);
+  ctx.strokeStyle = rgba(lit(hex('#3a3a44'), L));
+  ctx.lineWidth = 0.2;
+  for (let row = 0; row <= writing.row; row++) {
+    const end = row < writing.row ? 1 : writing.progress;
+    ctx.beginPath();
+    for (let i = 0; i <= 30 * end; i++) {
+      const p = i / 30;
+      const x = LINE_START + (LINE_END - LINE_START) * p;
+      if (i === 0) ctx.moveTo(x, lineY(row, p));
+      else ctx.lineTo(x, lineY(row, p));
+    }
+    ctx.stroke();
+  }
+  ctx.fillStyle = rgba(lit(hex('#9b7852'), L));
+  for (let i = 0; i < 4; i++) ctx.fillRect(-9.2 + i * 2.6, -0.8, 0.45, 1);
   ctx.restore();
 }
 
@@ -418,12 +452,18 @@ function drawSketch(ctx, L, amount, time) {
 function drawPencil(ctx, L, tip, hand, amount) {
   ctx.save();
   ctx.globalAlpha = clamp((amount - 0.2) * 1.6);
-  ctx.strokeStyle = rgba(lit(hex('#e0a030'), L));
-  ctx.lineWidth = 0.5;
+  ctx.strokeStyle = rgba(lit(hex('#50392a'), L));
+  ctx.lineWidth = 0.72;
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(tip[0], tip[1]);
-  ctx.lineTo(hand[0] + 0.4, hand[1] - 0.6);
+  ctx.lineTo(hand[0] + 1.1, hand[1] - 1.2);
+  ctx.stroke();
+  ctx.strokeStyle = rgba(lit(hex('#e0a030'), L));
+  ctx.lineWidth = 0.48;
+  ctx.beginPath();
+  ctx.moveTo(tip[0] + 0.35, tip[1] - 0.35);
+  ctx.lineTo(hand[0] + 1.1, hand[1] - 1.2);
   ctx.stroke();
   ctx.restore();
 }
@@ -449,8 +489,7 @@ const BITE_SECONDS = 3.6;
 
 /** The hand's own movement on top of the pose: waving, drawing, knitting, bites. */
 function handMotion(pose, base, time) {
-  const tip = pencilTip(time);
-  const sketchHand = [tip[0] + 1.6, tip[1] - 2.4]; // holding the pencil a little above its tip
+  const sketchHand = writingPose(time).hand;
   const bite = 0.5 - 0.5 * Math.cos((time / BITE_SECONDS) * Math.PI * 2); // 0 lap .. 1 mouth
   return [
     Math.sin(time * 9) * 1.6 * pose.wave
@@ -467,7 +506,7 @@ function drawArm(ctx, L, pose, holdingNewCup, time, knitted = 0) {
   const base = armPose(pose);
   const [mx, my] = handMotion(pose, base.hand, time);
   const hand = [base.hand[0] + mx, base.hand[1] + my];
-  const elbow = [base.elbow[0] + mx * 0.3, base.elbow[1] + my * 0.3];
+  const elbow = [base.elbow[0] + mx * (pose.sketch > 0.2 ? 0.06 : 0.3), base.elbow[1] + my * (pose.sketch > 0.2 ? 0.06 : 0.3)];
   const sleeve = mix(lit(look.sweater, L), [0, 0, 0], 0.15);
   const path = () => {
     ctx.beginPath();
@@ -495,13 +534,21 @@ function drawArm(ctx, L, pose, holdingNewCup, time, knitted = 0) {
   if (holdingNewCup) drawHeldCup(ctx, L, hand, 1);
   if (pose.eat > 0.3) drawFork(ctx, L, hand, pose.eat);
   if (pose.knit > 0.2) drawKnitting(ctx, L, hand, pose.knit, time, knitted);
-  if (pose.sketch > 0.2) drawPencil(ctx, L, pencilTip(time), hand, pose.sketch);
+  if (pose.sketch > 0.2) drawPencil(ctx, L, writingPose(time).tip, hand, pose.sketch);
   if (pose.snack > 0.3) drawSandwich(ctx, L, hand, pose.snack);
   if (pose.ticket > 0.3) drawTicket(ctx, L, hand, pose.ticket);
   ctx.fillStyle = rgba(lit(look.skin, L));
   ctx.beginPath();
-  ctx.arc(hand[0], hand[1], 1.7, 0, Math.PI * 2);
+  ctx.arc(hand[0], hand[1], pose.sketch > 0.2 ? 1.35 : 1.7, 0, Math.PI * 2);
   ctx.fill();
+  if (pose.sketch > 0.2) {
+    ctx.strokeStyle = rgba(mix(lit(look.skin, L), [60, 35, 24], 0.3));
+    ctx.lineWidth = 0.3;
+    ctx.beginPath();
+    ctx.moveTo(hand[0] + 0.3, hand[1] + 0.5);
+    ctx.lineTo(hand[0] + 1.2, hand[1] + 1.1);
+    ctx.stroke();
+  }
 }
 
 function drawZzz(ctx, time, amount) {
@@ -528,10 +575,11 @@ export function drawPassenger(ctx, layout, state, L, env, bob) {
     || passerbyLine(passerbyAt(state.time, state.dayTime))?.who === 'p';
   const facing = Math.max(pose.talk, pose.ticket, pose.receive, pose.wave);
   const head = {
-    tilt: nod * 0.02 + (pose.read + pose.knit + pose.sketch) * 0.22 - pose.sleep * 0.32 - pose.sip * 0.12 - facing * 0.08 + pose.rest * 0.42,
+    tilt: nod * 0.02 + (pose.read + pose.knit) * 0.22 + pose.sketch * 0.31 - pose.sleep * 0.32 - pose.sip * 0.12 - facing * 0.08 + pose.rest * 0.42,
     dx: -pose.sleep * 1.4 + pose.rest * 3, // dozing: head leaning toward the window glass
     dy: nod * 0.2 + (pose.read + pose.knit + pose.sketch) * 0.8 + pose.sleep * 0.6 + pose.rest * 1.6,
     face: facing,
+    focus: Math.max(pose.read, pose.knit, pose.sketch),
     mouth: speaking ? Math.abs(Math.sin(state.time * 11)) : 0,
   };
   const rim = rgba(mix(env.bottom, WHITE, 0.3), 0.1 + 0.35 * L.daylight);

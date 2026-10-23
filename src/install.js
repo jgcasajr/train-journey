@@ -4,7 +4,20 @@
  */
 export function setupInstall(doc, { onInstalled }) {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch((err) => console.warn('Offline mode unavailable:', err));
+    navigator.serviceWorker.register('sw.js').then((registration) => {
+      const notice = doc.getElementById('update-notice');
+      const hadController = Boolean(navigator.serviceWorker.controller);
+      const showUpdate = () => { if (navigator.serviceWorker.controller && registration.waiting) notice?.classList.remove('hidden'); };
+      showUpdate();
+      registration.addEventListener('updatefound', () => {
+        registration.installing?.addEventListener('statechange', showUpdate);
+      });
+      doc.getElementById('update-now')?.addEventListener('click', () => registration.waiting?.postMessage({ type: 'SKIP_WAITING' }));
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (hadController && !refreshing) { refreshing = true; window.location.reload(); }
+      });
+    }).catch((err) => console.warn('Offline mode unavailable:', err));
   }
   const button = doc.getElementById('install-btn');
   if (!button) throw new Error('Missing element #install-btn');

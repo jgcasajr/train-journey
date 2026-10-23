@@ -45,6 +45,7 @@ const treeStyle = (bm, env, haze) => ({
   snow: num(bm, 'snow') > 0.4 || env.season.winter > 0.5 ? rgba(shade(SNOW, env, haze)) : null,
   bare: env.season.winter > 0.5,
   blossom: env.season.spring > 0.5 ? rgba(shade(BLOSSOM, env, haze)) : null,
+  highlight: rgba(shade(WHITE, env, haze), 0.08 + env.light * 0.06),
 });
 
 /** Snow on the peaks: mountain biomes always, everywhere in winter. */
@@ -88,6 +89,11 @@ function drawMountains(ctx, layout, state, env, cfg) {
   const pts = traceRidge(win, lf, heightAt);
   const fill = acrossGradient(ctx, win, lf, (bm) => rgba(shade(tint(bm, cfg.key, env), env, cfg.haze)));
   fillRidge(ctx, pts, win.y + win.h + 40, fill);
+  ctx.strokeStyle = rgba(shade(WHITE, env, cfg.haze), cfg.key === 'far' ? 0.12 : 0.16);
+  ctx.lineWidth = Math.max(1, layout.u * 0.09);
+  ctx.beginPath();
+  pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+  ctx.stroke();
   drawSnowCaps(ctx, pts, horizon - win.h * cfg.snowLine, win.h * 0.14, rgba(shade(SNOW, env, cfg.haze * 0.8)), env);
 }
 

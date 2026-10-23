@@ -32,6 +32,11 @@ function drawRound(ctx, x, y, s, style) {
   circle(ctx, x - s * 0.2, y - s * 0.55, s * 0.22);
   circle(ctx, x + s * 0.2, y - s * 0.58, s * 0.24);
   ctx.fill();
+  ctx.fillStyle = style.highlight;
+  ctx.beginPath();
+  circle(ctx, x - s * 0.15, y - s * 0.7, s * 0.13);
+  circle(ctx, x + s * 0.08, y - s * 0.81, s * 0.11);
+  ctx.fill();
   if (!style.blossom) return;
   ctx.fillStyle = style.blossom;
   ctx.beginPath();

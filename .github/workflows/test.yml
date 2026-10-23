@@ -14,3 +14,8 @@ jobs:
         with:
           node-version: 22
       - run: npm test
+      - uses: browser-actions/setup-chrome@v2
+        id: browser
+      - run: npm run test:browser
+        env:
+          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}

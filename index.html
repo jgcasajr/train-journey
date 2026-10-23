@@ -64,6 +64,11 @@
         <span>Destino</span>
         <select id="destination"><option value="" selected>Viagem livre</option></select>
       </label>
+      <div class="route-builder">
+        <label class="field"><span>Roteiro com paradas</span><select id="route-stop"><option value="">Escolha uma estação</option></select></label>
+        <div class="buttons"><button id="route-add" type="button">Adicionar parada</button><button id="route-clear" type="button">Limpar roteiro</button></div>
+        <ol id="route-list" class="route-list" aria-label="Próximas paradas" hidden></ol>
+      </div>
       <label class="field">
         <span>Chegar às</span>
         <input type="time" id="arrive-at" title="Com um destino escolhido, o trem ajusta a velocidade para chegar nesse horário">
@@ -140,6 +145,23 @@
       </div>
     </details>
 
+    <details class="section" data-section="actions">
+      <summary>👆 Interagir com a cena</summary>
+      <p class="hint">As ações abaixo também funcionam com teclado.</p>
+      <div id="scene-actions" class="buttons">
+        <button type="button" data-scene-action="talk">Conversar</button>
+        <button type="button" data-scene-action="sketch">Escrever no caderno</button>
+        <button type="button" data-scene-action="sip">Tomar café</button>
+        <button type="button" data-scene-action="bella">Fazer carinho na Bella</button>
+        <button type="button" data-scene-action="curtain">Abrir ou fechar cortinas</button>
+        <button type="button" data-scene-action="radio">Mudar rádio</button>
+        <button type="button" data-scene-action="brake">Puxar freio</button>
+        <button type="button" data-scene-action="horn">Apitar</button>
+        <button type="button" data-scene-action="cat">Acariciar gato</button>
+        <button type="button" data-scene-action="sleeper">Acordar passageira</button>
+      </div>
+    </details>
+
     <details class="section" data-section="settings">
       <summary>⚙️ Ajustes</summary>
       <label class="field">
@@ -213,6 +235,14 @@
       <label class="check"><input type="checkbox" id="reduce-motion"> Movimento reduzido</label>
       <label class="check"><input type="checkbox" id="large-text"> Texto maior</label>
       <button id="install-btn" type="button" class="hidden">Instalar app</button>
+      <button id="welcome-open" type="button">Como começar</button>
+      <p class="field-title">Seu progresso</p>
+      <div class="buttons">
+        <button id="progress-export" type="button">Salvar backup</button>
+        <label class="file-button">Importar backup<input id="progress-import" type="file" accept="application/json,.json"></label>
+      </div>
+      <button id="progress-restart" type="button">Recomeçar viagem atual</button>
+      <p id="progress-status" class="hint" role="status"></p>
       <button id="reset-settings" type="button">Restaurar configurações</button>
       <p class="hint hint-mouse">Mova o mouse para olhar ao redor. Com o vidro embaçado, arraste para desenhar. H ou toque na cena oculta o painel.</p>
       <p class="hint hint-touch">Arraste o dedo ou incline o celular para olhar ao redor. Toque nas coisas da cena para interagir. O botão ☰ abre e fecha o painel.</p>
@@ -370,10 +400,51 @@
   </section>
 
   <div id="toast" data-i18n-skip class="toast" role="status" aria-live="polite"></div>
+  <div id="update-notice" class="update-notice hidden" role="status">Nova versão pronta. <button id="update-now" type="button">Atualizar agora</button></div>
+
+  <section id="welcome" class="welcome hidden" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div class="welcome-art" role="img" aria-label="Passageira observa campos e montanhas pela janela do trem"></div>
+    <div class="welcome-content">
+      <button id="welcome-close" class="welcome-close" type="button" aria-label="Fechar introdução">✕</button>
+      <p class="welcome-kicker">Sua próxima estação começa aqui</p>
+      <h2 id="welcome-title">Train Journey</h2>
+      <p>Escolha um destino ou siga sem pressa. O diário guarda suas descobertas; o roteiro pode levar você por várias estações.</p>
+      <div class="welcome-actions">
+        <button id="welcome-free" type="button">Viagem livre</button>
+        <button id="welcome-choose" type="button">Escolher destino</button>
+        <button id="welcome-resume" type="button">Retomar viagem</button>
+      </div>
+    </div>
+  </section>
 
   <div id="photo-flash" class="photo-flash" aria-hidden="true"></div>
   <div id="car-fade" class="car-fade" aria-hidden="true"></div>
 
-  <script type="module" src="src/main.js"></script>
+  <aside id="startup-problem" hidden role="alert" aria-live="assertive">
+    <strong>A cena não carregou.</strong>
+    <p>Recarregue a página com Ctrl+Shift+R. Sua viagem salva continua no navegador.</p>
+    <small id="startup-detail"></small>
+  </aside>
+  <script>
+    (() => {
+      const canvas = document.getElementById('scene');
+      const painted = () => {
+        try {
+          const ctx = canvas.getContext('2d');
+          return canvas.width > 0 && canvas.height > 0
+            && ctx.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1).data[3] > 0;
+        } catch { return false; }
+      };
+      const show = (detail) => {
+        if (painted()) return;
+        document.getElementById('startup-detail').textContent = detail || 'Falha ao iniciar o desenho.';
+        document.getElementById('startup-problem').hidden = false;
+      };
+      window.addEventListener('error', (event) => show(event.message));
+      window.addEventListener('unhandledrejection', (event) => show(String(event.reason)));
+      window.setTimeout(() => show('O primeiro quadro não foi desenhado.'), 6000);
+    })();
+  </script>
+  <script type="module" src="src/main.js?v=6"></script>
 </body>
 </html>

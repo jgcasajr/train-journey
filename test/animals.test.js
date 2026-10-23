@@ -10,6 +10,7 @@ test('Bella comes running early in the trip, and ?bella brings her sooner', () =
   assert.ok(bellaAt(running()));
   assert.equal(bellaAt(running({ time: 10 })), null);
   assert.ok(bellaAt(running({ time: 5, bellaFirst: 3 })));
+  assert.ok(bellaAt(running({ time: 4005, bellaFirst: 4003 })), '?bella also works in a resumed trip');
 });
 
 test('she fades out as the train stops, and is gone at the platform', () => {

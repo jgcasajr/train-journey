@@ -133,14 +133,17 @@ function drawClouds(ctx, layout, state, env) {
   const rainy = mix(mix(lit, hex('#ffb38a'), env.warm * 0.35), hex('#6b717a'), env.rain * 0.5);
   const stormy = mix(rainy, hex('#34383f'), env.storm * 0.6);
   const tone = mix(stormy, WHITE, env.flash * 0.6);
-  ctx.fillStyle = rgba(tone, 0.55 + 0.3 * Math.max(env.light, env.storm));
   const first = Math.floor(offset / spacing) - 2;
   const last = Math.floor((offset + win.w) / spacing) + 2;
   for (let i = first; i <= last; i++) {
     if (hash(i, 7) > coverage) continue;
     const x = win.x + (i + hash(i, 8)) * spacing - offset;
     const y = win.y + (0.08 + hash(i, 9) * 0.35) * (horizon - win.y);
-    drawCloud(ctx, x, y, u * (5 + hash(i, 10) * 9), i);
+    const size = u * (5 + hash(i, 10) * 9);
+    ctx.fillStyle = rgba(scale(tone, 0.72), 0.22 + env.rain * 0.15);
+    drawCloud(ctx, x + u * 0.6, y + u * 0.65, size, i);
+    ctx.fillStyle = rgba(tone, 0.55 + 0.3 * Math.max(env.light, env.storm));
+    drawCloud(ctx, x, y, size, i);
   }
 }
 
@@ -148,6 +151,7 @@ export function drawSky(ctx, layout, state, env) {
   const { win, horizon } = layout;
   const g = ctx.createLinearGradient(0, win.y, 0, horizon);
   g.addColorStop(0, rgba(env.top));
+  g.addColorStop(0.62, rgba(mix(env.top, env.bottom, 0.55)));
   g.addColorStop(1, rgba(env.bottom));
   ctx.fillStyle = g;
   const margin = layout.u * 14;

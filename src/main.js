@@ -41,6 +41,9 @@ import { createRadio } from './radio.js';
 import { passDuration } from './passingTrain.js';
 import { passerbyAt, passerbyCues } from './passersby.js';
 import { createPointer } from './pointer.js';
+import { savedJourney, saveJourney, setupProgress } from './progress.js';
+import { createItinerary } from './itinerary.js';
+import { setupWelcome } from './welcome.js';
 import { render } from './render.js';
 import { crossingNear } from './roads.js';
 import { SEASON_NAMES, dominantSeason } from './seasons.js';
@@ -154,8 +157,28 @@ function createClicks({ canvas, audio, radio, controls, getScene }) {
     e.preventDefault();
     audio.whistle();
   });
+  const sounds = { bella: 'bark', curtain: 'swish', brake: 'brake', cat: 'meow' };
+  document.querySelectorAll('[data-scene-action]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const type = button.dataset.sceneAction;
+      if (type === 'horn') { audio.whistle(); return; }
+      if (type === 'radio') { radio.next(); return; }
+      if (sounds[type]) audio.sfx(sounds[type]);
+      pending = [...pending, { type }];
+    });
+  });
   return {
     pointer,
+    updateActions(state) {
+      const car = state.car;
+      const seated = car === 'passenger' || car === 'dining';
+      const available = {
+        talk: seated || car === 'panorama', sketch: seated, sip: seated, bella: Boolean(state.bellaAboard) && seated,
+        curtain: seated, radio: seated, brake: seated, horn: car === 'cab',
+        cat: car === 'baggage', sleeper: car === 'sleeper',
+      };
+      document.querySelectorAll('[data-scene-action]').forEach((button) => { button.hidden = !available[button.dataset.sceneAction]; });
+    },
     /** Queue an event that doesn't come from a canvas click (e.g. the arrival card buttons). */
     queue(event) { pending = [...pending, event]; },
     takeEvents() {
@@ -194,6 +217,8 @@ function postcardInfo(state) {
 }
 
 function start() {
+  const params = new URLSearchParams(window.location.search);
+  const resume = params.has('km') ? null : savedJourney();
   const canvas = document.getElementById('scene');
   const ctx = canvas.getContext('2d');
   const savedSettings = restoreSettings(document); // saved panel settings first; a shared link (below) overrides them
@@ -224,12 +249,15 @@ function start() {
   const notebook = createNotebook(document);
   const journal = createJournal(document, { onDiscover: (fresh, s) => { audio.sfx('discover'); notebook.note(fresh, s); } });
   const travelers = createTravelers({ onRecall: (text) => clicks.queue({ type: 'recall', text }) });
+  let itinerary;
   const arrival = createArrival(document, {
     panel: document.getElementById('panel'),
-    onContinue: () => clicks.queue({ type: 'continue' }),
+    onContinue: () => { clicks.queue({ type: 'continue' }); itinerary?.advance(); },
     foundCount: journal.foundCount,
     arrivalNote: (time) => schedule.arrivalNote(time),
   });
+  if (resume?.destination) document.getElementById('destination').value = resume.destination;
+  itinerary = createItinerary(document);
   const schedule = createSchedule(document, { onPunctual: () => journal.award('punctual') });
   const focus = createFocus(document, {
     params: new URLSearchParams(window.location.search),
@@ -239,8 +267,6 @@ function start() {
   });
 
   let layout = resizeCanvas(canvas, ctx);
-  const params = new URLSearchParams(window.location.search);
-  showSplash(document, params);
   const modes = createModes(document, {
     canvas,
     panel: document.getElementById('panel'),
@@ -265,10 +291,15 @@ function start() {
   const kmParam = params.get('km');
   const start = initialState(controls.read(), kmParam === null ? NaN : Number(kmParam));
   const day = Number(params.get('dia'));
-  const withDay = params.has('dia') && Number.isFinite(day) ? { ...start, dayCount: Math.floor(day) } : start;
-  const withBella = params.has('bella') ? { ...withDay, bellaFirst: 3 } : withDay; // ?bella: she comes running right away
+  // A resumed trip still honours the link's extras below, but never keeps old ones (a forced eclipse forever).
+  const { bellaFirst, wonder, ...resumed } = resume ?? {};
+  const base = resume ? resumed : start;
+  const withDay = params.has('dia') && Number.isFinite(day) ? { ...base, dayCount: Math.floor(day) } : base;
+  const withBella = params.has('bella') ? { ...withDay, bellaFirst: withDay.time + 3 } : withDay; // ?bella: she comes running right away
   const withWonder = WONDERS.includes(params.get('ceu')) ? { ...withBella, wonder: params.get('ceu') } : withBella; // ?ceu=cometa|eclipse|arcolunar
-  let state = params.has('pass') ? { ...withWonder, nextPassing: 2 } : withWonder;
+  let state = params.has('pass') ? { ...withWonder, nextPassing: 2 } : withWonder; // countdown in seconds
+  setupProgress(document, () => state);
+  if (!setupWelcome(document, { hasJourney: Boolean(resume) })) showSplash(document, params);
   letters.receive(params, params.has('km') ? `${t(LINES[lineAt(state.distance)].name)}, ${t(biomeName(state.distance))}` : '');
   let last = performance.now();
   let hudTimer = 0;
@@ -276,6 +307,9 @@ function start() {
 
   let saving = false;
   let lastDraw = 0;
+  let lastSave = performance.now();
+  window.addEventListener('pagehide', () => saveJourney(state));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveJourney(state); });
   window.addEventListener('resize', () => { layout = resizeCanvas(canvas, ctx, saving); });
   const announcer = createAnnouncer(document, { radio });
   const passport = createPassport(document, {
@@ -345,6 +379,7 @@ function start() {
     controls.showScheduledSpeed(plan ? plan.kmh : null);
     const stepInput = { ...input, destination, destinationAt: plan?.stopAt ?? null, bellaAboard: bellaAboardBox.checked };
     state = step(state, dt, { ...stepInput, events: clicks.takeEvents() });
+    if (now - lastSave > 10000) { saveJourney(state); lastSave = now; }
     for (let k = 1; k < recorder.speedup(); k++) state = step(state, dt, { ...stepInput, events: [] }); // timelapse
     recorder.tick(now);
     arrival.update(state, focus.active());
@@ -367,6 +402,7 @@ function start() {
     if (hudTimer > HUD_INTERVAL) {
       hudTimer = 0;
       updatePanel(controls, state, input, schedule.boardText(state, destination) ?? arrival.boardText(state, input.targetKmh));
+      clicks.updateActions(state);
     }
     const headLook = pointer.updateLook(dt);
     const look = a11y.calm() ? { x: 0, y: 0 } : headLook; // reduced motion: no swaying point of view

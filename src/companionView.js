@@ -77,6 +77,11 @@ function drawHead(ctx, look, c, { mouth, dozing, tilt = 0 }) {
   ctx.quadraticCurveTo(7.6, 0.6, 5.9, 1.5);
   ctx.fill();
   drawHair(ctx, look, c);
+  ctx.strokeStyle = c(mix(hex(look.hair), [255, 255, 255], 0.2));
+  ctx.lineWidth = 0.35;
+  ctx.beginPath();
+  ctx.arc(-0.7, -1, 5.4, Math.PI * 1.14, Math.PI * 1.43);
+  ctx.stroke();
   drawHeadExtras(ctx, c, look);
   ctx.fillStyle = c(hex('#2a1c14'));
   ctx.strokeStyle = ctx.fillStyle;
@@ -115,17 +120,33 @@ function drawTorso(ctx, look, c) {
   ctx.bezierCurveTo(7, -2, 5, 0, 2, 1);
   ctx.closePath();
   ctx.fill();
+  ctx.strokeStyle = c(mix(hex(look.coat), [255, 255, 255], 0.22));
+  ctx.globalAlpha *= 0.4;
+  ctx.lineWidth = 0.4;
+  ctx.beginPath();
+  ctx.moveTo(-3.5, -31);
+  ctx.quadraticCurveTo(1, -33.3, 4.7, -31);
+  ctx.stroke();
+  ctx.globalAlpha /= 0.4;
 }
 
 function drawArm(ctx, look, c, elbow, hand) {
-  ctx.strokeStyle = c(mix(hex(look.coat), [0, 0, 0], 0.18));
-  ctx.lineWidth = 4.4;
+  const coat = hex(look.coat);
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  ctx.beginPath();
-  ctx.moveTo(-2, -29);
-  ctx.lineTo(elbow[0], elbow[1]);
-  ctx.lineTo(hand[0], hand[1]);
+  const path = () => {
+    ctx.beginPath();
+    ctx.moveTo(-2, -29);
+    ctx.quadraticCurveTo(-1, -22, elbow[0], elbow[1]);
+    ctx.quadraticCurveTo((elbow[0] + hand[0]) / 2, (elbow[1] + hand[1]) / 2 + 0.7, hand[0], hand[1]);
+  };
+  ctx.strokeStyle = c(mix(coat, [0, 0, 0], 0.38));
+  ctx.lineWidth = 5;
+  path();
+  ctx.stroke();
+  ctx.strokeStyle = c(mix(coat, [0, 0, 0], 0.12));
+  ctx.lineWidth = 4.1;
+  path();
   ctx.stroke();
   ctx.fillStyle = c(hex(look.skin));
   ctx.beginPath();

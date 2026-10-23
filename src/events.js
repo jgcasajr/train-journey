@@ -47,6 +47,7 @@ export const initialInteraction = () => ({
   speech: null,
   wakeUntil: 0,
   sipUntil: 0,
+  sketchUntil: 0,
   brakeUntil: 0,
   brakeStarted: false,
   lampMode: 'auto',
@@ -66,6 +67,8 @@ function reduce(state, event) {
     case 'sip':
       if (state.coffee <= 0.05) return say(state, 'Acabou o café... cadê o carrinho?');
       return { sipUntil: state.time + SIP_SECONDS, speech: null };
+    case 'sketch':
+      return { sketchUntil: state.time + 16, wakeUntil: state.time + 16, speech: null };
     case 'lamp':
       return { lampMode: LAMP_MODES[(LAMP_MODES.indexOf(state.lampMode) + 1) % LAMP_MODES.length] };
     case 'curtain':

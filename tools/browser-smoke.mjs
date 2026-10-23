@@ -36,6 +36,9 @@ async function withPlaywright(playwright, url, [width, height]) {
   const browser = await playwright.chromium.launch({ args: ['--allow-file-access-from-files'] });
   try {
     const page = await browser.newPage({ viewport: { width, height } });
+    page.on('crash', () => console.error(`Page crashed at ${width}x${height}`));
+    page.on('pageerror', (err) => console.error(`Page error at ${width}x${height}:`, err.message));
+    page.on('console', (msg) => { if (msg.type() === 'error' || msg.type() === 'warning') console.error(`console.${msg.type()}:`, msg.text()); });
     await page.goto(url);
     await page.waitForFunction(() => document.documentElement.dataset.smokeActions !== undefined, null, { timeout: 20000 });
     return page.evaluate(() => document.documentElement.outerHTML.match(/<html[^>]*>/)[0]);

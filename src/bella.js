@@ -3,6 +3,7 @@ import { bridgeAt } from './rivers.js';
 import { shade } from './sky.js';
 import { tunnelsBetween } from './tunnel.js';
 import { onViaduct } from './viaduct.js';
+import { stationsBetween } from './stations.js';
 import { clamp, hash, hex, lerp, rgba, scale } from './utils.js';
 
 // Bella: a German Shepherd who runs alongside the train now and then (in memory of a dear friend).
@@ -52,8 +53,26 @@ function episode(time, first = null) {
   const k = Math.floor(time / PERIOD);
   if (k > 0 && hash(k, 4101) > 0.75) return null;
   const start = k === 0 ? FIRST : k * PERIOD + hash(k, 4102) * (PERIOD - SECONDS);
+  // A regular run right after the forced one would make them jump back to the start of the run.
+  if (first !== null && Math.abs(start - first) < SECONDS + 10) return null;
   const t = time - start;
   return t >= 0 && t <= SECONDS ? { k, t } : null;
+}
+
+/** Whether they wait at this station today (never while they travel aboard). See bellaPlatform.js. */
+export function bellaWaitsAt(st, state) {
+  if (state.bellaAboard) return false;
+  return hash(st.id * 13 + (state.dayCount ?? 0), 871) < (st.nexus ? 0.4 : 0.2);
+}
+
+const PLATFORM_CLEARANCE = { behind: 250, ahead: 450 }; // meters around a platform where they wait
+
+/** Meters from the train to the nearest platform where they are waiting today (Infinity if none near). */
+function waitingPlatformGap(state) {
+  const d = state.distance;
+  return stationsBetween(d - PLATFORM_CLEARANCE.behind, d + PLATFORM_CLEARANCE.ahead)
+    .filter((st) => bellaWaitsAt(st, state))
+    .reduce((gap, st) => Math.min(gap, d < st.start ? st.start - d : Math.max(0, d - st.end)), Infinity);
 }
 
 const LOOKAHEAD = 300; // meters checked ahead for tunnels, bridges and viaducts
@@ -67,12 +86,14 @@ function clearAhead(d) {
 
 /**
  * How visible she is (0..1): she fades away, instead of vanishing, as the train slows to a
- * stop, nears a tunnel, bridge or viaduct, or enters a town.
+ * stop, nears a tunnel, bridge or viaduct, enters a town, or comes to a platform where she is
+ * already waiting (so the pair never shows up twice).
  */
 function visibility(state) {
   if (state.dwell > 0) return 0;
   const town = clamp((0.6 - num(biomeAt(state.distance), 'city')) / 0.2);
-  return Math.min(clamp((state.speed - 1.5) / 3), clamp((clearAhead(state.distance) - 60) / 150), town);
+  const waiting = clamp((waitingPlatformGap(state) - 60) / 150);
+  return Math.min(clamp((state.speed - 1.5) / 3), clamp((clearAhead(state.distance) - 60) / 150), town, waiting);
 }
 
 /** Bella's run right now ({ k, t, alpha }), or null. Pure function of the state; `state.bellaFirst` (from ?bella) brings her first run forward. */

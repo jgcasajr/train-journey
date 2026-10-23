@@ -1,18 +1,14 @@
-import { BELLA, PRINCESS } from './bella.js';
+import { BELLA, PRINCESS, bellaWaitsAt } from './bella.js';
 import { stopElapsed } from './stationPeople.js';
 import { DWELL } from './stations.js';
-import { hash, smoothstep } from './utils.js';
+import { smoothstep } from './utils.js';
 
 // Bella and Princess waiting on the platform: some days they sit at a station watching the
 // train come in, get up wagging when it stops, trot to the window, and watch it go.
 
 const GREETINGS = ['Bella! Princess! Vocês vieram me esperar!', 'Olha quem está na plataforma... a Bella e a Princess!', 'Minhas meninas! Sabia que vocês vinham.'];
 
-/** Whether they wait at this station today (never while they travel aboard). */
-export function bellaWaitsAt(st, state) {
-  if (state.bellaAboard) return false;
-  return hash(st.id * 13 + (state.dayCount ?? 0), 871) < (st.nexus ? 0.4 : 0.2);
-}
+export { bellaWaitsAt }; // decided in bella.js, where the run also needs it
 
 /** Speech when the train stops where they are waiting. */
 export function bellaPlatformGreeting(prev, next) {

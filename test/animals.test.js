@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { bellaAt, bellaGreeting } from '../src/bella.js';
 import { tunnelsBetween } from '../src/tunnel.js';
+import { step } from '../src/journey.js';
 import { baseInput, run, start } from './helpers.js';
 
 const running = (over = {}) => ({ time: 30, distance: 2000, speed: 25, dwell: 0, bellaFirst: 25, ...over });
@@ -64,4 +65,34 @@ test('some days Bella waits at a station and the passenger greets her on arrival
   const next = { ...prev, arrived: true, served: { id: nexus.id, name: 'Nexus' }, pose: { sleep: 0 } };
   assert.match(bellaPlatformGreeting(prev, next).speech.text, /Bella/);
   assert.deepEqual(bellaPlatformGreeting(next, next), {}, 'only on arrival');
+});
+
+test('the pair never shows up twice: no run near a platform where they are waiting', async () => {
+  const { bellaWaitsAt } = await import('../src/bellaPlatform.js');
+  const { stationsBetween } = await import('../src/stations.js');
+  const input = baseInput({ stops: true });
+  for (const day of [2, 4]) {
+    let s = { ...start(input, 13), dayCount: day, bellaFirst: 0 };
+    let overlaps = 0;
+    let runs = 0;
+    for (let i = 0; i < 6000; i++) { // ~200 s at 30 fps, through several stations
+      s = { ...step(s, 1 / 30, input), bellaFirst: s.time - 1 > 0 ? Math.floor(s.time / 30) * 30 : 0 };
+      const run = bellaAt(s);
+      if (run) runs += 1;
+      // The platform pair sits 22–32 m past the stop point; the window shows about 60 m of track ahead.
+      const view = stationsBetween(s.distance - 200, s.distance + 200)
+        .some((st) => bellaWaitsAt(st, s) && st.stopAt + 32 > s.distance - 5 && st.stopAt + 22 < s.distance + 70);
+      if (run && view) overlaps += 1;
+    }
+    assert.ok(runs > 100, `day ${day}: they still run (${runs} frames)`);
+    assert.equal(overlaps, 0, `day ${day}: run and platform at the same time`);
+  }
+});
+
+test('a forced run is not followed by a regular one that jumps back to the start', () => {
+  const at = (time) => bellaAt(running({ time, bellaFirst: 3 }));
+  const seen = Array.from({ length: 600 }, (_, i) => at(i * 0.1)).map((r) => r?.t ?? null);
+  for (let i = 1; i < seen.length; i++) {
+    if (seen[i] !== null && seen[i - 1] !== null) assert.ok(seen[i] > seen[i - 1], `run time went back at ${i * 0.1}s`);
+  }
 });

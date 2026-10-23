@@ -33,10 +33,9 @@ try {
   await writeFile(probeFile, html.replace('<head>', `<head>${probe}`));
   for (const [width, height] of [[1280, 800], [390, 844]]) {
     const url = `${pathToFileURL(probeFile).href}?nosplash&nowelcome&lang=pt`;
-    // Just enough virtual time for the probe (it reads the page at 1.2 s): on slow CI machines a
-    // longer budget makes headless Chrome render hundreds of frames and sometimes stall.
-    // A fresh profile for every launch (a stopped Chrome can leave its profile locked) and no
-    // /dev/shm (small on CI machines), the usual causes of headless Chrome hanging at start.
+    // Just enough virtual time for the probe (it reads the page at 1.2 s). A fresh profile for every
+    // launch, no /dev/shm and no D-Bus (absent on CI machines) avoid the known start-up hangs of
+    // headless Chrome there; a stalled launch is retried once.
     const runChrome = async () => {
       const profile = await mkdtemp(join(tmpdir(), 'tj-smoke-'));
       try {
@@ -45,7 +44,7 @@ try {
           '--no-default-browser-check', '--disable-extensions', `--user-data-dir=${profile}`,
           '--allow-file-access-from-files', '--enable-logging=stderr', '--v=0',
           `--window-size=${width},${height}`, '--virtual-time-budget=1600', '--dump-dom', url,
-        ], { encoding: 'utf8', timeout: 60000, maxBuffer: 8 * 1024 * 1024 });
+        ], { encoding: 'utf8', timeout: 60000, maxBuffer: 8 * 1024 * 1024, env: { ...process.env, DBUS_SESSION_BUS_ADDRESS: 'disabled:' } });
       } finally {
         await rm(profile, { recursive: true, force: true }).catch(() => {});
       }

@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
-import { readFile, writeFile, unlink } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile, unlink } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -34,14 +35,25 @@ try {
     const url = `${pathToFileURL(probeFile).href}?nosplash&nowelcome&lang=pt`;
     // Just enough virtual time for the probe (it reads the page at 1.2 s): on slow CI machines a
     // longer budget makes headless Chrome render hundreds of frames and sometimes stall.
-    const runChrome = () => spawnSync(chrome, [
-      '--headless=new', '--no-sandbox', '--disable-gpu', '--allow-file-access-from-files', '--enable-logging=stderr', '--v=0',
-      `--window-size=${width},${height}`, '--virtual-time-budget=1600', '--dump-dom', url,
-    ], { encoding: 'utf8', timeout: 60000, maxBuffer: 8 * 1024 * 1024 });
-    let result = runChrome();
+    // A fresh profile for every launch (a stopped Chrome can leave its profile locked) and no
+    // /dev/shm (small on CI machines), the usual causes of headless Chrome hanging at start.
+    const runChrome = async () => {
+      const profile = await mkdtemp(join(tmpdir(), 'tj-smoke-'));
+      try {
+        return spawnSync(chrome, [
+          '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--no-first-run',
+          '--no-default-browser-check', '--disable-extensions', `--user-data-dir=${profile}`,
+          '--allow-file-access-from-files', '--enable-logging=stderr', '--v=0',
+          `--window-size=${width},${height}`, '--virtual-time-budget=1600', '--dump-dom', url,
+        ], { encoding: 'utf8', timeout: 60000, maxBuffer: 8 * 1024 * 1024 });
+      } finally {
+        await rm(profile, { recursive: true, force: true }).catch(() => {});
+      }
+    };
+    let result = await runChrome();
     if (result.error?.code === 'ETIMEDOUT') {
       console.warn(`Chrome stalled at ${width}x${height}; trying once more.`);
-      result = runChrome();
+      result = await runChrome();
     }
     if (result.error) {
       // Show what the page was doing before Chrome had to be stopped (console lines and errors).

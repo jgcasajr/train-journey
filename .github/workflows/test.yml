@@ -15,8 +15,8 @@ jobs:
         with:
           node-version: 22
       - run: npm test
-      - uses: browser-actions/setup-chrome@v2
-        id: browser
+      # The browser smoke test drives Chromium through Playwright here (installed only for CI;
+      # the project itself has no dependencies). Headless Chrome's --dump-dom stalls on CI machines.
+      - run: npm install --no-save playwright@1
+      - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
-        env:
-          CHROME_BIN: ${{ steps.browser.outputs.chrome-path }}

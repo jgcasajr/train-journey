@@ -32,10 +32,17 @@ try {
   await writeFile(probeFile, html.replace('<head>', `<head>${probe}`));
   for (const [width, height] of [[1280, 800], [390, 844]]) {
     const url = `${pathToFileURL(probeFile).href}?nosplash&nowelcome&lang=pt`;
-    const result = spawnSync(chrome, [
+    // Just enough virtual time for the probe (it reads the page at 1.2 s): on slow CI machines a
+    // longer budget makes headless Chrome render hundreds of frames and sometimes stall.
+    const runChrome = () => spawnSync(chrome, [
       '--headless=new', '--no-sandbox', '--disable-gpu', '--allow-file-access-from-files', '--enable-logging=stderr', '--v=0',
-      `--window-size=${width},${height}`, '--virtual-time-budget=5000', '--dump-dom', url,
-    ], { encoding: 'utf8', timeout: 30000, maxBuffer: 8 * 1024 * 1024 });
+      `--window-size=${width},${height}`, '--virtual-time-budget=1600', '--dump-dom', url,
+    ], { encoding: 'utf8', timeout: 60000, maxBuffer: 8 * 1024 * 1024 });
+    let result = runChrome();
+    if (result.error?.code === 'ETIMEDOUT') {
+      console.warn(`Chrome stalled at ${width}x${height}; trying once more.`);
+      result = runChrome();
+    }
     if (result.error) {
       // Show what the page was doing before Chrome had to be stopped (console lines and errors).
       const log = String(result.stderr ?? '').split('\n').filter((l) => /CONSOLE|ERROR|Uncaught|smoke/.test(l)).slice(-40).join('\n');

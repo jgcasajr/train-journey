@@ -10,6 +10,9 @@ const probeFile = join(root, '.browser-smoke.html');
 const probe = `<script>
 window.addEventListener('error', e => document.documentElement.dataset.smokeError = e.message);
 window.addEventListener('unhandledrejection', e => document.documentElement.dataset.smokeError = String(e.reason));
+let smokeTicks = 0;
+const smokeTimer = setInterval(() => console.log('smoke tick', ++smokeTicks, Math.round(performance.now())), 500);
+setTimeout(() => clearInterval(smokeTimer), 6000);
 setTimeout(() => {
   const canvas = document.getElementById('scene');
   const pixel = canvas?.getContext('2d')?.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1).data;
@@ -30,10 +33,15 @@ try {
   for (const [width, height] of [[1280, 800], [390, 844]]) {
     const url = `${pathToFileURL(probeFile).href}?nosplash&nowelcome&lang=pt`;
     const result = spawnSync(chrome, [
-      '--headless=new', '--no-sandbox', '--disable-gpu', '--allow-file-access-from-files',
+      '--headless=new', '--no-sandbox', '--disable-gpu', '--allow-file-access-from-files', '--enable-logging=stderr', '--v=0',
       `--window-size=${width},${height}`, '--virtual-time-budget=5000', '--dump-dom', url,
     ], { encoding: 'utf8', timeout: 30000, maxBuffer: 8 * 1024 * 1024 });
-    if (result.error) throw result.error;
+    if (result.error) {
+      // Show what the page was doing before Chrome had to be stopped (console lines and errors).
+      const log = String(result.stderr ?? '').split('\n').filter((l) => /CONSOLE|ERROR|Uncaught|smoke/.test(l)).slice(-40).join('\n');
+      console.error(`Chrome did not finish at ${width}x${height}. Last page log lines:\n${log || '(none)'}`);
+      throw result.error;
+    }
     const dom = result.stdout;
     const ok = /data-smoke-canvas="true"/.test(dom) && /data-smoke-destinations="([2-9]\d|\d{3,})"/.test(dom)
       && /data-smoke-route="true"/.test(dom) && /data-smoke-actions="true"/.test(dom)

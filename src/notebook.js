@@ -23,6 +23,8 @@ const TEMPLATES = {
 const BY_ID = {
   bella: 'A Bella apareceu e correu ao lado do trem. Corre, Bella!',
   bellaPet: 'Fiz carinho na Bella. Saudade boa.',
+  princess: 'A Princess veio junto com a Bella. Minhas duas meninas!',
+  princessPet: 'Fiz carinho na Princess. Ela abanou o rabo inteiro.',
   bellaWaits: 'A Bella estava me esperando na plataforma. Que alegria!',
   bellaAboard: 'Hoje a Bella veio comigo, sentadinha do meu lado.',
   sleepTimer: 'Dormi embalada pelo barulho dos trilhos. Boa noite.',

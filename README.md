@@ -147,13 +147,15 @@ Botão **Intenção** no painel (e um convite gentil na primeira visita): escrev
 
 Figurinhas: "Chuva de granizo", "Nevasca", "Miragem no deserto" e "Vendaval".
 
-## Bella e outros animais
+## Bella, Princess e outros animais
 
 Em homenagem à Bella: de vez em quando uma pastora-alemã aparece correndo ao lado do trem, colada nos trilhos — capa preta, orelhas em pé, coleira vermelha e língua de fora, num galope animado. Ela alcança a janela, acompanha o trem por uns 20 segundos e fica para trás; corre até pela plataforma das estações. A passageira fala com ela ("Olha a Bella! Corre, Bella!"), e tocar nela faz carinho: um latido, corações e um "Te amo, Bella!". Ela não entra em túneis, pontes, viadutos nem cidades — vai sumindo devagar antes. A primeira corrida vem logo no começo da viagem; com `?bella` no link ela aparece em segundos (bom para mandar a homenagem a alguém).
 
 **Bella viaja comigo**: com essa opção ligada (em Viagem), a Bella vem junto, sentada no chão ao lado da passageira nos vagões de passageiros e restaurante. Nas estações ela levanta a cabeça e as orelhas para olhar a plataforma; de vez em quando vira para a passageira; à noite, quando ela dorme, a Bella encosta a cabeça no joelho dela e fecha os olhos; tocar nela faz carinho (rabo abanando, corações, latido). Enquanto ela viaja dentro, não corre lá fora.
 
 **Bella na plataforma**: alguns dias (mais vezes em Nexus) ela espera o trem numa estação — sentada, olhando o trem chegar; quando ele para, levanta abanando o rabo e vai até a janela, e a passageira fala com ela ("Bella! Você veio me esperar!"); depois senta e olha o trem partir.
+
+**Princess**: a border collie preta e branca (peito, focinho, patas, ponta do rabo e uma lista na testa brancos, orelhas com a pontinha dobrada, coleira lilás) anda sempre com a Bella — corre um pouco atrás dela, viaja a bordo sentada perto da janela e espera junto na plataforma. Tocar nela também faz carinho ("Boa menina, Princess!").
 
 Outros bichos: cavalos a galope nos campos e fazendas, apostando corrida com o trem; golfinhos saltando um depois do outro no mar do litoral; e famílias de capivaras pastando na beira do lago.
 

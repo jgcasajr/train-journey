@@ -22,8 +22,26 @@ const HEART = hex('#ff5c8a');
 /** Her coat, shared by every drawing of her. */
 export const COAT = { TAN, TAN_LIGHT, SADDLE, MASK, MUZZLE, COLLAR, TONGUE, HEART };
 
-const GREETINGS = ['Olha a Bella! Corre, Bella!', 'Bella! Você veio me acompanhar?', 'Vai, Bella! Mais rápido que o trem!', 'Minha Bella... sempre do meu lado.'];
+const COLLIE_BLACK = hex('#1a181c');
+const COLLIE_WHITE = hex('#f1eee8');
+
+/**
+ * The two dogs, as coats every drawing of them takes: Bella, a German Shepherd, and Princess,
+ * a black-and-white Border Collie (white chest, muzzle, blaze, paws and tail tip; tipped ears).
+ */
+export const BELLA = {
+  name: 'Bella', body: TAN, chest: TAN, belly: TAN_LIGHT, back: SADDLE, ears: SADDLE, mask: MASK, muzzle: MUZZLE,
+  collar: COLLAR, tongue: TONGUE, legs: TAN, tailTip: null, blaze: null, tippedEars: false,
+};
+export const PRINCESS = {
+  name: 'Princess', body: COLLIE_BLACK, chest: COLLIE_WHITE, belly: COLLIE_WHITE, back: COLLIE_BLACK, ears: COLLIE_BLACK,
+  mask: hex('#0c0b0d'), muzzle: COLLIE_WHITE, collar: hex('#8a4fd8'), tongue: TONGUE, legs: COLLIE_WHITE,
+  tailTip: COLLIE_WHITE, blaze: COLLIE_WHITE, tippedEars: true,
+};
+
+const GREETINGS = ['Olha a Bella e a Princess! Corre, meninas!', 'Bella! Princess! Vieram me acompanhar?', 'Vão, meninas! Mais rápido que o trem!', 'Minha Bella e minha Princess... sempre do meu lado.'];
 export const PETS = ['Boa menina, Bella!', 'Te amo, Bella!', 'Quem é a cachorra mais linda? A Bella!'];
+export const PRINCESS_PETS = ['Boa menina, Princess!', 'Te amo, Princess!', 'Quem é a border collie mais linda? A Princess!'];
 
 /**
  * The run of this period, if any: { k, t } with t = seconds since she showed up.
@@ -90,6 +108,18 @@ export function bellaBox(layout, state) {
   return p && p.run.alpha > 0.5 && { x: p.x - p.s * 0.8, y: p.y - p.s * 0.95, w: p.s * 1.55, h: p.s * 0.95 };
 }
 
+/** Princess runs with Bella, a little behind and farther from the track, keeping pace. */
+export function princessPlace(layout, state) {
+  const p = bellaPlace(layout, state);
+  if (!p) return null;
+  return { ...p, x: p.x - p.s * (1.25 + 0.15 * Math.sin(state.time * 0.6)), y: p.y - p.s * 0.07, s: p.s * 0.88 };
+}
+
+export function princessBox(layout, state) {
+  const p = princessPlace(layout, state);
+  return p && p.run.alpha > 0.5 && { x: p.x - p.s * 0.8, y: p.y - p.s * 0.95, w: p.s * 1.4, h: p.s * 0.95 };
+}
+
 /** She greets Bella a moment after she shows up (unless asleep or already talking). */
 export function bellaGreeting(prev, next) {
   const before = bellaAt(prev)?.t ?? -1;
@@ -119,38 +149,56 @@ function drawLegs(ctx, x, by, s, ph, far) {
   leg(ctx, x - s * 0.3, by + s * 0.02, ha + 0.35, ha - 0.45 - 0.5 * Math.max(0, Math.cos(ph + Math.PI * 0.9 + off)), len);
 }
 
-function drawHead(ctx, hx, hy, s, ph, c) {
-  ctx.fillStyle = c(SADDLE);
+/** Ears: pricked (Bella) or with the tips folded forward (Princess). */
+function drawEars(ctx, hx, hy, s, coat, c) {
+  ctx.fillStyle = c(coat.ears);
   [-0.09, -0.02].forEach((o) => {
+    const tip = coat.tippedEars ? 0.15 : 0.21;
     ctx.beginPath();
     ctx.moveTo(hx + o * s - s * 0.04, hy - s * 0.04);
-    ctx.lineTo(hx + o * s, hy - s * 0.21);
+    ctx.lineTo(hx + o * s, hy - s * tip);
     ctx.lineTo(hx + o * s + s * 0.05, hy - s * 0.05);
     ctx.fill();
+    if (!coat.tippedEars) return;
+    ctx.beginPath(); // the folded tip
+    ctx.moveTo(hx + o * s - s * 0.005, hy - s * 0.15);
+    ctx.lineTo(hx + o * s + s * 0.06, hy - s * 0.12);
+    ctx.lineTo(hx + o * s + s * 0.02, hy - s * 0.1);
+    ctx.fill();
   });
-  ctx.fillStyle = c(TAN);
+}
+
+function drawHead(ctx, hx, hy, s, ph, c, coat) {
+  drawEars(ctx, hx, hy, s, coat, c);
+  ctx.fillStyle = c(coat.body);
   ctx.beginPath();
   ctx.ellipse(hx, hy, s * 0.12, s * 0.09, 0.1, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = c(MUZZLE);
+  if (coat.blaze) {
+    ctx.fillStyle = c(coat.blaze);
+    ctx.beginPath();
+    ctx.ellipse(hx + s * 0.05, hy - s * 0.035, s * 0.07, s * 0.022, -0.35, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = c(coat.muzzle);
   ctx.beginPath();
   ctx.ellipse(hx + s * 0.13, hy + s * 0.035, s * 0.1, s * 0.042, 0.18, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = c(MASK);
+  ctx.fillStyle = c(coat.mask);
   ctx.beginPath();
   ctx.arc(hx + s * 0.225, hy + s * 0.05, s * 0.025, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = c(TONGUE);
+  ctx.fillStyle = c(coat.tongue);
   ctx.beginPath();
   ctx.ellipse(hx + s * 0.12, hy + s * (0.09 + 0.012 * Math.sin(ph * 2)), s * 0.035, s * 0.022, 0.3, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = c(MASK);
+  ctx.fillStyle = c(coat.mask);
   ctx.beginPath();
   ctx.arc(hx + s * 0.03, hy - s * 0.025, Math.max(1, s * 0.016), 0, Math.PI * 2);
   ctx.fill();
 }
 
-function drawTail(ctx, x, by, s, ph, c) {
+function drawTail(ctx, x, by, s, ph, c, coat) {
   const sway = Math.sin(ph) * s * 0.05;
   const path = () => {
     ctx.beginPath();
@@ -158,61 +206,77 @@ function drawTail(ctx, x, by, s, ph, c) {
     ctx.quadraticCurveTo(x - s * 0.6, by, x - s * 0.72, by + s * 0.14 + sway);
   };
   ctx.lineCap = 'round';
-  ctx.strokeStyle = c(TAN);
+  ctx.strokeStyle = c(coat.body);
   ctx.lineWidth = s * 0.11;
   path();
   ctx.stroke();
-  ctx.strokeStyle = c(SADDLE);
+  ctx.strokeStyle = c(coat.back);
   ctx.lineWidth = s * 0.06;
   ctx.save();
   ctx.translate(0, -s * 0.02);
   path();
   ctx.stroke();
   ctx.restore();
+  if (!coat.tailTip) return;
+  ctx.strokeStyle = c(coat.tailTip); // the white tip of a collie's tail
+  ctx.lineWidth = s * 0.1;
+  ctx.beginPath();
+  ctx.moveTo(x - s * 0.69, by + s * 0.09 + sway * 0.8);
+  ctx.lineTo(x - s * 0.72, by + s * 0.14 + sway);
+  ctx.stroke();
 }
 
-/** A German Shepherd galloping to the right: tan with a black saddle, ears up, tongue out. */
-export function drawShepherd(ctx, x, ground, s, time, env) {
+/** A dog galloping to the right, in its coat (Bella by default): ears up, tongue out. */
+export function drawShepherd(ctx, x, ground, s, time, env, coat = BELLA) {
   const c = (col) => rgba(shade(col, env, 0.04));
   const ph = time * Math.PI * 2 * GALLOP_HZ;
   const by = ground - s * 0.55 - s * 0.04 * Math.abs(Math.sin(ph));
   ctx.lineCap = 'round';
   ctx.lineWidth = s * 0.075;
-  ctx.strokeStyle = rgba(shade(scale(TAN, 0.72), env, 0.04));
+  ctx.strokeStyle = rgba(shade(scale(coat.legs, 0.72), env, 0.04));
   drawLegs(ctx, x, by, s, ph, true);
-  drawTail(ctx, x, by, s, ph, c);
-  ctx.fillStyle = c(TAN);
+  drawTail(ctx, x, by, s, ph, c, coat);
+  ctx.fillStyle = c(coat.body);
   ctx.beginPath();
   ctx.ellipse(x, by, s * 0.37, s * 0.15, 0.06 * Math.sin(ph), 0, Math.PI * 2);
   ctx.fill();
+  ctx.fillStyle = c(coat.chest);
   ctx.beginPath();
   ctx.ellipse(x + s * 0.24, by + s * 0.02, s * 0.17, s * 0.17, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = c(TAN_LIGHT);
+  ctx.fillStyle = c(coat.belly);
   ctx.beginPath();
   ctx.ellipse(x - s * 0.02, by + s * 0.09, s * 0.26, s * 0.05, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = c(SADDLE);
+  ctx.fillStyle = c(coat.back);
   ctx.beginPath();
   ctx.ellipse(x - s * 0.07, by - s * 0.06, s * 0.31, s * 0.1, 0.04, 0, Math.PI * 2);
   ctx.fill();
   const hx = x + s * 0.5;
   const hy = by - s * 0.27 + s * 0.02 * Math.sin(ph);
-  ctx.strokeStyle = c(TAN);
+  ctx.strokeStyle = c(coat.body);
   ctx.lineWidth = s * 0.17;
   ctx.beginPath();
   ctx.moveTo(x + s * 0.26, by - s * 0.04);
   ctx.lineTo(hx - s * 0.03, hy + s * 0.03);
   ctx.stroke();
-  ctx.strokeStyle = c(COLLAR);
+  if (coat.chest !== coat.body) { // a collie's white ruff under the neck
+    ctx.strokeStyle = c(coat.chest);
+    ctx.lineWidth = s * 0.08;
+    ctx.beginPath();
+    ctx.moveTo(x + s * 0.3, by + s * 0.02);
+    ctx.lineTo(hx - s * 0.05, hy + s * 0.08);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = c(coat.collar);
   ctx.lineWidth = s * 0.04;
   ctx.beginPath();
   ctx.moveTo(hx - s * 0.14, hy + s * 0.0);
   ctx.lineTo(hx - s * 0.06, hy + s * 0.12);
   ctx.stroke();
-  drawHead(ctx, hx, hy, s, ph, c);
+  drawHead(ctx, hx, hy, s, ph, c, coat);
   ctx.lineWidth = s * 0.075;
-  ctx.strokeStyle = c(TAN);
+  ctx.strokeStyle = c(coat.legs);
   drawLegs(ctx, x, by, s, ph, false);
 }
 
@@ -224,9 +288,9 @@ function heart(ctx, x, y, r) {
   ctx.fill();
 }
 
-/** Hearts rising over her after she is petted (clicked). */
-function drawHearts(ctx, p, state) {
-  (state.effects ?? []).filter((e) => e.kind === 'bella').forEach((e) => {
+/** Hearts rising over a dog after she is petted (clicked); `kind` is 'bella' or 'princess'. */
+function drawHearts(ctx, p, state, kind) {
+  (state.effects ?? []).filter((e) => e.kind === kind).forEach((e) => {
     const age = state.time - e.born;
     if (age > 2) return;
     [-0.25, 0.05, 0.3].forEach((o, i) => {
@@ -241,9 +305,12 @@ function drawHearts(ctx, p, state) {
 export function drawBella(ctx, layout, state, env) {
   const p = bellaPlace(layout, state);
   if (!p) return;
+  const q = princessPlace(layout, state);
   ctx.save();
   ctx.globalAlpha = p.run.alpha;
+  drawShepherd(ctx, q.x, q.y, q.s, state.time + 0.17, env, PRINCESS); // out of step with Bella
+  drawHearts(ctx, q, state, 'princess');
   drawShepherd(ctx, p.x, p.y, p.s, state.time, env);
-  drawHearts(ctx, p, state);
+  drawHearts(ctx, p, state, 'bella');
   ctx.restore();
 }

@@ -47,7 +47,7 @@ export function describeScene(state, env) {
     : next ? t(`Próxima estação: ${next.name}.`) : ''; // no distance: it would change every few seconds
   const top = Object.entries(state.pose ?? {}).sort((a, b) => b[1] - a[1])[0];
   const doing = ACTIVITIES.find(([k]) => k === top?.[0] && top[1] > 0.5)?.[1] ?? 'Ela olha a paisagem pela janela.';
-  const bella = state.bellaAboard ? t('A Bella viaja sentada ao lado dela.') : bellaAt(state) ? t('A Bella corre ao lado do trem.') : '';
+  const bella = state.bellaAboard ? t('A Bella e a Princess viajam sentadas ao lado dela.') : bellaAt(state) ? t('A Bella e a Princess correm ao lado do trem.') : '';
   return `${where}. ${when}. ${stop} ${t(doing)} ${bella}`.replace(/\s+/g, ' ').trim();
 }
 

@@ -157,7 +157,7 @@ function createClicks({ canvas, audio, radio, controls, getScene }) {
     e.preventDefault();
     audio.whistle();
   });
-  const sounds = { bella: 'bark', curtain: 'swish', brake: 'brake', cat: 'meow' };
+  const sounds = { bella: 'bark', princess: 'bark', curtain: 'swish', brake: 'brake', cat: 'meow' };
   document.querySelectorAll('[data-scene-action]').forEach((button) => {
     button.addEventListener('click', () => {
       const type = button.dataset.sceneAction;
@@ -173,7 +173,7 @@ function createClicks({ canvas, audio, radio, controls, getScene }) {
       const car = state.car;
       const seated = car === 'passenger' || car === 'dining';
       const available = {
-        talk: seated || car === 'panorama', sketch: seated, sip: seated, bella: Boolean(state.bellaAboard) && seated,
+        talk: seated || car === 'panorama', sketch: seated, sip: seated, bella: Boolean(state.bellaAboard) && seated, princess: Boolean(state.bellaAboard) && seated,
         curtain: seated, radio: seated, brake: seated, horn: car === 'cab',
         cat: car === 'baggage', sleeper: car === 'sleeper',
       };

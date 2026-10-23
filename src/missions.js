@@ -10,6 +10,7 @@ const DAY_MS = 24 * 3600 * 1000;
 export const MISSIONS = [
   { id: 'aurora', icon: '🌌', title: 'Veja uma aurora boreal', hint: 'Noites limpas nas montanhas nevadas.', test: (f) => f.aurora },
   { id: 'bella', icon: '🐕', title: 'Veja a Bella correr ao lado do trem', hint: 'Ela aparece em trechos abertos.', test: (f) => f.bella },
+  { id: 'princessPet', icon: '💜', title: 'Faça carinho na Princess', hint: 'Ela anda sempre com a Bella.', test: (f) => f.princessPets > 0 },
   { id: 'bellaPet', icon: '💕', title: 'Faça carinho na Bella', hint: 'Toque nela quando ela aparecer.', test: (f) => f.bellaPets > 0 },
   { id: 'dolphins', icon: '🐬', title: 'Veja golfinhos saltando', hint: 'No mar do litoral.', test: (f) => f.dolphins },
   { id: 'whale', icon: '🐋', title: 'Veja uma baleia', hint: 'No mar do litoral.', test: (f) => f.whale },
@@ -32,12 +33,14 @@ const pad = (n) => String(n).padStart(2, '0');
 /** Local calendar day as "YYYY-MM-DD". */
 export const dayKey = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 
+const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+/** A step through the list that visits every mission before repeating (coprime with its length). */
+const STRIDE = [7, 11, 13, 17, 19, 23].find((n) => n % MISSIONS.length !== 0 && gcd(n, MISSIONS.length) === 1) ?? 1;
+
 /** The mission of a calendar day: the same for everyone on that day, never the same two days in a row. */
 export function missionFor(key) {
   const days = Math.round(Date.parse(`${key}T12:00:00Z`) / DAY_MS);
-  const pick = (d) => Math.abs((d * 2654435761) >>> 0) % MISSIONS.length;
-  const today = pick(days);
-  return MISSIONS[today === pick(days - 1) ? (today + 1) % MISSIONS.length : today];
+  return MISSIONS[(((days * STRIDE) % MISSIONS.length) + MISSIONS.length) % MISSIONS.length];
 }
 
 const yesterdayOf = (key) => dayKey(new Date(Date.parse(`${key}T12:00:00Z`) - DAY_MS));

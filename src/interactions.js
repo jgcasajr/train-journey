@@ -12,7 +12,7 @@ import { sleeperHeadBox } from './sleeperView.js';
 import { hornBox } from './cabDash.js';
 import { carLayout, seatedCar } from './cars.js';
 import { balloonsInView, flockBirds } from './skylife.js';
-import { bellaBox } from './bella.js';
+import { bellaBox, princessBox } from './bella.js';
 import { bellaAboardBox, bellaCanBoard } from './bellaAboard.js';
 
 const ANIMALS = {
@@ -39,7 +39,8 @@ function cabinTarget(view, state, p) {
   const cupX = o.x + u * 22;
   const ledgeY = win.y + win.h + u * 1.2;
   if (inBox(p, { x: cupX - u * 3.5, y: ledgeY - u * 6, w: u * 7, h: u * 7 })) return { type: 'sip' };
-  if (state.bellaAboard && bellaCanBoard(state.car) && inBox(shifted, bellaAboardBox(view))) return { type: 'bella', sound: 'bark' };
+  if (state.bellaAboard && bellaCanBoard(state.car) && inBox(shifted, bellaAboardBox(view, 'bella'))) return { type: 'bella', sound: 'bark' };
+  if (state.bellaAboard && bellaCanBoard(state.car) && inBox(shifted, bellaAboardBox(view, 'princess'))) return { type: 'princess', sound: 'bark' };
   if (inBox(shifted, { x: o.x - u * 9, y: o.y - u * 50, w: u * 22, h: u * 50 })) return { type: 'talk' };
   if (state.companion?.status === 'seated' && inBox(shifted, companionBox(view))) return { type: 'companion' };
   if (curtainBoxes(view, state.curtains).some((b) => inBox(p, b))) return { type: 'curtain', sound: 'swish' };
@@ -60,6 +61,8 @@ function outsideTarget(view, state, env, q) {
   const { u } = view;
   const bella = bellaBox(view, state);
   if (bella && inBox(q, bella)) return { type: 'bella', sound: 'bark' };
+  const princess = princessBox(view, state);
+  if (princess && inBox(q, princess)) return { type: 'princess', sound: 'bark' };
   if (flockBirds(view, state, env).some((b) => near(q, b, u * 3))) return { type: 'scatter', sound: 'flutter' };
   const balloon = balloonsInView(view, state, env).find((b) => near(q, { x: b.x, y: b.y + b.s * 0.4 }, b.s * 1.3));
   if (balloon) return { type: 'wave', id: balloon.i, sound: 'cheer' };

@@ -20,5 +20,3 @@ jobs:
       - run: npm install --no-save playwright@1
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
-        env:
-          DEBUG: pw:browser

@@ -41,7 +41,7 @@ async function withPlaywright(playwright, url, [width, height]) {
     page.on('console', (msg) => { if (msg.type() === 'error' || msg.type() === 'warning') console.error(`console.${msg.type()}:`, msg.text()); });
     await page.goto(url);
     await page.waitForFunction(() => document.documentElement.dataset.smokeActions !== undefined, null, { timeout: 20000 });
-    return page.evaluate(() => document.documentElement.outerHTML.match(/<html[^>]*>/)[0]);
+    return await page.evaluate(() => document.documentElement.outerHTML.match(/<html[^>]*>/)[0]); // await: the browser closes in finally
   } finally {
     await browser.close();
   }
